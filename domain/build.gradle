@@ -43,45 +43,15 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.0'
-    implementation 'com.google.android.material:material:1.8.0'
-
     //kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.7.21"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
 
-    //android
-    implementation "androidx.core:core-ktx:1.9.0"
-    implementation "androidx.appcompat:appcompat:1.6.0"
-    implementation "androidx.navigation:navigation-fragment:2.5.3"
-    implementation "androidx.fragment:fragment-ktx:1.5.5"
-    implementation 'com.google.android.material:material:1.8.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation "androidx.recyclerview:recyclerview:1.2.1"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-
-
-    //databinding
-    implementation "androidx.databinding:databinding-ktx:7.4.1"
-    implementation 'com.google.firebase:firebase-config-ktx:21.2.1'
-
-    //lifecycle
-    def lifecycle_version = "2.5.0"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycle_version}"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycle_version}"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:${lifecycle_version}"
-    implementation "androidx.lifecycle:lifecycle-common:${lifecycle_version}"
-    //implementation  "androidx.lifecycle:lifecycle-extensions:${lifecycle_version}"
-
     //hilt
     def hilt_version = "2.44"
     implementation "com.google.dagger:hilt-android:${hilt_version}"
     kapt "com.google.dagger:hilt-android-compiler:${hilt_version}"
-
-    //material
-    implementation "com.google.android.material:material:1.8.0"
 
     //retrofit
     def RETROFIT = "2.9.0"
@@ -94,23 +64,13 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:${OKHTTP}"
     implementation "com.squareup.okhttp3:okhttp-urlconnection:${OKHTTP}"
 
-    //glide
-    def GLIDE = "4.11.0"
-    implementation "com.github.bumptech.glide:glide:${GLIDE}"
-    implementation "com.github.bumptech.glide:okhttp3-integration:${GLIDE}"
-    kapt "com.github.bumptech.glide:compiler:${GLIDE}"
 
     //unit test
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
-    //tedpermission
-    implementation 'io.github.ParkSangGwon:tedpermission-coroutine:3.3.0'
-
     //timber log
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
-    //opensource
-    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 }
