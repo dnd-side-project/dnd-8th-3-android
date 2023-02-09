@@ -1,0 +1,79 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    namespace 'com.d83t.bpm.data'
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 28
+        targetSdk 33
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    kapt {
+        javacOptions {
+            option("-Adagger.fastInit=ENABLED")
+            option("-Adagger.hilt.android.internal.disableAndroidSuperclassValidation=true")
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation project(path: ':domain')
+
+    //kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.7.21"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+
+    //android
+    implementation "androidx.core:core-ktx:1.9.0"
+    implementation "androidx.appcompat:appcompat:1.6.0"
+
+    //hilt
+    def hilt_version = "2.44"
+    implementation "com.google.dagger:hilt-android:${hilt_version}"
+    kapt "com.google.dagger:hilt-android-compiler:${hilt_version}"
+
+    //retrofit
+    def RETROFIT = "2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:${RETROFIT}"
+    implementation "com.squareup.retrofit2:converter-gson:${RETROFIT}"
+
+    //okhttp
+    def OKHTTP = "5.0.0-alpha.2"
+    implementation "com.squareup.okhttp3:okhttp:${OKHTTP}"
+    implementation "com.squareup.okhttp3:logging-interceptor:${OKHTTP}"
+    implementation "com.squareup.okhttp3:okhttp-urlconnection:${OKHTTP}"
+
+    //unit test
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    //timber log
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+}
