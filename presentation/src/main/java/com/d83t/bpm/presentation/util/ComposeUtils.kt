@@ -1,4 +1,4 @@
-package com.d83t.bpm.presentation.compose
+package com.d83t.bpm.presentation.util
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
