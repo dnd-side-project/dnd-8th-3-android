@@ -2,27 +2,39 @@ package com.d83t.bpm.presentation.compose.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// Set of Material typography styles to start with
-val Typography = Typography(
-    body1 = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
-    )
-    /* Other default text styles to override
+val BPMTypography = Typography(
+    h1 = TextStyle(
+        fontFamily = pretendard,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 18.sp,
+        letterSpacing = 0.sp
+    ),
+    h2 = TextStyle(
+        fontFamily = pretendard,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+        letterSpacing = 0.sp
+    ),
+    // body
     button = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.W500,
-        fontSize = 14.sp
+        fontFamily = pretendard,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+        letterSpacing = 0.sp
     ),
     caption = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 12.sp
-    )
-    */
+        fontFamily = pretendard,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 10.sp,
+        letterSpacing = 0.sp
+    ), // for tab name
+    overline = TextStyle(
+        fontFamily = pretendard,
+        fontWeight = FontWeight.Medium,
+        fontSize = 10.sp,
+        letterSpacing = 0.sp
+    ) // for type limit
 )
