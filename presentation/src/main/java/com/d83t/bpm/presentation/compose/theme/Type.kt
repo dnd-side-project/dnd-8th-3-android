@@ -18,6 +18,18 @@ val BPMTypography = Typography(
         fontSize = 16.sp,
         letterSpacing = 0.sp
     ),
+    h5 = TextStyle(
+        fontFamily = pyeongchangPeace,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+        letterSpacing = 0.8.sp
+    ),
+    body1 = TextStyle(
+        fontFamily = pretendard,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        letterSpacing = 0.sp
+    ),
     // body
     button = TextStyle(
         fontFamily = pretendard,

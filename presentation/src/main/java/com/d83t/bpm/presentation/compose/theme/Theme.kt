@@ -27,7 +27,7 @@ fun BPMTheme(
         MaterialTheme(
             colors = colors,
             typography = BPMTypography,
-            shapes = Shapes,
+            shapes = BPMShapes,
             content = content
         )
     }
