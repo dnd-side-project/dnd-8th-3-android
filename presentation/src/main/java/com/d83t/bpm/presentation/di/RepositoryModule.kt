@@ -1,7 +1,6 @@
 package com.d83t.bpm.presentation.di
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
+import com.d83t.bpm.data.datastore.DataStoreManager
 import com.d83t.bpm.data.repositoryImpl.MainRepositoryImpl
 import com.d83t.bpm.data.repositoryImpl.SplashRepositoryImpl
 import com.d83t.bpm.domain.repository.MainRepository
@@ -27,8 +26,8 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideSplashRepository(
-        dataStore: DataStore<Preferences>
+        dataStoreManager: DataStoreManager
     ): SplashRepository {
-        return SplashRepositoryImpl(dataStore)
+        return SplashRepositoryImpl(dataStoreManager)
     }
 }

@@ -28,10 +28,8 @@ class SplashViewModel @Inject constructor(
         get() = _state
 
     fun getStoredId() {
-        val storedIdFlow = getStoredIdUseCase()
-
         viewModelScope.launch(ioDispatcher) {
-            val kakaoId = storedIdFlow.first()
+            val kakaoId = getStoredIdUseCase().first()
             withContext(mainDispatcher) {
                 _state.emit(SplashState.KakaoId(kakaoId))
             }

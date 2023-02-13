@@ -1,7 +1,7 @@
 package com.d83t.bpm.presentation.di
 
 import android.content.Context
-import com.d83t.bpm.data.datastore.dataStore
+import com.d83t.bpm.data.datastore.DataStoreManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,9 +11,11 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-object DataStoreModule {
+object DataStoreManagerModule {
 
     @Singleton
     @Provides
-    fun provideSignInDataStore(@ApplicationContext context: Context) = context.dataStore
+    fun provideDataStoreManager(@ApplicationContext context: Context): DataStoreManager {
+        return DataStoreManager(context)
+    }
 }
