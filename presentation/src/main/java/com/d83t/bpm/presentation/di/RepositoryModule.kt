@@ -1,7 +1,10 @@
 package com.d83t.bpm.presentation.di
 
+import com.d83t.bpm.data.datastore.DataStoreManager
 import com.d83t.bpm.data.repositoryImpl.MainRepositoryImpl
+import com.d83t.bpm.data.repositoryImpl.SplashRepositoryImpl
 import com.d83t.bpm.domain.repository.MainRepository
+import com.d83t.bpm.domain.repository.SplashRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,4 +23,11 @@ object RepositoryModule {
         return MainRepositoryImpl()
     }
 
+    @Singleton
+    @Provides
+    fun provideSplashRepository(
+        dataStoreManager: DataStoreManager
+    ): SplashRepository {
+        return SplashRepositoryImpl(dataStoreManager)
+    }
 }

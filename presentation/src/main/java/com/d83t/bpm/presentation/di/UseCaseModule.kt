@@ -1,7 +1,9 @@
 package com.d83t.bpm.presentation.di
 
 import com.d83t.bpm.domain.repository.MainRepository
+import com.d83t.bpm.domain.repository.SplashRepository
 import com.d83t.bpm.domain.usecase.GetSampleTextUseCase
+import com.d83t.bpm.domain.usecase.GetStoredIdUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,4 +20,9 @@ object UseCaseModule {
         return GetSampleTextUseCase(mainRepository)
     }
 
+    @Provides
+    @ViewModelScoped
+    fun provideGetStoredIdUseCase(splashRepository: SplashRepository): GetStoredIdUseCase {
+        return GetStoredIdUseCase(splashRepository)
+    }
 }
