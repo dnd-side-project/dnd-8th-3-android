@@ -9,7 +9,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import com.d83t.bpm.presentation.compose.theme.*
 
-private val ColorPalette = lightColors(
+val ColorPalette = lightColors(
     primary = Color.White,
     primaryVariant = Color.White,
     secondary = Color.White,

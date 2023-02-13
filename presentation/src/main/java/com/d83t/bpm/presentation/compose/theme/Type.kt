@@ -18,11 +18,29 @@ val BPMTypography = Typography(
         fontSize = 16.sp,
         letterSpacing = 0.sp
     ),
+    h3 = TextStyle(
+        fontFamily = pretendard,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 19.sp,
+        letterSpacing = 0.sp
+    ),
     h5 = TextStyle(
         fontFamily = pyeongchangPeace,
         fontWeight = FontWeight.Normal,
         fontSize = 20.sp,
         letterSpacing = 0.8.sp
+    ),
+    subtitle1 = TextStyle(
+        fontFamily = pretendard,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 15.sp,
+        letterSpacing = 0.sp
+    ),
+    subtitle2 = TextStyle(
+        fontFamily = pretendard,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        letterSpacing = 2.sp
     ),
     body1 = TextStyle(
         fontFamily = pretendard,
@@ -30,7 +48,13 @@ val BPMTypography = Typography(
         fontSize = 14.sp,
         letterSpacing = 0.sp
     ),
-    // body
+    body2 = TextStyle(
+        fontFamily = pretendard,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        letterSpacing = 0.sp
+    ),
+// body
     button = TextStyle(
         fontFamily = pretendard,
         fontWeight = FontWeight.SemiBold,

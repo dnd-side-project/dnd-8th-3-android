@@ -26,6 +26,10 @@
             android:name=".ui.main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Bpm.NoActionBar" />
+        <activity
+            android:name=".ui.studio_detail.StudioDetailActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Bpm.NoActionBar" />
     </application>
 
 </manifest>
