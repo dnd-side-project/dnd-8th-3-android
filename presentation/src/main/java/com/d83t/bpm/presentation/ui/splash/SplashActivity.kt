@@ -1,7 +1,8 @@
 package com.d83t.bpm.presentation.ui.splash
 
 import android.annotation.SuppressLint
-import android.os.Bundle
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -11,7 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
@@ -26,33 +27,73 @@ import androidx.compose.ui.unit.dp
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.compose.theme.BPMShapes
+import com.d83t.bpm.presentation.compose.theme.BPMTheme
 import com.d83t.bpm.presentation.compose.theme.BPMTypography
+import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @SuppressLint("CustomSplashScreen")
+@AndroidEntryPoint
 class SplashActivity : BaseComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        initUi {
-            SplashActivityContent()
+    override val viewModel: SplashViewModel by viewModels()
+    private val startButtonVisibilityState = mutableStateOf(false)
+    override fun initUi() {
+        setContent {
+            BPMTheme {
+                SplashActivityContent(
+                    startButtonVisibilityState = startButtonVisibilityState,
+                    onClickStartButton = {
+                        // TODO : SignUp With Kakao
+                    }
+                )
+            }
         }
     }
 
+    override fun setupCollect() {
+        repeatCallDefaultOnStarted {
+            viewModel.state.collectLatest { state ->
+                when (state) {
+                    SplashState.Init -> {
+                        MainScope().launch {
+                            delay(1000L)
+                            viewModel.getStoredId()
+                        }
+                    }
+                    is SplashState.KakaoId -> {
+                        if (state.id == "null") {
+                            startButtonVisibilityState.value = true
+                        } else {
+                            // TODO : SignIn
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
-private fun SplashActivityContent() {
+private fun SplashActivityContent(
+    startButtonVisibilityState: MutableState<Boolean>,
+    onClickStartButton: () -> Unit
+) {
     val subtitleVisibilityState = remember { mutableStateOf(false) }
     val subtitleAlphaState = animateFloatAsState(
-        targetValue = if (subtitleVisibilityState.value) 1f else 0f,
-        animationSpec = tween(1000)
+        targetValue = if (subtitleVisibilityState.value) 1f else 0f, animationSpec = tween(1000)
     )
 
     val logoVisibilityState = remember { mutableStateOf(false) }
     val logoAlphaState = animateFloatAsState(
-        targetValue = if (logoVisibilityState.value) 1f else 0f,
-        animationSpec = tween(1000)
+        targetValue = if (logoVisibilityState.value) 1f else 0f, animationSpec = tween(1000)
+    )
+
+    val startButtonAlphaState = animateFloatAsState(
+        targetValue = if (startButtonVisibilityState.value) 1f else 0f, animationSpec = tween(1000)
     )
 
     LaunchedEffect(key1 = Unit) {
@@ -92,18 +133,18 @@ private fun SplashActivityContent() {
             )
         }
 
-        Box(
-            modifier = Modifier
-                .padding(bottom = 30.dp)
-                .padding(horizontal = 16.dp)
-                .clip(shape = BPMShapes.small)
-                .fillMaxWidth()
-                .height(48.dp)
-                .background(Color(0xFFFEE500))
-                .align(Alignment.BottomCenter)
-                .clickable {
-                    // todo : onClickKakaoLogin
-                }
+        Box(modifier = Modifier
+            .alpha(startButtonAlphaState.value)
+            .padding(bottom = 30.dp)
+            .padding(horizontal = 16.dp)
+            .clip(shape = BPMShapes.small)
+            .fillMaxWidth()
+            .height(48.dp)
+            .background(Color(0xFFFEE500))
+            .align(BottomCenter)
+            .clickable {
+                onClickStartButton()
+            }
         ) {
             Icon(
                 modifier = Modifier
@@ -115,8 +156,7 @@ private fun SplashActivityContent() {
             )
 
             Text(
-                modifier = Modifier
-                    .align(Center),
+                modifier = Modifier.align(Center),
                 text = "카카오톡으로 시작하기",
                 style = BPMTypography.body1,
                 color = Color.Black
@@ -128,5 +168,9 @@ private fun SplashActivityContent() {
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
-    SplashActivityContent()
+    val startButtonVisibilityState = remember { mutableStateOf(false) }
+    SplashActivityContent(
+        startButtonVisibilityState = startButtonVisibilityState,
+        onClickStartButton = {}
+    )
 }
