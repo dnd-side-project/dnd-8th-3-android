@@ -11,11 +11,10 @@ import javax.inject.Inject
 
 class DataStoreManager @Inject constructor(private val context: Context) {
     private val Context.instance: DataStore<Preferences> by preferencesDataStore(name = "bpm")
-    private val kakaoId = stringPreferencesKey(name = "kakaoId")
 
     fun getKakaoId(): Flow<String> {
         return context.instance.data.map { preferences ->
-            preferences[kakaoId] ?: "null"
+            preferences[stringPreferencesKey(name = "kakaoId")] ?: "null"
         }
     }
 }
