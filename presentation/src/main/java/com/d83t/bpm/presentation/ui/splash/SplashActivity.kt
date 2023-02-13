@@ -84,16 +84,19 @@ private fun SplashActivityContent(
 ) {
     val subtitleVisibilityState = remember { mutableStateOf(false) }
     val subtitleAlphaState = animateFloatAsState(
-        targetValue = if (subtitleVisibilityState.value) 1f else 0f, animationSpec = tween(1000)
+        targetValue = if (subtitleVisibilityState.value) 1f else 0f,
+        animationSpec = tween(1000)
     )
 
     val logoVisibilityState = remember { mutableStateOf(false) }
     val logoAlphaState = animateFloatAsState(
-        targetValue = if (logoVisibilityState.value) 1f else 0f, animationSpec = tween(1000)
+        targetValue = if (logoVisibilityState.value) 1f else 0f,
+        animationSpec = tween(1000)
     )
 
     val startButtonAlphaState = animateFloatAsState(
-        targetValue = if (startButtonVisibilityState.value) 1f else 0f, animationSpec = tween(1000)
+        targetValue = if (startButtonVisibilityState.value) 1f else 0f,
+        animationSpec = tween(1000)
     )
 
     LaunchedEffect(key1 = Unit) {
