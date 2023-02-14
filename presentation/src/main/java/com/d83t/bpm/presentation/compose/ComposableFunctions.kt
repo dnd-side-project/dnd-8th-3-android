@@ -2,6 +2,7 @@ package com.d83t.bpm.presentation.compose
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
@@ -49,9 +50,10 @@ fun ScreenHeader(header: String) {
                 style = BPMTypography.h1
             )
         }
+
         Divider(
-            color = GrayColor8,
-            thickness = 1.dp
+            thickness = 1.dp,
+            color = GrayColor8
         )
     }
 }
@@ -79,6 +81,37 @@ inline fun RoundedCornerButton(
     Box(
         modifier = modifier
             .clip(BPMShapes.medium)
+            .background(color = buttonColor)
+            .clickable {
+                onClick()
+            }
+    ) {
+        Text(
+            modifier = Modifier.align(Center),
+            text = text,
+            color = textColor,
+            style = BPMTypography.button
+        )
+    }
+}
+
+@Composable
+inline fun OutLinedRoundedCornerButton(
+    modifier: Modifier,
+    text: String,
+    textColor: Color,
+    buttonColor: Color,
+    outLineColor: Color,
+    crossinline onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .clip(BPMShapes.medium)
+            .border(
+                width = 1.dp,
+                color = outLineColor,
+                shape = BPMShapes.medium
+            )
             .background(color = buttonColor)
             .clickable {
                 onClick()
