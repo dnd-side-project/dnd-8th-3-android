@@ -5,10 +5,12 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -27,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ContentScale.Companion.Crop
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
@@ -35,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -102,9 +106,11 @@ private inline fun StudioDetailActivityContent(
     val tabState = remember { mutableStateOf(0) }
     val tabs = listOf("상품설명", "리뷰")
     val scope = rememberCoroutineScope()
-    val keywordColumnExpandState = remember { mutableStateOf(false) }
-    val keywordColumnHeightState = animateDpAsState(targetValue = if (keywordColumnExpandState.value) 474.dp else 138.dp)
-    val expandIconRotateState = animateFloatAsState(targetValue = if (keywordColumnExpandState.value) 270f else 90f)
+    val showExpandedKeywordColumn = remember { mutableStateOf(false) }
+    val keywordColumnHeightState = animateDpAsState(targetValue = if (showExpandedKeywordColumn.value) 474.dp else 138.dp)
+    val expandIconRotateState = animateFloatAsState(targetValue = if (showExpandedKeywordColumn.value) 270f else 90f)
+    val showImageReviewOnly = remember { mutableStateOf(false) }
+    val showReviewOrderByLike = remember { mutableStateOf(true) }
 
     Box(modifier = Modifier.background(color = Color.White)) {
         LazyColumn(modifier = Modifier.padding(top = 95.dp)) {
@@ -117,7 +123,7 @@ private inline fun StudioDetailActivityContent(
                     ) {
                         HorizontalPager(
                             modifier = Modifier.fillParentMaxSize(),
-                            count = 1 // TODO : Will be changed
+                            count = 1
                         ) {
                             Image(
                                 modifier = Modifier.fillParentMaxSize(),
@@ -141,7 +147,7 @@ private inline fun StudioDetailActivityContent(
                         ) {
                             Text(
                                 modifier = Modifier.align(Center),
-                                text = "1/1", // TODO : Will be Changed
+                                text = "1/1",
                                 style = BPMTypography.subtitle2
                             )
                         }
@@ -157,7 +163,7 @@ private inline fun StudioDetailActivityContent(
                         Column {
                             Row(verticalAlignment = CenterVertically) {
                                 Text(
-                                    text = "서울", // TODO : Will be changed
+                                    text = "서울",
                                     style = BPMTypography.body2
                                 )
 
@@ -167,7 +173,7 @@ private inline fun StudioDetailActivityContent(
                                 )
 
                                 Text(
-                                    text = "서초구", // TODO : Will be changed
+                                    text = "서초구",
                                     style = BPMTypography.body2
                                 )
                             }
@@ -175,14 +181,14 @@ private inline fun StudioDetailActivityContent(
                             BPMSpacer(height = 8.dp)
 
                             Text(
-                                text = "스튜디오 이름", // TODO : Will be changed
+                                text = "스튜디오 이름",
                                 style = BPMTypography.h3
                             )
 
                             BPMSpacer(height = 6.dp)
 
                             Text(
-                                text = "스튜디오에 대한 간단한 한줄 설명을 붙여주세요.", // TODO : Will be changed
+                                text = "스튜디오에 대한 간단한 한줄 설명을 붙여주세요.",
                                 fontFamily = pretendard,
                                 fontSize = 13.sp,
                                 fontWeight = Normal,
@@ -211,7 +217,7 @@ private inline fun StudioDetailActivityContent(
                                     BPMSpacer(width = 8.dp)
 
                                     Text(
-                                        text = "4.0", // TODO : Will be changed
+                                        text = "4.0",
                                         fontFamily = pretendard,
                                         fontSize = 14.sp,
                                         fontWeight = Normal,
@@ -221,7 +227,7 @@ private inline fun StudioDetailActivityContent(
                                 }
 
                                 Text(
-                                    text = "후기 504개", // TODO : Will be changed
+                                    text = "후기 504개",
                                     fontFamily = pretendard,
                                     fontWeight = Normal,
                                     fontSize = 12.sp,
@@ -294,7 +300,7 @@ private inline fun StudioDetailActivityContent(
 
                     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                         Text(
-                            text = "주소에 대한 정보를 적습니다.", // TODO : Will be changed
+                            text = "주소에 대한 정보를 적습니다.",
                             fontFamily = pretendard,
                             fontWeight = Medium,
                             fontSize = 16.sp,
@@ -326,7 +332,7 @@ private inline fun StudioDetailActivityContent(
                                             MapPoint.mapPointWithGeoCoord(
                                                 35.8589,
                                                 128.4988
-                                            ), false // TODO : Will be changed
+                                            ), false
                                         )
                                     }
                                 }
@@ -392,7 +398,7 @@ private inline fun StudioDetailActivityContent(
                         )
 
                         Text(
-                            text = "마지막 업데이트 : 0000 00 00", // TODO : Will be changed
+                            text = "마지막 업데이트 : 0000 00 00",
                             fontFamily = pretendard,
                             fontWeight = Medium,
                             fontSize = 14.sp,
@@ -413,28 +419,28 @@ private inline fun StudioDetailActivityContent(
                         ConvenienceInfo(
                             type = "전화번호",
                             detail = "전화번호에 대한 설명을 적는 곳입니다."
-                        ) // TODO : Will be changed
+                        )
 
                         BPMSpacer(height = 12.dp)
 
                         ConvenienceInfo(
                             type = "SNS",
                             detail = "SNS에 대한 설명을 적는 곳입니다."
-                        ) // TODO : Will be changed
+                        )
 
                         BPMSpacer(height = 12.dp)
 
                         ConvenienceInfo(
                             type = "영업시간",
                             detail = "영업시간에 대한 설명을 적는 곳입니다."
-                        ) // TODO : Will be changed
+                        )
 
                         BPMSpacer(height = 12.dp)
 
                         ConvenienceInfo(
                             type = "가격정보",
                             detail = "가격정보에 대한 설명을 적는 곳입니다."
-                        ) // TODO : Will be changed
+                        )
                     }
 
                     BPMSpacer(height = 24.dp)
@@ -503,14 +509,14 @@ private inline fun StudioDetailActivityContent(
                             Icon(
                                 modifier = Modifier
                                     .size(24.dp)
-                                    .clickableWithoutRipple { keywordColumnExpandState.value = !keywordColumnExpandState.value }
+                                    .clickableWithoutRipple { showExpandedKeywordColumn.value = !showExpandedKeywordColumn.value }
                                     .align(Center)
                                     .rotate(expandIconRotateState.value),
                                 painter = painterResource(id = R.drawable.ic_arrow_right),
                                 contentDescription = "expandColumnIcon"
                             )
                         }
-                    } // TODO : Will be changed
+                    }
 
                     BPMSpacer(height = 24.dp)
 
@@ -518,9 +524,105 @@ private inline fun StudioDetailActivityContent(
                         thickness = 8.dp,
                         color = GrayColor11
                     )
+
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxWidth()
+                            .height(55.dp),
+                        horizontalArrangement = SpaceBetween,
+                        verticalAlignment = CenterVertically
+                    ) {
+                        Text(
+                            text = "업체 리뷰 120",
+                            fontFamily = pretendard,
+                            fontWeight = SemiBold,
+                            fontSize = 16.sp,
+                            letterSpacing = 0.sp
+                        )
+
+                        Text(
+                            text = "후기 작성하기",
+                            fontFamily = pretendard,
+                            fontWeight = Medium,
+                            fontSize = 14.sp,
+                            letterSpacing = 0.sp,
+                            color = GrayColor4
+                        )
+                    }
+
+                    Divider(color = GrayColor13)
+
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxWidth()
+                            .height(55.dp),
+                        horizontalArrangement = SpaceBetween,
+                        verticalAlignment = CenterVertically
+                    ) {
+                        Row(modifier = Modifier.clickableWithoutRipple { showImageReviewOnly.value = !showImageReviewOnly.value }) {
+                            Icon(
+                                modifier = Modifier.align(CenterVertically),
+                                painter = painterResource(id = R.drawable.ic_check_field),
+                                contentDescription = "checkFieldIcon",
+                                tint = if (showImageReviewOnly.value) Color.Black else GrayColor7
+                            )
+
+                            BPMSpacer(width = 8.dp)
+
+                            Text(
+                                text = "사진 리뷰만 보기",
+                                fontFamily = pretendard,
+                                fontWeight = Medium,
+                                fontSize = 14.sp,
+                                letterSpacing = 0.sp
+                            )
+                        }
+
+                        Row {
+                            Text(
+                                modifier = Modifier.clickableWithoutRipple { showReviewOrderByLike.value = true },
+                                text = "좋아요순",
+                                fontFamily = pretendard,
+                                fontWeight = Medium,
+                                fontSize = 14.sp,
+                                letterSpacing = 0.sp,
+                                color = if (showReviewOrderByLike.value) Color.Black else GrayColor6
+                            )
+
+                            BPMSpacer(width = 20.dp)
+
+                            Divider(
+                                modifier = Modifier
+                                    .height(12.dp)
+                                    .width(1.dp)
+                                    .align(CenterVertically),
+                                color = GrayColor3
+                            )
+
+                            BPMSpacer(width = 20.dp)
+
+                            Text(
+                                modifier = Modifier.clickableWithoutRipple { showReviewOrderByLike.value = false },
+                                text = "최신순",
+                                fontFamily = pretendard,
+                                fontWeight = Medium,
+                                fontSize = 14.sp,
+                                letterSpacing = 0.sp,
+                                color = if (showReviewOrderByLike.value) GrayColor6 else Color.Black
+                            )
+                        }
+                    }
+
+                    Divider(color = GrayColor13)
                 }
             }
-            // reviews
+
+            val dummyReviews = listOf(true, false, true, true, false)
+            items(dummyReviews) { review ->
+                Review(review)
+            }
         }
 
         Column {
@@ -640,25 +742,172 @@ private fun BestKeyword(
     }
 }
 
+@Composable
+private fun Review(
+    liked: Boolean
+) {
+    Column {
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+        ) {
+            BPMSpacer(height = 15.dp)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = SpaceBetween,
+                verticalAlignment = CenterVertically
+            ) {
+                Row(verticalAlignment = CenterVertically) {
+                    Image(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(id = R.drawable.default_profile_image),
+                        contentDescription = "profileImage"
+                    )
+
+                    BPMSpacer(width = 8.dp)
+
+                    Text(
+                        text = "닉네임",
+                        fontFamily = pretendard,
+                        fontWeight = SemiBold,
+                        fontSize = 14.sp,
+                        letterSpacing = 0.sp
+                    )
+                }
+
+                Text(
+                    text = "2023.02.15",
+                    fontFamily = pretendard,
+                    fontWeight = Medium,
+                    fontSize = 12.sp,
+                    letterSpacing = 0.5.sp
+                )
+            }
+
+            BPMSpacer(height = 12.dp)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = SpaceBetween,
+                verticalAlignment = CenterVertically
+            ) {
+                Text(
+                    text = "스튜디오 이름",
+                    fontFamily = pretendard,
+                    fontWeight = Medium,
+                    fontSize = 14.sp,
+                    letterSpacing = 0.sp
+                )
+
+                Row {
+                    repeat(5) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_star_small),
+                            contentDescription = "starIcon",
+                            tint = GrayColor6
+                        )
+
+                        BPMSpacer(width = 2.dp)
+                    }
+                }
+            }
+
+            Row(modifier = Modifier.padding(vertical = 14.dp)) {
+                repeat(5) {index ->
+                    Image(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(60.dp),
+                        painter = painterResource(id = R.drawable.dummy_studio),
+                        contentDescription = "reviewImage",
+                        contentScale = Crop
+                    )
+
+                    if (index != 4) {
+                        BPMSpacer(width = 4.dp)
+                    }
+                }
+            }
+
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = "One, two, three, four Baby, got me looking so crazy 빠져버리는 daydream got me feeling you 너도 말해줄래 누가 내게 뭐라든 남들과는 달라 넌 Maybe you could be the one 날 믿어봐 한 번 I'm not looking for just fun Maybe I could be the one Oh baby 예민하대 나 lately 너 없이는 나 매일매일이 yeah 재미없어 어쩌지 I just want you Call my phone right now I just wanna hear you're mine",
+                fontFamily = pretendard,
+                fontWeight = Normal,
+                fontSize = 13.sp,
+                letterSpacing = 0.sp,
+                maxLines = 4,
+                lineHeight = 19.sp,
+                overflow = Ellipsis
+            )
+
+            BPMSpacer(height = 25.dp)
+
+            Box(
+                modifier = Modifier
+                    .clip(shape = BPMShapes.large)
+                    .height(28.dp)
+                    .border(
+                        width = 1.dp,
+                        color = if (liked) Color.Black else GrayColor9,
+                        shape = BPMShapes.large
+                    )
+                    .background(color = if (liked) Color.Black else Color.White)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)
+                        .align(Center),
+                    verticalAlignment = CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_like),
+                        contentDescription = "likeIcon",
+                        tint = if (liked) MainGreenColor else Color.Black
+                    )
+
+                    BPMSpacer(width = 4.dp)
+
+                    Text(
+                        text = "좋아요",
+                        fontFamily = pretendard,
+                        fontWeight = Medium,
+                        fontSize = 12.sp,
+                        letterSpacing = 0.sp,
+                        color = if (liked) MainGreenColor else Color.Black
+                    )
+
+                    BPMSpacer(width = 4.dp)
+
+                    Text(
+                        text = "12",
+                        fontFamily = pretendard,
+                        fontWeight = SemiBold,
+                        fontSize = 12.sp,
+                        letterSpacing = 0.sp,
+                        color = if (liked) MainGreenColor else Color.Black
+                    )
+                }
+            }
+        }
+
+        BPMSpacer(height = 20.dp)
+
+        Divider(color = GrayColor13)
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
     StudioDetailActivityContent(
-        onClickCallButton = {
+        onClickCallButton = { /*TODO*/ },
+        onClickInfoEditSuggestion = { /*TODO*/ },
+        onClickMap = { /*TODO*/ },
+        onClickCopyAddress = { /*TODO*/ }) {
 
-        },
-        onClickInfoEditSuggestion = {
-
-        },
-        onClickMap = {
-
-        },
-        onClickCopyAddress = {
-
-        },
-        onClickShowCourse = {
-
-        }
-    )
+    }
 }
