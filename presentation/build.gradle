@@ -57,6 +57,7 @@ android {
     dataBinding {
         enabled = true
     }
+
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
@@ -68,6 +69,8 @@ dependencies {
 
     implementation project(path: ':data')
     implementation project(path: ':domain')
+
+    implementation files('libs/libDaumMapAndroid.jar')
 
     //kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.10"
