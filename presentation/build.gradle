@@ -165,4 +165,7 @@ dependencies {
 
     //opensource
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
+
+    // 카카오 로그인
+    implementation "com.kakao.sdk:v2-user:2.12.1"
 }
