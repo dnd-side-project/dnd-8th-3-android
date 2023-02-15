@@ -15,10 +15,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterStart
@@ -112,8 +109,17 @@ private inline fun StudioDetailActivityContent(
     val showImageReviewOnly = remember { mutableStateOf(false) }
     val showReviewOrderByLike = remember { mutableStateOf(true) }
 
+    LaunchedEffect(key1 = remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }) {
+        snapshotFlow { lazyListState.firstVisibleItemIndex }.collect { index ->
+            tabState.value = if (index == 0) 0 else 1
+        }
+    }
+
     Box(modifier = Modifier.background(color = Color.White)) {
-        LazyColumn(modifier = Modifier.padding(top = 95.dp)) {
+        LazyColumn(
+            modifier = Modifier.padding(top = 95.dp),
+            state = lazyListState
+        ) {
             item {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Box(
@@ -815,7 +821,7 @@ private fun Review(
             }
 
             Row(modifier = Modifier.padding(vertical = 14.dp)) {
-                repeat(5) {index ->
+                repeat(5) { index ->
                     Image(
                         modifier = Modifier
                             .weight(1f)
