@@ -100,7 +100,7 @@ private inline fun StudioDetailActivityContent(
     val scope = rememberCoroutineScope()
     val showExpandedKeywordColumn = remember { mutableStateOf(false) }
     val keywordColumnHeightState = animateDpAsState(targetValue = if (showExpandedKeywordColumn.value) 474.dp else 138.dp)
-    val expandIconRotateState = animateFloatAsState(targetValue = if (showExpandedKeywordColumn.value) 270f else 90f)
+    val expandIconRotateState = animateFloatAsState(targetValue = if (showExpandedKeywordColumn.value) 180f else 0f)
     val showImageReviewOnly = remember { mutableStateOf(false) }
     val showReviewOrderByLike = remember { mutableStateOf(true) }
     val studioDetailInfoHeightState = remember { mutableStateOf(0) }
@@ -514,12 +514,13 @@ private inline fun StudioDetailActivityContent(
                     ) {
                         Icon(
                             modifier = Modifier
-                                .size(24.dp)
+                                .size(18.dp)
                                 .clickableWithoutRipple { showExpandedKeywordColumn.value = !showExpandedKeywordColumn.value }
                                 .align(Center)
                                 .rotate(expandIconRotateState.value),
-                            painter = painterResource(id = R.drawable.ic_arrow_right),
-                            contentDescription = "expandColumnIcon"
+                            painter = painterResource(id = R.drawable.ic_arrow_down),
+                            contentDescription = "expandColumnIcon",
+                            tint = GrayColor5
                         )
                     }
                 }
