@@ -103,7 +103,7 @@ private inline fun StudioDetailActivityContent(
     val expandIconRotateState = animateFloatAsState(targetValue = if (showExpandedKeywordColumn.value) 180f else 0f)
     val showImageReviewOnly = remember { mutableStateOf(false) }
     val showReviewOrderByLike = remember { mutableStateOf(true) }
-    val studioDetailInfoHeightState = remember { mutableStateOf(0) }
+    val studioDetailInfoHeightState = remember { mutableStateOf(1) }
 
     tabState.value = if (remember { derivedStateOf { scrollState.value > studioDetailInfoHeightState.value } }.value) 1 else 0
 
