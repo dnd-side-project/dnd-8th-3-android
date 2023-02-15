@@ -3,15 +3,9 @@ package com.d83t.bpm.presentation.ui.studio_detail
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
@@ -27,6 +21,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ContentScale.Companion.Crop
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
@@ -99,7 +94,7 @@ private inline fun StudioDetailActivityContent(
     crossinline onClickCopyAddress: () -> Unit,
     crossinline onClickShowCourse: () -> Unit
 ) {
-    val lazyListState = rememberLazyListState()
+    val scrollState = rememberScrollState()
     val tabState = remember { mutableStateOf(0) }
     val tabs = listOf("상품설명", "리뷰")
     val scope = rememberCoroutineScope()
@@ -108,528 +103,531 @@ private inline fun StudioDetailActivityContent(
     val expandIconRotateState = animateFloatAsState(targetValue = if (showExpandedKeywordColumn.value) 270f else 90f)
     val showImageReviewOnly = remember { mutableStateOf(false) }
     val showReviewOrderByLike = remember { mutableStateOf(true) }
+    val studioDetailInfoHeightState = remember { mutableStateOf(0) }
 
-    LaunchedEffect(key1 = remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }) {
-        snapshotFlow { lazyListState.firstVisibleItemIndex }.collect { index ->
-            tabState.value = if (index == 0) 0 else 1
-        }
-    }
+    tabState.value = if (remember { derivedStateOf { scrollState.value > studioDetailInfoHeightState.value } }.value) 1 else 0
 
     Box(modifier = Modifier.background(color = Color.White)) {
-        LazyColumn(
-            modifier = Modifier.padding(top = 95.dp),
-            state = lazyListState
+        Column(
+            modifier = Modifier
+                .padding(top = 95.dp)
+                .verticalScroll(state = scrollState),
         ) {
-            item {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Box(
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { coordinates -> studioDetailInfoHeightState.value = coordinates.size.height }
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                ) {
+                    HorizontalPager(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1f)
+                            .aspectRatio(1f),
+                        count = 1
                     ) {
-                        HorizontalPager(
-                            modifier = Modifier.fillParentMaxSize(),
-                            count = 1
-                        ) {
-                            Image(
-                                modifier = Modifier.fillParentMaxSize(),
-                                painter = painterResource(id = R.drawable.dummy_studio),
-                                contentDescription = "studioImage",
-                                contentScale = ContentScale.Fit
-                            )
-                        }
-
-                        Box(
+                        Image(
                             modifier = Modifier
-                                .padding(
-                                    start = 16.dp,
-                                    bottom = 16.dp
-                                )
-                                .clip(RoundedCornerShape(40.dp))
-                                .width(42.dp)
-                                .height(25.dp)
-                                .background(color = FilteredGrayColor)
-                                .align(BottomStart)
-                        ) {
-                            Text(
-                                modifier = Modifier.align(Center),
-                                text = "1/1",
-                                style = BPMTypography.subtitle2
-                            )
-                        }
+                                .fillMaxWidth()
+                                .aspectRatio(1f),
+                            painter = painterResource(id = R.drawable.dummy_studio),
+                            contentDescription = "studioImage",
+                            contentScale = ContentScale.Fit
+                        )
                     }
-
-                    BPMSpacer(height = 20.dp)
 
                     Box(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth()
+                            .padding(
+                                start = 16.dp,
+                                bottom = 16.dp
+                            )
+                            .clip(RoundedCornerShape(40.dp))
+                            .width(42.dp)
+                            .height(25.dp)
+                            .background(color = FilteredGrayColor)
+                            .align(BottomStart)
                     ) {
-                        Column {
-                            Row(verticalAlignment = CenterVertically) {
-                                Text(
-                                    text = "서울",
-                                    style = BPMTypography.body2
-                                )
+                        Text(
+                            modifier = Modifier.align(Center),
+                            text = "1/1",
+                            style = BPMTypography.subtitle2
+                        )
+                    }
+                }
 
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_arrow_right),
-                                    contentDescription = "tagDepthIcon"
-                                )
+                BPMSpacer(height = 20.dp)
 
-                                Text(
-                                    text = "서초구",
-                                    style = BPMTypography.body2
-                                )
-                            }
-
-                            BPMSpacer(height = 8.dp)
-
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                ) {
+                    Column {
+                        Row(verticalAlignment = CenterVertically) {
                             Text(
-                                text = "스튜디오 이름",
-                                style = BPMTypography.h3
+                                text = "서울",
+                                style = BPMTypography.body2
                             )
 
-                            BPMSpacer(height = 6.dp)
-
-                            Text(
-                                text = "스튜디오에 대한 간단한 한줄 설명을 붙여주세요.",
-                                fontFamily = pretendard,
-                                fontSize = 13.sp,
-                                fontWeight = Normal,
-                                letterSpacing = 0.sp,
-                                color = GrayColor3
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_arrow_right),
+                                contentDescription = "tagDepthIcon"
                             )
 
-                            BPMSpacer(height = 8.dp)
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = CenterVertically,
-                                horizontalArrangement = SpaceBetween
-                            ) {
-                                Row {
-                                    repeat(5) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.ic_star_small),
-                                            contentDescription = "starIcon",
-                                            tint = GrayColor6
-                                        )
-
-                                        BPMSpacer(width = 2.dp)
-                                    }
-
-                                    BPMSpacer(width = 8.dp)
-
-                                    Text(
-                                        text = "4.0",
-                                        fontFamily = pretendard,
-                                        fontSize = 14.sp,
-                                        fontWeight = Normal,
-                                        letterSpacing = 0.sp,
-                                        color = GrayColor3
-                                    )
-                                }
-
-                                Text(
-                                    text = "후기 504개",
-                                    fontFamily = pretendard,
-                                    fontWeight = Normal,
-                                    fontSize = 12.sp,
-                                    letterSpacing = 0.sp,
-                                    style = TextStyle(textDecoration = TextDecoration.Underline)
-                                )
-                            }
+                            Text(
+                                text = "서초구",
+                                style = BPMTypography.body2
+                            )
                         }
-
-                        Icon(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .align(TopEnd),
-                            painter = painterResource(id = R.drawable.ic_heart),
-                            contentDescription = "heartIcon",
-                            tint = GrayColor8
-                        )
-                    }
-
-                    BPMSpacer(height = 36.dp)
-
-                    RoundedCornerButton(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth()
-                            .height(48.dp),
-                        text = "전화 걸기",
-                        textColor = Color.White,
-                        buttonColor = Color.Black,
-                        onClick = { onClickCallButton() }
-                    )
-
-                    BPMSpacer(height = 36.dp)
-
-                    Divider(
-                        thickness = 8.dp,
-                        color = GrayColor11
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth()
-                            .height(55.dp),
-                        horizontalArrangement = SpaceBetween,
-                        verticalAlignment = CenterVertically
-                    ) {
-                        Text(
-                            text = "위치 정보",
-                            fontFamily = pretendard,
-                            fontWeight = SemiBold,
-                            fontSize = 16.sp,
-                            letterSpacing = 0.sp
-                        )
-
-                        Text(
-                            modifier = Modifier.clickable { onClickInfoEditSuggestion() },
-                            text = "정보수정 제안",
-                            fontFamily = pretendard,
-                            fontWeight = Medium,
-                            fontSize = 14.sp,
-                            letterSpacing = 0.sp,
-                            color = GrayColor4
-                        )
-                    }
-
-                    Divider(color = GrayColor8)
-
-                    BPMSpacer(height = 24.dp)
-
-                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        Text(
-                            text = "주소에 대한 정보를 적습니다.",
-                            fontFamily = pretendard,
-                            fontWeight = Medium,
-                            fontSize = 16.sp,
-                            letterSpacing = 0.sp
-                        )
 
                         BPMSpacer(height = 8.dp)
 
                         Text(
-                            text = "상세 주소에 대한 설명을 적는 곳입니다.",
-                            fontFamily = pretendard,
-                            fontWeight = Normal,
-                            fontSize = 12.sp,
-                            letterSpacing = 0.sp,
-                            color = GrayColor4
+                            text = "스튜디오 이름",
+                            style = BPMTypography.h3
                         )
 
-                        BPMSpacer(height = 12.dp)
+                        BPMSpacer(height = 6.dp)
 
-                        if (tabState.value == 0) {
-                            Box {
-                                AndroidView(
-                                    modifier = Modifier
-                                        .clip(shape = BPMShapes.large)
-                                        .fillMaxWidth()
-                                        .height(180.dp),
-                                    factory = { context ->
-                                        MapView(context).apply {
-                                            setMapCenterPoint(
-                                                MapPoint.mapPointWithGeoCoord(
-                                                    35.8589,
-                                                    128.4988
-                                                ), false
-                                            )
-                                        }
-                                    }
-                                )
+                        Text(
+                            text = "스튜디오에 대한 간단한 한줄 설명을 붙여주세요.",
+                            fontFamily = pretendard,
+                            fontSize = 13.sp,
+                            fontWeight = Normal,
+                            letterSpacing = 0.sp,
+                            color = GrayColor3
+                        )
 
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(180.dp)
-                                        .clickableWithoutRipple { onClickMap() }
+                        BPMSpacer(height = 8.dp)
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = CenterVertically,
+                            horizontalArrangement = SpaceBetween
+                        ) {
+                            Row {
+                                repeat(5) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_star_small),
+                                        contentDescription = "starIcon",
+                                        tint = GrayColor6
+                                    )
+
+                                    BPMSpacer(width = 2.dp)
+                                }
+
+                                BPMSpacer(width = 8.dp)
+
+                                Text(
+                                    text = "4.0",
+                                    fontFamily = pretendard,
+                                    fontSize = 14.sp,
+                                    fontWeight = Normal,
+                                    letterSpacing = 0.sp,
+                                    color = GrayColor3
                                 )
                             }
-                        }
 
-                        BPMSpacer(height = 12.dp)
-
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            OutLinedRoundedCornerButton(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(48.dp),
-                                text = "주소 복사",
-                                textColor = Color.Black,
-                                buttonColor = Color.White,
-                                outLineColor = GrayColor6,
-                                onClick = { onClickCopyAddress() }
-                            )
-
-                            BPMSpacer(width = 8.dp)
-
-                            RoundedCornerButton(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(48.dp),
-                                text = "길찾기",
-                                textColor = Color.Black,
-                                buttonColor = SubGreenColor,
-                                onClick = { onClickShowCourse() }
+                            Text(
+                                text = "후기 504개",
+                                fontFamily = pretendard,
+                                fontWeight = Normal,
+                                fontSize = 12.sp,
+                                letterSpacing = 0.sp,
+                                style = TextStyle(textDecoration = TextDecoration.Underline)
                             )
                         }
                     }
 
-                    BPMSpacer(height = 24.dp)
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .align(TopEnd),
+                        painter = painterResource(id = R.drawable.ic_heart),
+                        contentDescription = "heartIcon",
+                        tint = GrayColor8
+                    )
+                }
 
-                    Divider(
-                        thickness = 8.dp,
-                        color = GrayColor11
+                BPMSpacer(height = 36.dp)
+
+                RoundedCornerButton(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    text = "전화 걸기",
+                    textColor = Color.White,
+                    buttonColor = Color.Black,
+                    onClick = { onClickCallButton() }
+                )
+
+                BPMSpacer(height = 36.dp)
+
+                Divider(
+                    thickness = 8.dp,
+                    color = GrayColor11
+                )
+
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                        .height(55.dp),
+                    horizontalArrangement = SpaceBetween,
+                    verticalAlignment = CenterVertically
+                ) {
+                    Text(
+                        text = "위치 정보",
+                        fontFamily = pretendard,
+                        fontWeight = SemiBold,
+                        fontSize = 16.sp,
+                        letterSpacing = 0.sp
                     )
 
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth()
-                            .height(55.dp),
-                        horizontalArrangement = SpaceBetween,
-                        verticalAlignment = CenterVertically
-                    ) {
-                        Text(
-                            text = "편의 정보",
-                            fontFamily = pretendard,
-                            fontWeight = SemiBold,
-                            fontSize = 16.sp,
-                            letterSpacing = 0.sp
-                        )
+                    Text(
+                        modifier = Modifier.clickable { onClickInfoEditSuggestion() },
+                        text = "정보수정 제안",
+                        fontFamily = pretendard,
+                        fontWeight = Medium,
+                        fontSize = 14.sp,
+                        letterSpacing = 0.sp,
+                        color = GrayColor4
+                    )
+                }
 
-                        Text(
-                            text = "마지막 업데이트 : 0000 00 00",
-                            fontFamily = pretendard,
-                            fontWeight = Medium,
-                            fontSize = 14.sp,
-                            letterSpacing = 0.sp,
-                            color = GrayColor5
-                        )
-                    }
+                Divider(color = GrayColor8)
 
-                    Divider(color = GrayColor13)
+                BPMSpacer(height = 24.dp)
 
-                    BPMSpacer(height = 24.dp)
-
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth()
-                    ) {
-                        ConvenienceInfo(
-                            type = "전화번호",
-                            detail = "전화번호에 대한 설명을 적는 곳입니다."
-                        )
-
-                        BPMSpacer(height = 12.dp)
-
-                        ConvenienceInfo(
-                            type = "SNS",
-                            detail = "SNS에 대한 설명을 적는 곳입니다."
-                        )
-
-                        BPMSpacer(height = 12.dp)
-
-                        ConvenienceInfo(
-                            type = "영업시간",
-                            detail = "영업시간에 대한 설명을 적는 곳입니다."
-                        )
-
-                        BPMSpacer(height = 12.dp)
-
-                        ConvenienceInfo(
-                            type = "가격정보",
-                            detail = "가격정보에 대한 설명을 적는 곳입니다."
-                        )
-                    }
-
-                    BPMSpacer(height = 24.dp)
-
-                    Divider(
-                        thickness = 8.dp,
-                        color = GrayColor11
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                    Text(
+                        text = "주소에 대한 정보를 적습니다.",
+                        fontFamily = pretendard,
+                        fontWeight = Medium,
+                        fontSize = 16.sp,
+                        letterSpacing = 0.sp
                     )
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(55.dp)
-                    ) {
-                        Text(
+                    BPMSpacer(height = 8.dp)
+
+                    Text(
+                        text = "상세 주소에 대한 설명을 적는 곳입니다.",
+                        fontFamily = pretendard,
+                        fontWeight = Normal,
+                        fontSize = 12.sp,
+                        letterSpacing = 0.sp,
+                        color = GrayColor4
+                    )
+
+                    BPMSpacer(height = 12.dp)
+
+                    Box {
+                        AndroidView(
                             modifier = Modifier
-                                .padding(start = 16.dp)
-                                .align(CenterStart),
-                            text = "이런 점을 추천해요",
-                            fontFamily = pretendard,
-                            fontWeight = SemiBold,
-                            fontSize = 16.sp,
-                            letterSpacing = 0.sp,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-
-                    Divider(color = GrayColor13)
-
-                    BPMSpacer(height = 24.dp)
-
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .clip(shape = BPMShapes.large)
-                            .fillMaxWidth()
-                            .background(color = GrayColor10)
-                    ) {
-                        BPMSpacer(height = 15.dp)
-
-                        Column(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .height(keywordColumnHeightState.value)
-                        ) {
-                            repeat(10) { number ->
-                                BestKeyword(
-                                    number = number + 1,
-                                    keyword = "친절해요",
-                                    count = 28,
-                                    backgroundColor = GrayColor2,
-                                    textColor = Color.White
-                                )
-
-                                if (number != 9) {
-                                    BPMSpacer(height = 6.dp)
+                                .clip(shape = BPMShapes.large)
+                                .fillMaxWidth()
+                                .height(180.dp),
+                            factory = { context ->
+                                MapView(context).apply {
+                                    setMapCenterPoint(
+                                        MapPoint.mapPointWithGeoCoord(
+                                            35.8589,
+                                            128.4988
+                                        ), false
+                                    )
                                 }
                             }
-                        }
+                        )
 
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(30.dp)
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .clickableWithoutRipple { showExpandedKeywordColumn.value = !showExpandedKeywordColumn.value }
-                                    .align(Center)
-                                    .rotate(expandIconRotateState.value),
-                                painter = painterResource(id = R.drawable.ic_arrow_right),
-                                contentDescription = "expandColumnIcon"
+                                .height(180.dp)
+                                .clickableWithoutRipple { onClickMap() }
+                        )
+                    }
+
+                    BPMSpacer(height = 12.dp)
+
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        OutLinedRoundedCornerButton(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(48.dp),
+                            text = "주소 복사",
+                            textColor = Color.Black,
+                            buttonColor = Color.White,
+                            outLineColor = GrayColor6,
+                            onClick = { onClickCopyAddress() }
+                        )
+
+                        BPMSpacer(width = 8.dp)
+
+                        RoundedCornerButton(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(48.dp),
+                            text = "길찾기",
+                            textColor = Color.Black,
+                            buttonColor = SubGreenColor,
+                            onClick = { onClickShowCourse() }
+                        )
+                    }
+                }
+
+                BPMSpacer(height = 24.dp)
+
+                Divider(
+                    thickness = 8.dp,
+                    color = GrayColor11
+                )
+
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                        .height(55.dp),
+                    horizontalArrangement = SpaceBetween,
+                    verticalAlignment = CenterVertically
+                ) {
+                    Text(
+                        text = "편의 정보",
+                        fontFamily = pretendard,
+                        fontWeight = SemiBold,
+                        fontSize = 16.sp,
+                        letterSpacing = 0.sp
+                    )
+
+                    Text(
+                        text = "마지막 업데이트 : 0000 00 00",
+                        fontFamily = pretendard,
+                        fontWeight = Medium,
+                        fontSize = 14.sp,
+                        letterSpacing = 0.sp,
+                        color = GrayColor5
+                    )
+                }
+
+                Divider(color = GrayColor13)
+
+                BPMSpacer(height = 24.dp)
+
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                ) {
+                    ConvenienceInfo(
+                        type = "전화번호",
+                        detail = "전화번호에 대한 설명을 적는 곳입니다."
+                    )
+
+                    BPMSpacer(height = 12.dp)
+
+                    ConvenienceInfo(
+                        type = "SNS",
+                        detail = "SNS에 대한 설명을 적는 곳입니다."
+                    )
+
+                    BPMSpacer(height = 12.dp)
+
+                    ConvenienceInfo(
+                        type = "영업시간",
+                        detail = "영업시간에 대한 설명을 적는 곳입니다."
+                    )
+
+                    BPMSpacer(height = 12.dp)
+
+                    ConvenienceInfo(
+                        type = "가격정보",
+                        detail = "가격정보에 대한 설명을 적는 곳입니다."
+                    )
+                }
+
+                BPMSpacer(height = 24.dp)
+
+                Divider(
+                    thickness = 8.dp,
+                    color = GrayColor11
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp)
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .align(CenterStart),
+                        text = "이런 점을 추천해요",
+                        fontFamily = pretendard,
+                        fontWeight = SemiBold,
+                        fontSize = 16.sp,
+                        letterSpacing = 0.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                Divider(color = GrayColor13)
+
+                BPMSpacer(height = 24.dp)
+
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .clip(shape = BPMShapes.large)
+                        .fillMaxWidth()
+                        .background(color = GrayColor10)
+                ) {
+                    BPMSpacer(height = 15.dp)
+
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .height(keywordColumnHeightState.value)
+                    ) {
+                        repeat(10) { number ->
+                            BestKeyword(
+                                number = number + 1,
+                                keyword = "친절해요",
+                                count = 28,
+                                backgroundColor = GrayColor2,
+                                textColor = Color.White
                             )
+
+                            if (number != 9) {
+                                BPMSpacer(height = 6.dp)
+                            }
                         }
                     }
 
-                    BPMSpacer(height = 24.dp)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(30.dp)
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickableWithoutRipple { showExpandedKeywordColumn.value = !showExpandedKeywordColumn.value }
+                                .align(Center)
+                                .rotate(expandIconRotateState.value),
+                            painter = painterResource(id = R.drawable.ic_arrow_right),
+                            contentDescription = "expandColumnIcon"
+                        )
+                    }
+                }
 
-                    Divider(
-                        thickness = 8.dp,
-                        color = GrayColor11
+                BPMSpacer(height = 24.dp)
+
+                Divider(
+                    thickness = 8.dp,
+                    color = GrayColor11
+                )
+            }
+
+            Column {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                        .height(55.dp),
+                    horizontalArrangement = SpaceBetween,
+                    verticalAlignment = CenterVertically
+                ) {
+                    Text(
+                        text = "업체 리뷰 120",
+                        fontFamily = pretendard,
+                        fontWeight = SemiBold,
+                        fontSize = 16.sp,
+                        letterSpacing = 0.sp
                     )
 
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth()
-                            .height(55.dp),
-                        horizontalArrangement = SpaceBetween,
-                        verticalAlignment = CenterVertically
-                    ) {
-                        Text(
-                            text = "업체 리뷰 120",
-                            fontFamily = pretendard,
-                            fontWeight = SemiBold,
-                            fontSize = 16.sp,
-                            letterSpacing = 0.sp
+                    Text(
+                        text = "후기 작성하기",
+                        fontFamily = pretendard,
+                        fontWeight = Medium,
+                        fontSize = 14.sp,
+                        letterSpacing = 0.sp,
+                        color = GrayColor4
+                    )
+                }
+
+                Divider(color = GrayColor13)
+
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                        .height(55.dp),
+                    horizontalArrangement = SpaceBetween,
+                    verticalAlignment = CenterVertically
+                ) {
+                    Row(modifier = Modifier.clickableWithoutRipple { showImageReviewOnly.value = !showImageReviewOnly.value }) {
+                        Icon(
+                            modifier = Modifier.align(CenterVertically),
+                            painter = painterResource(id = R.drawable.ic_check_field),
+                            contentDescription = "checkFieldIcon",
+                            tint = if (showImageReviewOnly.value) Color.Black else GrayColor7
                         )
 
+                        BPMSpacer(width = 8.dp)
+
                         Text(
-                            text = "후기 작성하기",
+                            text = "사진 리뷰만 보기",
+                            fontFamily = pretendard,
+                            fontWeight = Medium,
+                            fontSize = 14.sp,
+                            letterSpacing = 0.sp
+                        )
+                    }
+
+                    Row {
+                        Text(
+                            modifier = Modifier.clickableWithoutRipple { showReviewOrderByLike.value = true },
+                            text = "좋아요순",
                             fontFamily = pretendard,
                             fontWeight = Medium,
                             fontSize = 14.sp,
                             letterSpacing = 0.sp,
-                            color = GrayColor4
+                            color = if (showReviewOrderByLike.value) Color.Black else GrayColor6
+                        )
+
+                        BPMSpacer(width = 20.dp)
+
+                        Divider(
+                            modifier = Modifier
+                                .height(12.dp)
+                                .width(1.dp)
+                                .align(CenterVertically),
+                            color = GrayColor3
+                        )
+
+                        BPMSpacer(width = 20.dp)
+
+                        Text(
+                            modifier = Modifier.clickableWithoutRipple { showReviewOrderByLike.value = false },
+                            text = "최신순",
+                            fontFamily = pretendard,
+                            fontWeight = Medium,
+                            fontSize = 14.sp,
+                            letterSpacing = 0.sp,
+                            color = if (showReviewOrderByLike.value) GrayColor6 else Color.Black
                         )
                     }
-
-                    Divider(color = GrayColor13)
-
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth()
-                            .height(55.dp),
-                        horizontalArrangement = SpaceBetween,
-                        verticalAlignment = CenterVertically
-                    ) {
-                        Row(modifier = Modifier.clickableWithoutRipple { showImageReviewOnly.value = !showImageReviewOnly.value }) {
-                            Icon(
-                                modifier = Modifier.align(CenterVertically),
-                                painter = painterResource(id = R.drawable.ic_check_field),
-                                contentDescription = "checkFieldIcon",
-                                tint = if (showImageReviewOnly.value) Color.Black else GrayColor7
-                            )
-
-                            BPMSpacer(width = 8.dp)
-
-                            Text(
-                                text = "사진 리뷰만 보기",
-                                fontFamily = pretendard,
-                                fontWeight = Medium,
-                                fontSize = 14.sp,
-                                letterSpacing = 0.sp
-                            )
-                        }
-
-                        Row {
-                            Text(
-                                modifier = Modifier.clickableWithoutRipple { showReviewOrderByLike.value = true },
-                                text = "좋아요순",
-                                fontFamily = pretendard,
-                                fontWeight = Medium,
-                                fontSize = 14.sp,
-                                letterSpacing = 0.sp,
-                                color = if (showReviewOrderByLike.value) Color.Black else GrayColor6
-                            )
-
-                            BPMSpacer(width = 20.dp)
-
-                            Divider(
-                                modifier = Modifier
-                                    .height(12.dp)
-                                    .width(1.dp)
-                                    .align(CenterVertically),
-                                color = GrayColor3
-                            )
-
-                            BPMSpacer(width = 20.dp)
-
-                            Text(
-                                modifier = Modifier.clickableWithoutRipple { showReviewOrderByLike.value = false },
-                                text = "최신순",
-                                fontFamily = pretendard,
-                                fontWeight = Medium,
-                                fontSize = 14.sp,
-                                letterSpacing = 0.sp,
-                                color = if (showReviewOrderByLike.value) GrayColor6 else Color.Black
-                            )
-                        }
-                    }
-
-                    Divider(color = GrayColor13)
                 }
-            }
 
-            val dummyReviews = listOf(true, false, true, true, false)
-            items(dummyReviews) { review ->
-                Review(review)
+                Divider(color = GrayColor13)
+
+                listOf(true, false, true, true, false).forEach { review ->
+                    Review(review)
+                } // dummy
             }
         }
 
@@ -659,7 +657,7 @@ private inline fun StudioDetailActivityContent(
                         selected = tabState.value == index,
                         onClick = {
                             tabState.value = index
-                            scope.launch { lazyListState.animateScrollToItem(index) }
+                            scope.launch { scrollState.animateScrollTo(if (index == 0) 0 else studioDetailInfoHeightState.value) }
                         },
                         selectedContentColor = Color.Black,
                         unselectedContentColor = GrayColor6
