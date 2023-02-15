@@ -29,8 +29,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
+import com.d83t.bpm.presentation.compose.theme.BPMShapes
+import com.d83t.bpm.presentation.compose.theme.BPMTheme
+import com.d83t.bpm.presentation.compose.theme.BPMTypography
+import com.d83t.bpm.presentation.ui.main.MainActivity
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
+import com.d83t.bpm.presentation.util.showDebugToast
+import com.d83t.bpm.presentation.util.showToast
+import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -40,15 +47,22 @@ import kotlinx.coroutines.launch
 @SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
 class SplashActivity : BaseComponentActivity() {
+
     override val viewModel: SplashViewModel by viewModels()
+
     private val startButtonVisibilityState = mutableStateOf(false)
+
+    private val kakaoLoginInstance: UserApiClient by lazy {
+        UserApiClient.instance
+    }
+
     override fun initUi() {
         setContent {
             BPMTheme {
                 SplashActivityContent(
                     startButtonVisibilityState = startButtonVisibilityState,
                     onClickStartButton = {
-                        // TODO : SignUp With Kakao
+                        setupLogin()
                     }
                 )
             }
@@ -65,16 +79,46 @@ class SplashActivity : BaseComponentActivity() {
                             viewModel.getStoredId()
                         }
                     }
-                    is SplashState.KakaoId -> {
-                        if (state.id == "null") {
+                    is SplashState.SignUp -> {
+                        if (state.id == "null" || state.id.isNullOrEmpty()) {
                             startButtonVisibilityState.value = true
                         } else {
-                            // TODO : SignIn
+                            viewModel.setFinish()
                         }
+                    }
+                    SplashState.SignIn -> {
+                        viewModel.setFinish()
+                    }
+                    SplashState.Finish -> {
+                        goToMainActivity()
                     }
                 }
             }
         }
+    }
+
+    private fun setupLogin() {
+        // 카카오톡으로 로그인
+        if (kakaoLoginInstance.isKakaoTalkLoginAvailable(this)) {
+            kakaoLoginInstance.loginWithKakaoTalk(this) { loginInfo, error ->
+                if (error != null) {
+                    // 로그인 실패
+                    showDebugToast("login failed! cause : ${error.message}")
+                    showToast("로그인에 실패하였습니다. 다시 시도해 주세요.")
+                } else if (loginInfo != null) {
+                    // 로그인 성공
+                    viewModel.setLoginId(loginInfo.idToken ?: "")
+                    showDebugToast("login succeed. user token : ${loginInfo.idToken}")
+                }
+            }
+        } else {
+            showToast("로그인에 실패하였습니다. 다시 시도해 주세요.")
+        }
+    }
+
+    private fun goToMainActivity() {
+        startActivity(MainActivity.newIntent(this))
+        finish()
     }
 }
 

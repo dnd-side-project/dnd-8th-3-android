@@ -9,7 +9,11 @@ class SplashRepositoryImpl @Inject constructor(
     private val dataStoreManager: DataStoreManager
 ) : SplashRepository {
 
-    override fun getStoredId(): Flow<String> {
+    override fun getKakaoUserId(): Flow<String?> {
         return dataStoreManager.getKakaoId()
+    }
+
+    override suspend fun setKakaoUserId(kakaoId : String): Flow<String?> {
+        return dataStoreManager.setKakaoUserId(kakaoId)
     }
 }

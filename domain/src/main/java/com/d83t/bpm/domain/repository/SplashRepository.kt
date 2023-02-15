@@ -4,5 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface SplashRepository {
 
-    fun getStoredId(): Flow<String>
+    fun getKakaoUserId(): Flow<String?>
+
+    suspend fun setKakaoUserId(kakaoId : String): Flow<String?>
 }
