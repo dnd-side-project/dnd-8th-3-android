@@ -326,30 +326,32 @@ private inline fun StudioDetailActivityContent(
 
                         BPMSpacer(height = 12.dp)
 
-                        Box {
-                            AndroidView(
-                                modifier = Modifier
-                                    .clip(shape = BPMShapes.large)
-                                    .fillMaxWidth()
-                                    .height(180.dp),
-                                factory = { context ->
-                                    MapView(context).apply {
-                                        setMapCenterPoint(
-                                            MapPoint.mapPointWithGeoCoord(
-                                                35.8589,
-                                                128.4988
-                                            ), false
-                                        )
+                        if (tabState.value == 0) {
+                            Box {
+                                AndroidView(
+                                    modifier = Modifier
+                                        .clip(shape = BPMShapes.large)
+                                        .fillMaxWidth()
+                                        .height(180.dp),
+                                    factory = { context ->
+                                        MapView(context).apply {
+                                            setMapCenterPoint(
+                                                MapPoint.mapPointWithGeoCoord(
+                                                    35.8589,
+                                                    128.4988
+                                                ), false
+                                            )
+                                        }
                                     }
-                                }
-                            )
+                                )
 
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(180.dp)
-                                    .clickableWithoutRipple { onClickMap() }
-                            )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(180.dp)
+                                        .clickableWithoutRipple { onClickMap() }
+                                )
+                            }
                         }
 
                         BPMSpacer(height = 12.dp)
