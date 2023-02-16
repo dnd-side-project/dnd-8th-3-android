@@ -3,7 +3,8 @@ package com.d83t.bpm.presentation.di
 import com.d83t.bpm.domain.repository.MainRepository
 import com.d83t.bpm.domain.repository.SplashRepository
 import com.d83t.bpm.domain.usecase.GetSampleTextUseCase
-import com.d83t.bpm.domain.usecase.GetStoredIdUseCase
+import com.d83t.bpm.domain.usecase.splash.GetKakaoUserIdUseCase
+import com.d83t.bpm.domain.usecase.splash.SetKakaoUserIdUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +23,13 @@ object UseCaseModule {
 
     @Provides
     @ViewModelScoped
-    fun provideGetStoredIdUseCase(splashRepository: SplashRepository): GetStoredIdUseCase {
-        return GetStoredIdUseCase(splashRepository)
+    fun provideGetKakaoUserIdUseCase(splashRepository: SplashRepository): GetKakaoUserIdUseCase {
+        return GetKakaoUserIdUseCase(splashRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideSetKakaoUserIdUseCase(splashRepository: SplashRepository): SetKakaoUserIdUseCase {
+        return SetKakaoUserIdUseCase(splashRepository)
     }
 }

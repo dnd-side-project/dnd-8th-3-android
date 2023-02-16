@@ -1,5 +1,7 @@
 package com.d83t.bpm.presentation.ui.main
 
+import android.content.Context
+import android.content.Intent
 import androidx.activity.viewModels
 import com.d83t.bpm.presentation.base.BaseActivity
 import com.d83t.bpm.presentation.databinding.ActivityMainBinding
@@ -33,5 +35,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             }
 
         }
+    }
+
+    companion object {
+
+        fun newIntent(context: Context): Intent {
+            return Intent(context, MainActivity::class.java)
+        }
+
     }
 }
