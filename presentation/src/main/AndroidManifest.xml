@@ -35,6 +35,10 @@
             android:name=".ui.studio_detail.StudioDetailActivity"
             android:exported="true"
             android:theme="@style/Theme.Bpm.NoActionBar" />
+        <activity
+            android:name=".ui.writing_review.WritingReviewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Bpm.NoActionBar" />
 
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
