@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale.Companion.Crop
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
@@ -154,7 +155,10 @@ private inline fun StudioDetailActivityContent(
                         Text(
                             modifier = Modifier.align(Center),
                             text = "1/1",
-                            style = BPMTypography.subtitle2
+                            fontFamily = pretendard,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 12.sp,
+                            letterSpacing = 2.sp
                         )
                     }
                 }
@@ -170,7 +174,10 @@ private inline fun StudioDetailActivityContent(
                         Row(verticalAlignment = CenterVertically) {
                             Text(
                                 text = "서울",
-                                style = BPMTypography.body2
+                                fontFamily = pretendard,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 12.sp,
+                                letterSpacing = 0.sp
                             )
 
                             Icon(
@@ -180,7 +187,10 @@ private inline fun StudioDetailActivityContent(
 
                             Text(
                                 text = "서초구",
-                                style = BPMTypography.body2
+                                fontFamily = pretendard,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 12.sp,
+                                letterSpacing = 0.sp
                             )
                         }
 
@@ -188,7 +198,10 @@ private inline fun StudioDetailActivityContent(
 
                         Text(
                             text = "스튜디오 이름",
-                            style = BPMTypography.h3
+                            fontFamily = pretendard,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 19.sp,
+                            letterSpacing = 0.sp
                         )
 
                         BPMSpacer(height = 6.dp)
@@ -329,7 +342,7 @@ private inline fun StudioDetailActivityContent(
                     Box {
                         AndroidView(
                             modifier = Modifier
-                                .clip(shape = BPMShapes.large)
+                                .clip(shape = RoundedCornerShape(12.dp))
                                 .fillMaxWidth()
                                 .height(180.dp),
                             factory = { context ->
@@ -481,7 +494,7 @@ private inline fun StudioDetailActivityContent(
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .clip(shape = BPMShapes.large)
+                        .clip(shape = RoundedCornerShape(12.dp))
                         .fillMaxWidth()
                         .background(color = GrayColor10)
                 ) {
@@ -652,7 +665,10 @@ private inline fun StudioDetailActivityContent(
                         text = {
                             Text(
                                 text = tabName,
-                                style = BPMTypography.subtitle1
+                                fontFamily = pretendard,
+                                fontWeight = SemiBold,
+                                fontSize = 15.sp,
+                                letterSpacing = 0.sp
                             )
                         },
                         selected = tabState.value == index,
@@ -854,12 +870,12 @@ private fun Review(
 
             Box(
                 modifier = Modifier
-                    .clip(shape = BPMShapes.large)
+                    .clip(shape = RoundedCornerShape(12.dp))
                     .height(28.dp)
                     .border(
                         width = 1.dp,
                         color = if (liked) Color.Black else GrayColor9,
-                        shape = BPMShapes.large
+                        shape = RoundedCornerShape(12.dp)
                     )
                     .background(color = if (liked) Color.Black else Color.White)
             ) {

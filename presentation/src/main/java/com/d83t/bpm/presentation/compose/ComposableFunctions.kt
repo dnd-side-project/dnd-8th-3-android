@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -16,12 +17,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.d83t.bpm.presentation.R
-import com.d83t.bpm.presentation.compose.theme.BPMShapes
-import com.d83t.bpm.presentation.compose.theme.BPMTypography
 import com.d83t.bpm.presentation.compose.theme.GrayColor8
+import com.d83t.bpm.presentation.compose.theme.pretendard
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 
 @Composable
@@ -47,7 +49,10 @@ fun ScreenHeader(header: String) {
             Text(
                 modifier = Modifier.align(Center),
                 text = header,
-                style = BPMTypography.h1
+                fontFamily = pretendard,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                letterSpacing = 0.sp
             )
         }
 
@@ -80,17 +85,18 @@ inline fun RoundedCornerButton(
 ) {
     Box(
         modifier = modifier
-            .clip(BPMShapes.medium)
+            .clip(RoundedCornerShape(8.dp))
             .background(color = buttonColor)
-            .clickable {
-                onClick()
-            }
+            .clickable { onClick() }
     ) {
         Text(
             modifier = Modifier.align(Center),
             text = text,
             color = textColor,
-            style = BPMTypography.button
+            fontFamily = pretendard,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp,
+            letterSpacing = 0.sp
         )
     }
 }
@@ -106,22 +112,23 @@ inline fun OutLinedRoundedCornerButton(
 ) {
     Box(
         modifier = modifier
-            .clip(BPMShapes.medium)
+            .clip(RoundedCornerShape(8.dp))
             .border(
                 width = 1.dp,
                 color = outLineColor,
-                shape = BPMShapes.medium
+                shape = RoundedCornerShape(8.dp)
             )
             .background(color = buttonColor)
-            .clickable {
-                onClick()
-            }
+            .clickable { onClick() }
     ) {
         Text(
             modifier = Modifier.align(Center),
             text = text,
             color = textColor,
-            style = BPMTypography.button
+            fontFamily = pretendard,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp,
+            letterSpacing = 0.sp
         )
     }
 }
