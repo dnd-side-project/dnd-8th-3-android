@@ -123,6 +123,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-insets:$insets_version"
     implementation "com.google.accompanist:accompanist-insets-ui:$insets_version"
     implementation "com.google.accompanist:accompanist-pager:0.20.1"
+    implementation "com.google.accompanist:accompanist-flowlayout:0.28.0"
 
     //compose lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-beta01"

@@ -1,0 +1,321 @@
+package com.d83t.bpm.presentation.ui.writing_review
+
+import androidx.activity.compose.setContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement.SpaceBetween
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight.Companion.Medium
+import androidx.compose.ui.text.font.FontWeight.Companion.Normal
+import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.d83t.bpm.presentation.R
+import com.d83t.bpm.presentation.base.BaseComponentActivity
+import com.d83t.bpm.presentation.base.BaseViewModel
+import com.d83t.bpm.presentation.compose.BPMSpacer
+import com.d83t.bpm.presentation.compose.ScreenHeader
+import com.d83t.bpm.presentation.compose.theme.*
+import com.d83t.bpm.presentation.util.clickableWithoutRipple
+import com.google.accompanist.flowlayout.FlowRow
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class WritingReviewActivity : BaseComponentActivity() {
+    override val viewModel: BaseViewModel
+        get() = TODO("Not yet implemented")
+
+    override fun initUi() {
+        setContent {
+            BPMTheme {
+
+            }
+        }
+    }
+
+    override fun setupCollect() {
+
+    }
+}
+
+@Composable
+private fun WritingReviewActivityContent() {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        ScreenHeader(header = "리뷰 작성하기")
+
+        BPMSpacer(height = 20.dp)
+
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .clip(shape = RoundedCornerShape(12.dp))
+                .fillMaxWidth()
+                .height(104.dp)
+                .background(color = GrayColor11)
+                .border(
+                    width = 1.dp,
+                    color = GrayColor9,
+                    shape = RoundedCornerShape(12.dp)
+                )
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(all = 16.dp)
+                    .fillMaxWidth()
+                    .height(74.dp)
+            ) {
+                Image(
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(12.dp))
+                        .size(74.dp),
+                    painter = painterResource(id = R.drawable.dummy_studio),
+                    contentDescription = "studioProfileImage",
+                    contentScale = ContentScale.FillBounds
+                )
+
+                BPMSpacer(width = 10.dp)
+
+                Column(
+                    modifier = Modifier.height(74.dp),
+                    verticalArrangement = SpaceBetween
+                ) {
+                    Column {
+                        Text(
+                            text = "스튜디오 이름",
+                            fontFamily = pretendard,
+                            fontWeight = Medium,
+                            fontSize = 14.sp,
+                            letterSpacing = 0.sp
+                        )
+
+                        BPMSpacer(height = 6.dp)
+
+                        Text(
+                            text = "스튜디오에 대한 간단한 한 줄 설명을 붙여주세요.",
+                            fontFamily = pretendard,
+                            fontWeight = Normal,
+                            fontSize = 11.sp,
+                            letterSpacing = 0.sp,
+                            color = GrayColor3
+                        )
+                    }
+
+                    Row(verticalAlignment = CenterVertically) {
+                        repeat(5) {
+                            Icon(
+                                modifier = Modifier.size(12.dp),
+                                painter = painterResource(id = R.drawable.ic_star_small),
+                                contentDescription = "starIcon",
+                                tint = GrayColor6
+                            )
+
+                            BPMSpacer(width = 2.dp)
+                        }
+
+                        BPMSpacer(width = 6.dp)
+
+                        Text(
+                            text = "4.0",
+                            fontFamily = pretendard,
+                            fontWeight = Normal,
+                            fontSize = 11.sp,
+                            letterSpacing = 0.sp,
+                            color = GrayColor3
+                        )
+                    }
+                }
+            }
+        }
+
+        BPMSpacer(height = 35.dp)
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = "이 정도 만족했어요",
+            fontFamily = pretendard,
+            fontWeight = SemiBold,
+            fontSize = 16.sp,
+            letterSpacing = 0.sp
+        )
+
+        BPMSpacer(height = 8.dp)
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = "만족한 정도를 별점으로 보여주세요",
+            fontFamily = pretendard,
+            fontWeight = Medium,
+            fontSize = 12.sp,
+            letterSpacing = 0.2.sp,
+            color = GrayColor4
+        )
+
+        BPMSpacer(height = 14.dp)
+
+        Divider(color = GrayColor13)
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+        ) {
+            Row(modifier = Modifier.align(Center)) {
+                repeat(5) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_start_large),
+                        contentDescription = "starIcon",
+                        tint = GrayColor8
+                    )
+
+                    BPMSpacer(width = 8.dp)
+                }
+            }
+        }
+
+        Divider(
+            thickness = 8.dp,
+            color = GrayColor11
+        )
+
+        BPMSpacer(height = 35.dp)
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = "이런 점을 추천해요",
+            fontFamily = pretendard,
+            fontWeight = SemiBold,
+            fontSize = 16.sp,
+            letterSpacing = 0.sp
+        )
+
+        BPMSpacer(height = 8.dp)
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = "최대 5개까지 선택가능해요",
+            fontFamily = pretendard,
+            fontWeight = Medium,
+            fontSize = 12.sp,
+            letterSpacing = 0.2.sp,
+            color = GrayColor4
+        )
+
+        BPMSpacer(height = 14.dp)
+
+        Divider(color = GrayColor13)
+
+        BPMSpacer(height = 20.dp)
+
+        FlowRow(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            mainAxisSpacing = 8.dp,
+            crossAxisSpacing = 10.dp
+        ) {
+            Keyword(text = "친절해요", isChosen = false)
+            Keyword(text = "소통이 빨라요", isChosen = false)
+            Keyword(text = "소품이 다양해요", isChosen = false)
+            Keyword(text = "세트장 구성이 다양해요", isChosen = false)
+            Keyword(text = "제공하는 컨셉이 다양해요", isChosen = false)
+            Keyword(text = "자연스럽게 연출해줘요", isChosen = false)
+            Keyword(text = "시설이 깔끔해요", isChosen = false)
+            Keyword(text = "원하는 스타일을 바로바로 파악해줘요", isChosen = false)
+            Keyword(text = "주차하기 편해요", isChosen = false)
+            Keyword(text = "보정을 꼼꼼하게 해줘요", isChosen = false)
+        }
+
+        BPMSpacer(height = 20.dp)
+
+        Divider(
+            thickness = 8.dp,
+            color = GrayColor11
+        )
+
+        BPMSpacer(height = 35.dp)
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = "이런 경험이었어요",
+            fontFamily = pretendard,
+            fontWeight = SemiBold,
+            fontSize = 16.sp,
+            letterSpacing = 0.sp
+        )
+
+        BPMSpacer(height = 8.dp)
+
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = "사진과 간단한 후기를 적어주세요",
+            fontFamily = pretendard,
+            fontWeight = Medium,
+            fontSize = 12.sp,
+            letterSpacing = 0.2.sp,
+            color = GrayColor4
+        )
+
+        BPMSpacer(height = 14.dp)
+
+        Divider(color = GrayColor13)
+
+
+    }
+}
+
+@Composable
+private fun Keyword(
+    text: String,
+    isChosen: Boolean
+) {
+    val selectState = remember { mutableStateOf(isChosen) }
+    val backgroundColorState = animateColorAsState(targetValue = if (selectState.value) MainGreenColor else GrayColor9)
+    val textColorState = animateColorAsState(targetValue = if (selectState.value) Color.Black else GrayColor4)
+
+    Text(
+        modifier = Modifier
+            .clip(RoundedCornerShape(60.dp))
+            .background(color = backgroundColorState.value)
+            .padding(
+                horizontal = 12.dp,
+                vertical = 8.dp
+            )
+            .clickableWithoutRipple { selectState.value = !selectState.value },
+        text = text,
+        fontFamily = pretendard,
+        fontWeight = Medium,
+        fontSize = 12.sp,
+        letterSpacing = 0.sp,
+        color = textColorState.value
+    )
+}
+
+@Composable
+private fun ImagePlaceHolder(
+
+) {
+
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun Preview() {
+    WritingReviewActivityContent()
+}
