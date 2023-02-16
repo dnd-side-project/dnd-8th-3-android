@@ -29,11 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
-import com.d83t.bpm.presentation.compose.theme.BPMShapes
-import com.d83t.bpm.presentation.compose.theme.BPMTheme
-import com.d83t.bpm.presentation.compose.theme.BPMTypography
-import com.d83t.bpm.presentation.ui.main.MainActivity
 import com.d83t.bpm.presentation.compose.theme.*
+import com.d83t.bpm.presentation.ui.main.MainActivity
 import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import com.d83t.bpm.presentation.util.showDebugToast
 import com.d83t.bpm.presentation.util.showToast
