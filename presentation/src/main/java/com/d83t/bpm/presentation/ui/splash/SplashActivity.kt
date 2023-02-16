@@ -9,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -22,13 +23,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
-import com.d83t.bpm.presentation.compose.theme.BPMShapes
-import com.d83t.bpm.presentation.compose.theme.BPMTheme
-import com.d83t.bpm.presentation.compose.theme.BPMTypography
+import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
@@ -125,7 +126,10 @@ private fun SplashActivityContent(
                     .padding(bottom = 8.dp)
                     .alpha(subtitleAlphaState.value),
                 text = "당신을 위한\n바디프로필 매니저",
-                style = BPMTypography.h5,
+                fontFamily = pyeongchangPeace,
+                fontWeight = FontWeight.Normal,
+                fontSize = 20.sp,
+                letterSpacing = 0.8.sp,
                 color = Color.White
             )
 
@@ -140,7 +144,7 @@ private fun SplashActivityContent(
             .alpha(startButtonAlphaState.value)
             .padding(bottom = 30.dp)
             .padding(horizontal = 16.dp)
-            .clip(shape = BPMShapes.small)
+            .clip(shape = RoundedCornerShape(6.dp))
             .fillMaxWidth()
             .height(48.dp)
             .background(Color(0xFFFEE500))
@@ -161,7 +165,10 @@ private fun SplashActivityContent(
             Text(
                 modifier = Modifier.align(Center),
                 text = "카카오톡으로 시작하기",
-                style = BPMTypography.body1,
+                fontFamily = pretendard,
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp,
+                letterSpacing = 0.sp,
                 color = Color.Black
             )
         }

@@ -26,8 +26,8 @@ fun BPMTheme(
     CompositionLocalProvider(LocalOverscrollConfiguration.provides(null)) {
         MaterialTheme(
             colors = colors,
-            typography = BPMTypography,
-            shapes = BPMShapes,
+            typography = Typography,
+            shapes = Shapes,
             content = content
         )
     }
