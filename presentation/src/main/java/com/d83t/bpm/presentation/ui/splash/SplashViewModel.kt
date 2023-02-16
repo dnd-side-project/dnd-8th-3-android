@@ -45,7 +45,6 @@ class SplashViewModel @Inject constructor(
                     // TODO : Exception Handling
                 }
             }
-
         }
     }
 
@@ -59,9 +58,9 @@ class SplashViewModel @Inject constructor(
         }
     }
 
-    fun setLoginId(kakaoId: String) {
+    fun setLoginId(kakaoUserId: String) {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
-            setKakaoUserIdUseCase(kakaoId).onEach {
+            setKakaoUserIdUseCase(kakaoUserId).onEach {
                 withContext(mainDispatcher) {
                     _state.emit(SplashState.SignUp(it))
                 }

@@ -10,10 +10,10 @@ class SplashRepositoryImpl @Inject constructor(
 ) : SplashRepository {
 
     override fun getKakaoUserId(): Flow<String?> {
-        return dataStoreManager.getKakaoId()
+        return dataStoreManager.getKakaoUserId()
     }
 
-    override suspend fun setKakaoUserId(kakaoId : String): Flow<String?> {
-        return dataStoreManager.setKakaoUserId(kakaoId)
+    override suspend fun setKakaoUserId(kakaoUserId : String): Flow<String?> {
+        return dataStoreManager.setKakaoUserId(kakaoUserId)
     }
 }

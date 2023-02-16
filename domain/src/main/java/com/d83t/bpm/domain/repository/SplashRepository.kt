@@ -6,5 +6,5 @@ interface SplashRepository {
 
     fun getKakaoUserId(): Flow<String?>
 
-    suspend fun setKakaoUserId(kakaoId : String): Flow<String?>
+    suspend fun setKakaoUserId(kakaoUserId : String): Flow<String?>
 }

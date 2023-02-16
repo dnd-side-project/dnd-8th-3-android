@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 class SetKakaoUserIdUseCase @Inject constructor(
     private val splashRepository: SplashRepository
 ) {
-    suspend operator fun invoke(kakaoId: String): Flow<String?> {
-        return splashRepository.setKakaoUserId(kakaoId)
+    suspend operator fun invoke(kakaoUserId: String): Flow<String?> {
+        return splashRepository.setKakaoUserId(kakaoUserId)
     }
 }
