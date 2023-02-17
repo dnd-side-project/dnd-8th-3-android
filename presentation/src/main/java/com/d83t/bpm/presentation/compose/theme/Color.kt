@@ -1,5 +1,8 @@
 package com.d83t.bpm.presentation.compose.theme
 
+import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val Transparent = Color(0x00000000)
@@ -24,3 +27,19 @@ val GrayColor11 = Color(0xFFF5F6F6)
 val GrayColor12 = Color(0xFFFEFFFE)
 val GrayColor13 = Color(0xFFEEEEEE)
 val FilteredGrayColor = Color(0xAAE6E6E7)
+
+@Composable
+fun textSelectionColor() = TextSelectionColors(
+    handleColor = GrayColor3,
+    backgroundColor = GrayColor6
+)
+
+@Composable
+fun textFieldColors() = TextFieldDefaults.textFieldColors(
+    textColor = Color.Black,
+    backgroundColor = Color.White,
+    cursorColor = GrayColor3,
+    focusedIndicatorColor = Color.Transparent,
+    unfocusedIndicatorColor = Color.Transparent,
+    disabledIndicatorColor = Color.Transparent,
+)
