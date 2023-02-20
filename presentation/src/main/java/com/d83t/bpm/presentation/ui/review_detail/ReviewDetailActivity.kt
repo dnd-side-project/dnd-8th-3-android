@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
@@ -62,7 +63,11 @@ private inline fun ReviewDetailActivityContent(
     val scrollState = rememberScrollState()
     val likeState = remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.verticalScroll(state = scrollState)) {
+    Column(
+        modifier = Modifier
+            .verticalScroll(state = scrollState)
+            .background(color = Color.White)
+    ) {
         ScreenHeader(header = "스튜디오 이름")
 
         Box(

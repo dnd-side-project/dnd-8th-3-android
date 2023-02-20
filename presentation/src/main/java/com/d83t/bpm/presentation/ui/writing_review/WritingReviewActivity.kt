@@ -158,6 +158,7 @@ private fun WritingReviewActivityContent(
         modifier = Modifier
             .fillMaxWidth()
             .verticalScroll(state = scrollState)
+            .background(color = Color.White)
     ) {
         ScreenHeader(header = "리뷰 작성하기")
 
