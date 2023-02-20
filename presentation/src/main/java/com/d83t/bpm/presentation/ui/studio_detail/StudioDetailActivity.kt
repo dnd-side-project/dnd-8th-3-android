@@ -81,9 +81,7 @@ class StudioDetailActivity : BaseComponentActivity() {
         }
     }
 
-    override fun setupCollect() {
-
-    }
+    override fun setupCollect() = Unit
 }
 
 @OptIn(ExperimentalPagerApi::class)
