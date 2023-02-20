@@ -12,8 +12,10 @@ import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -354,6 +356,21 @@ private inline fun StudioDetailActivityContent(
                                 }
                             }
                         )
+
+                        Column(
+                            modifier = Modifier
+                                .height(90.dp)
+                                .align(TopCenter),
+                            verticalArrangement = Arrangement.Bottom
+                        ) {
+                            Image(
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .align(CenterHorizontally),
+                                painter = painterResource(id = R.drawable.ic_marker),
+                                contentDescription = "mapMarkerIcon"
+                            )
+                        }
 
                         Box(
                             modifier = Modifier
