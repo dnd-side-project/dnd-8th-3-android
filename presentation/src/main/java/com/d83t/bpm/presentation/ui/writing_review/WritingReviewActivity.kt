@@ -280,7 +280,7 @@ private fun WritingReviewActivityContent(
             Row(modifier = Modifier.align(Center)) {
                 repeat(5) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_start_large),
+                        painter = painterResource(id = R.drawable.ic_star_large),
                         contentDescription = "starIcon",
                         tint = GrayColor8
                     )
