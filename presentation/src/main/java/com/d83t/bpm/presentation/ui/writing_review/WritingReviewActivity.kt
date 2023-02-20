@@ -523,7 +523,7 @@ private fun ImagePlaceHolder(
     Box(modifier = Modifier.size(105.dp)) {
         Box(modifier = Modifier
             .size(100.dp)
-            .background(color = GrayColor9)
+            .background(color = GrayColor10)
             .align(BottomStart)
             .clickable { onClick() }) {
             if (imageState.value != null) {
