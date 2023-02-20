@@ -1,6 +1,7 @@
 package com.d83t.bpm.presentation.compose
 
 import androidx.activity.ComponentActivity
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,6 +11,8 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
@@ -23,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.compose.theme.GrayColor8
+import com.d83t.bpm.presentation.compose.theme.GrayColor9
+import com.d83t.bpm.presentation.compose.theme.MainGreenColor
 import com.d83t.bpm.presentation.compose.theme.pretendard
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 
@@ -130,5 +135,65 @@ inline fun OutLinedRoundedCornerButton(
             fontSize = 16.sp,
             letterSpacing = 0.sp
         )
+    }
+}
+
+@Composable
+inline fun LikeButton(
+    isLiked: MutableState<Boolean>,
+    crossinline onClick:() -> Unit
+) {
+    val buttonColorState = animateColorAsState(targetValue = if (isLiked.value) Color.Black else Color.White)
+    val contentColorState = animateColorAsState(targetValue = if(isLiked.value) MainGreenColor else Color.Black)
+
+    Box(
+        modifier = Modifier
+            .clip(shape = RoundedCornerShape(12.dp))
+            .height(28.dp)
+            .border(
+                width = 1.dp,
+                color = if (isLiked.value) Color.Black else GrayColor9,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .background(color = buttonColorState.value)
+            .clickable {
+                isLiked.value = !isLiked.value
+                onClick()
+            }
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 10.dp)
+                .align(Center),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_like),
+                contentDescription = "likeIcon",
+                tint = contentColorState.value
+            )
+
+            BPMSpacer(width = 4.dp)
+
+            Text(
+                text = "좋아요",
+                fontFamily = pretendard,
+                fontWeight = FontWeight.Medium,
+                fontSize = 12.sp,
+                letterSpacing = 0.sp,
+                color = contentColorState.value
+            )
+
+            BPMSpacer(width = 4.dp)
+
+            Text(
+                text = "12",
+                fontFamily = pretendard,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp,
+                letterSpacing = 0.sp,
+                color = contentColorState.value
+            )
+        }
     }
 }

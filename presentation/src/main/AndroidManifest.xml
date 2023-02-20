@@ -33,10 +33,14 @@
             android:theme="@style/Theme.Bpm.NoActionBar" />
         <activity
             android:name=".ui.studio_detail.StudioDetailActivity"
-            android:exported="true"
+            android:exported="false"
             android:theme="@style/Theme.Bpm.NoActionBar" />
         <activity
             android:name=".ui.writing_review.WritingReviewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Bpm.NoActionBar" />
+        <activity
+            android:name=".ui.review_detail.ReviewDetailActivity"
             android:exported="false"
             android:theme="@style/Theme.Bpm.NoActionBar" />
 

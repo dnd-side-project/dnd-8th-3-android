@@ -41,10 +41,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.base.BaseViewModel
-import com.d83t.bpm.presentation.compose.BPMSpacer
-import com.d83t.bpm.presentation.compose.OutLinedRoundedCornerButton
-import com.d83t.bpm.presentation.compose.RoundedCornerButton
-import com.d83t.bpm.presentation.compose.ScreenHeader
+import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -782,8 +779,10 @@ private fun BestKeyword(
 
 @Composable
 private fun Review(
-    liked: Boolean
+    isLiked: Boolean
 ) {
+    val likeState = remember { mutableStateOf(isLiked) }
+
     Column {
         Column(
             modifier = Modifier
@@ -883,52 +882,10 @@ private fun Review(
 
             BPMSpacer(height = 25.dp)
 
-            Box(
-                modifier = Modifier
-                    .clip(shape = RoundedCornerShape(12.dp))
-                    .height(28.dp)
-                    .border(
-                        width = 1.dp,
-                        color = if (liked) Color.Black else GrayColor9,
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    .background(color = if (liked) Color.Black else Color.White)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp)
-                        .align(Center),
-                    verticalAlignment = CenterVertically
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_like),
-                        contentDescription = "likeIcon",
-                        tint = if (liked) MainGreenColor else Color.Black
-                    )
-
-                    BPMSpacer(width = 4.dp)
-
-                    Text(
-                        text = "좋아요",
-                        fontFamily = pretendard,
-                        fontWeight = Medium,
-                        fontSize = 12.sp,
-                        letterSpacing = 0.sp,
-                        color = if (liked) MainGreenColor else Color.Black
-                    )
-
-                    BPMSpacer(width = 4.dp)
-
-                    Text(
-                        text = "12",
-                        fontFamily = pretendard,
-                        fontWeight = SemiBold,
-                        fontSize = 12.sp,
-                        letterSpacing = 0.sp,
-                        color = if (liked) MainGreenColor else Color.Black
-                    )
-                }
-            }
+            LikeButton(
+                isLiked = likeState,
+                onClick = { }
+            )
         }
 
         BPMSpacer(height = 20.dp)
