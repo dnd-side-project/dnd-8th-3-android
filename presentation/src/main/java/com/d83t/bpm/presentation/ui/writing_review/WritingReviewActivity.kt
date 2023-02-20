@@ -131,9 +131,7 @@ class WritingReviewActivity : BaseComponentActivity() {
         }
     }
 
-    override fun setupCollect() {
-
-    }
+    override fun setupCollect() = Unit
 
     private fun refreshImageList() {
         val temp = SnapshotStateList<ImageBitmap>().apply { addAll(imageStateList) }
