@@ -43,7 +43,10 @@
             android:name=".ui.review_detail.ReviewDetailActivity"
             android:exported="false"
             android:theme="@style/Theme.Bpm.NoActionBar" />
-
+        <activity
+            android:name=".ui.making_reservation.MakingReservationActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Bpm.NoActionBar" />
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
