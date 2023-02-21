@@ -9,6 +9,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.layout.Arrangement.SpaceEvenly
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,11 +19,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +42,8 @@ import com.d83t.bpm.presentation.compose.BPMSpacer
 import com.d83t.bpm.presentation.compose.ScreenHeader
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
+import dev.chrisbanes.snapper.ExperimentalSnapperApi
+import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -66,6 +69,7 @@ class MakingReservationActivity : BaseComponentActivity() {
     override fun setupCollect() = Unit
 }
 
+@OptIn(ExperimentalSnapperApi::class)
 @Composable
 private inline fun MakingReservationActivityContent(
     selectedDateState: MutableState<LocalDate?>,
@@ -318,6 +322,120 @@ private inline fun MakingReservationActivityContent(
         }
 
         Divider(color = GrayColor8)
+
+        MakingReservationItemLayout(
+            isEssential = false,
+            title = "시간",
+            expandedHeight = 206.dp
+        ) {
+            val hoursLazyListState = rememberLazyListState()
+            val minutesLazyListState = rememberLazyListState()
+            val timesLazyListState = rememberLazyListState()
+            val hours = (0..13).toList()
+            val minutes = (-1..60).toList()
+            val times = listOf("", "오전", "오후", "")
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+            ) {
+                Row(
+                    modifier = Modifier.align(Center),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .height(120.dp),
+                        state = hoursLazyListState,
+                        flingBehavior = rememberSnapperFlingBehavior(hoursLazyListState),
+                        horizontalAlignment = CenterHorizontally
+                    ) {
+                        items(hours) { hour ->
+                            Box(modifier = Modifier.size(40.dp)) {
+                                Text(
+                                    modifier = Modifier.align(Center),
+                                    text = if (hour in 1..12) "$hour" else "",
+                                    fontFamily = pretendard,
+                                    fontWeight = SemiBold,
+                                    fontSize = 14.sp,
+                                    letterSpacing = 0.sp
+                                )
+                            }
+                        }
+                    }
+
+                    Icon(
+                        modifier = Modifier.align(CenterVertically),
+                        painter = painterResource(id = R.drawable.ic_time_divider),
+                        contentDescription = "timeDividerIcon"
+                    )
+
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .height(120.dp),
+                        state = minutesLazyListState,
+                        flingBehavior = rememberSnapperFlingBehavior(minutesLazyListState),
+                        horizontalAlignment = CenterHorizontally
+                    ) {
+                        items(minutes) { minute ->
+                            Box(modifier = Modifier.size(40.dp)) {
+                                Text(
+                                    modifier = Modifier.align(Center),
+                                    text = if (minute in 0..59) "$minute" else "",
+                                    fontFamily = pretendard,
+                                    fontWeight = SemiBold,
+                                    fontSize = 14.sp,
+                                    letterSpacing = 0.sp
+                                )
+                            }
+                        }
+                    }
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .width(50.dp)
+                            .height(120.dp),
+                        state = timesLazyListState,
+                        flingBehavior = rememberSnapperFlingBehavior(timesLazyListState),
+                        horizontalAlignment = CenterHorizontally
+                    ) {
+                        items(times) { times ->
+                            Box(modifier = Modifier.size(40.dp)) {
+                                Text(
+                                    modifier = Modifier.align(Center),
+                                    text = times,
+                                    fontFamily = pretendard,
+                                    fontWeight = SemiBold,
+                                    fontSize = 14.sp,
+                                    letterSpacing = 0.sp
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp),
+                    verticalArrangement = SpaceEvenly,
+                    horizontalAlignment = CenterHorizontally
+                ) {
+                    Divider(
+                        modifier = Modifier.width(210.dp),
+                        color = GrayColor8
+                    )
+                    Divider(
+                        modifier = Modifier.width(210.dp),
+                        color = GrayColor8
+                    )
+                }
+            }
+        }
     }
 }
 
