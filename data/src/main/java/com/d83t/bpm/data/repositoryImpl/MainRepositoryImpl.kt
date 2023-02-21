@@ -5,8 +5,4 @@ import javax.inject.Inject
 
 class MainRepositoryImpl @Inject constructor() : MainRepository {
 
-    override fun getSampleText(): String {
-        return "text"
-    }
-
 }

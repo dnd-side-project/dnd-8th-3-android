@@ -30,6 +30,7 @@
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Bpm.NoActionBar" />
         <activity
             android:name=".ui.studio_detail.StudioDetailActivity"
