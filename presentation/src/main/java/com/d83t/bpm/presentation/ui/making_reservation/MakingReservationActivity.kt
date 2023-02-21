@@ -40,6 +40,7 @@ import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -351,6 +352,7 @@ private inline fun MakingReservationActivityContent(
             val hours = (0..13).toList()
             val minutes = (-1..60).toList()
             val times = listOf("", "오후", "오전", "")
+            val scope = rememberCoroutineScope()
 
             Box(
                 modifier = Modifier
@@ -374,7 +376,9 @@ private inline fun MakingReservationActivityContent(
                                 val textColorState = animateColorAsState(targetValue = if (index == remember { derivedStateOf { hoursLazyListState.firstVisibleItemIndex } }.value + 1) Color.Black else GrayColor5)
 
                                 Text(
-                                    modifier = Modifier.align(Center),
+                                    modifier = Modifier
+                                        .align(Center)
+                                        .clickableWithoutRipple { scope.launch { hoursLazyListState.animateScrollToItem(index - 1) } },
                                     text = if (hour in 1..12) String.format("%02d", hour) else if (hour == 0) "시" else "",
                                     fontFamily = pretendard,
                                     fontWeight = SemiBold,
@@ -406,7 +410,9 @@ private inline fun MakingReservationActivityContent(
 
                             Box(modifier = Modifier.size(40.dp)) {
                                 Text(
-                                    modifier = Modifier.align(Center),
+                                    modifier = Modifier
+                                        .align(Center)
+                                        .clickableWithoutRipple { scope.launch { minutesLazyListState.animateScrollToItem(index - 1) } },
                                     text = if (minute in 0..59) String.format("%02d", minute) else if (minute == -1) "분" else "",
                                     fontFamily = pretendard,
                                     fontWeight = SemiBold,
@@ -431,7 +437,9 @@ private inline fun MakingReservationActivityContent(
 
                             Box(modifier = Modifier.size(40.dp)) {
                                 Text(
-                                    modifier = Modifier.align(Center),
+                                    modifier = Modifier
+                                        .align(Center)
+                                        .clickableWithoutRipple { scope.launch { timesLazyListState.animateScrollToItem(index - 1) } },
                                     text = times,
                                     fontFamily = pretendard,
                                     fontWeight = SemiBold,
@@ -475,9 +483,12 @@ private inline fun MakingReservationActivityContent(
                         color = GrayColor5
                     )
                     .align(CenterHorizontally)
-                    .clickable { onClickSetTime("${String.format("%02d", hours[hoursLazyListState.firstVisibleItemIndex + 1])}:" +
-                            "${String.format("%02d", minutes[minutesLazyListState.firstVisibleItemIndex + 1])} " +
-                            "(${times[timesLazyListState.firstVisibleItemIndex + 1]})")
+                    .clickable {
+                        onClickSetTime(
+                            "${String.format("%02d", hours[hoursLazyListState.firstVisibleItemIndex + 1])}:" +
+                                    "${String.format("%02d", minutes[minutesLazyListState.firstVisibleItemIndex + 1])} " +
+                                    "(${times[timesLazyListState.firstVisibleItemIndex + 1]})"
+                        )
                     }
             ) {
                 Text(
