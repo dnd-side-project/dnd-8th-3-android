@@ -1,7 +1,6 @@
 package com.d83t.bpm.presentation.ui.main
 
 import androidx.lifecycle.viewModelScope
-import com.d83t.bpm.domain.usecase.GetSampleTextUseCase
 import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.di.MainDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +14,6 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getSampleTextUseCase: GetSampleTextUseCase,
     @MainDispatcher private val mainDispatcher: CoroutineDispatcher
 ) : BaseViewModel() {
 
@@ -27,13 +25,10 @@ class MainViewModel @Inject constructor(
     val state: StateFlow<MainState>
         get() = _state
 
-    fun getInitText() {
-        val sampleText = getSampleTextUseCase()
-
+    fun onClickAdd(){
         viewModelScope.launch(mainDispatcher) {
-            _state.emit(MainState.SampleText(sampleText))
+            _event.emit(MainViewEvent.Add)
         }
-
     }
 
 }
