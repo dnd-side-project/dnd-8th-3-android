@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.layout.Arrangement.SpaceEvenly
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -352,15 +352,18 @@ private inline fun MakingReservationActivityContent(
                         flingBehavior = rememberSnapperFlingBehavior(hoursLazyListState),
                         horizontalAlignment = CenterHorizontally
                     ) {
-                        items(hours) { hour ->
+                        itemsIndexed(hours) { index, hour ->
                             Box(modifier = Modifier.size(40.dp)) {
+                                val textColorState = animateColorAsState(targetValue = if (index == remember { derivedStateOf { hoursLazyListState.firstVisibleItemIndex } }.value + 1) Color.Black else GrayColor5)
+
                                 Text(
                                     modifier = Modifier.align(Center),
                                     text = if (hour in 1..12) "$hour" else "",
                                     fontFamily = pretendard,
                                     fontWeight = SemiBold,
                                     fontSize = 14.sp,
-                                    letterSpacing = 0.sp
+                                    letterSpacing = 0.sp,
+                                    color = textColorState.value
                                 )
                             }
                         }
@@ -381,7 +384,9 @@ private inline fun MakingReservationActivityContent(
                         flingBehavior = rememberSnapperFlingBehavior(minutesLazyListState),
                         horizontalAlignment = CenterHorizontally
                     ) {
-                        items(minutes) { minute ->
+                        itemsIndexed(minutes) { index, minute ->
+                            val textColorState = animateColorAsState(targetValue = if (index == remember { derivedStateOf { minutesLazyListState.firstVisibleItemIndex } }.value + 1) Color.Black else GrayColor5)
+
                             Box(modifier = Modifier.size(40.dp)) {
                                 Text(
                                     modifier = Modifier.align(Center),
@@ -389,7 +394,8 @@ private inline fun MakingReservationActivityContent(
                                     fontFamily = pretendard,
                                     fontWeight = SemiBold,
                                     fontSize = 14.sp,
-                                    letterSpacing = 0.sp
+                                    letterSpacing = 0.sp,
+                                    color = textColorState.value
                                 )
                             }
                         }
@@ -403,7 +409,9 @@ private inline fun MakingReservationActivityContent(
                         flingBehavior = rememberSnapperFlingBehavior(timesLazyListState),
                         horizontalAlignment = CenterHorizontally
                     ) {
-                        items(times) { times ->
+                        itemsIndexed(times) { index, times ->
+                            val textColorState = animateColorAsState(targetValue = if (index == remember { derivedStateOf { timesLazyListState.firstVisibleItemIndex } }.value + 1) Color.Black else GrayColor5)
+
                             Box(modifier = Modifier.size(40.dp)) {
                                 Text(
                                     modifier = Modifier.align(Center),
@@ -411,7 +419,8 @@ private inline fun MakingReservationActivityContent(
                                     fontFamily = pretendard,
                                     fontWeight = SemiBold,
                                     fontSize = 14.sp,
-                                    letterSpacing = 0.sp
+                                    letterSpacing = 0.sp,
+                                    color = textColorState.value
                                 )
                             }
                         }
