@@ -4,18 +4,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.layout.Arrangement.SpaceEvenly
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -31,7 +28,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,15 +48,18 @@ class MakingReservationActivity : BaseComponentActivity() {
         get() = TODO("Not yet implemented")
 
     private val selectedDateState = mutableStateOf<LocalDate?>(null)
+    private val timeTextState = mutableStateOf("시간")
 
     override fun initUi() {
         setContent {
             BPMTheme {
                 MakingReservationActivityContent(
                     selectedDateState = selectedDateState,
+                    timeTextState = timeTextState,
                     onClickSearchStudio = {
 
-                    }
+                    },
+                    onClickSetTime = { timeText -> timeTextState.value = timeText }
                 )
             }
         }
@@ -73,7 +72,9 @@ class MakingReservationActivity : BaseComponentActivity() {
 @Composable
 private inline fun MakingReservationActivityContent(
     selectedDateState: MutableState<LocalDate?>,
-    crossinline onClickSearchStudio: () -> Unit
+    timeTextState: MutableState<String>,
+    crossinline onClickSearchStudio: () -> Unit,
+    crossinline onClickSetTime: (String) -> Unit
 ) {
     val scrollState = rememberScrollState()
 
@@ -144,7 +145,23 @@ private inline fun MakingReservationActivityContent(
                 verticalAlignment = CenterVertically
             ) {
                 Text(
-                    text = "${calendarState.value.month.name} ${calendarState.value.year} ",
+                    text = "${calendarState.value.year}년 " +
+                            "${
+                                when (calendarState.value.month.name) {
+                                    "JANUARY" -> "1"
+                                    "FEBRUARY" -> "2"
+                                    "MARCH" -> "3"
+                                    "APRIL" -> "4"
+                                    "MAY" -> "5"
+                                    "JUNE" -> "6"
+                                    "JULY" -> "7"
+                                    "AUGUST" -> "8"
+                                    "SEPTEMBER" -> "9"
+                                    "OCTOBER" -> "10"
+                                    "NOVEMBER" -> "11"
+                                    else -> "12"
+                                }
+                            }월",
                     fontFamily = pretendard,
                     fontWeight = SemiBold,
                     fontSize = 14.sp,
@@ -181,7 +198,7 @@ private inline fun MakingReservationActivityContent(
             ) {
                 Text(
                     modifier = Modifier.size(40.dp),
-                    text = "M",
+                    text = "월",
                     textAlign = TextAlign.Center,
                     fontFamily = pretendard,
                     fontWeight = Medium,
@@ -191,7 +208,7 @@ private inline fun MakingReservationActivityContent(
 
                 Text(
                     modifier = Modifier.size(40.dp),
-                    text = "T",
+                    text = "화",
                     textAlign = TextAlign.Center,
                     fontFamily = pretendard,
                     fontWeight = Medium,
@@ -201,7 +218,7 @@ private inline fun MakingReservationActivityContent(
 
                 Text(
                     modifier = Modifier.size(40.dp),
-                    text = "W",
+                    text = "수",
                     textAlign = TextAlign.Center,
                     fontFamily = pretendard,
                     fontWeight = Medium,
@@ -211,7 +228,7 @@ private inline fun MakingReservationActivityContent(
 
                 Text(
                     modifier = Modifier.size(40.dp),
-                    text = "T",
+                    text = "목",
                     textAlign = TextAlign.Center,
                     fontFamily = pretendard,
                     fontWeight = Medium,
@@ -221,7 +238,7 @@ private inline fun MakingReservationActivityContent(
 
                 Text(
                     modifier = Modifier.size(40.dp),
-                    text = "F",
+                    text = "금",
                     textAlign = TextAlign.Center,
                     fontFamily = pretendard,
                     fontWeight = Medium,
@@ -231,7 +248,7 @@ private inline fun MakingReservationActivityContent(
 
                 Text(
                     modifier = Modifier.size(40.dp),
-                    text = "S",
+                    text = "토",
                     textAlign = TextAlign.Center,
                     fontFamily = pretendard,
                     fontWeight = Medium,
@@ -241,7 +258,7 @@ private inline fun MakingReservationActivityContent(
 
                 Text(
                     modifier = Modifier.size(40.dp),
-                    text = "S",
+                    text = "일",
                     textAlign = TextAlign.Center,
                     fontFamily = pretendard,
                     fontWeight = Medium,
@@ -325,15 +342,15 @@ private inline fun MakingReservationActivityContent(
 
         MakingReservationItemLayout(
             isEssential = false,
-            title = "시간",
-            expandedHeight = 206.dp
+            title = timeTextState.value,
+            expandedHeight = 278.dp
         ) {
             val hoursLazyListState = rememberLazyListState()
             val minutesLazyListState = rememberLazyListState()
             val timesLazyListState = rememberLazyListState()
             val hours = (0..13).toList()
             val minutes = (-1..60).toList()
-            val times = listOf("", "오전", "오후", "")
+            val times = listOf("", "오후", "오전", "")
 
             Box(
                 modifier = Modifier
@@ -358,7 +375,7 @@ private inline fun MakingReservationActivityContent(
 
                                 Text(
                                     modifier = Modifier.align(Center),
-                                    text = if (hour in 1..12) "$hour" else "",
+                                    text = if (hour in 1..12) String.format("%02d", hour) else if (hour == 0) "시" else "",
                                     fontFamily = pretendard,
                                     fontWeight = SemiBold,
                                     fontSize = 14.sp,
@@ -390,7 +407,7 @@ private inline fun MakingReservationActivityContent(
                             Box(modifier = Modifier.size(40.dp)) {
                                 Text(
                                     modifier = Modifier.align(Center),
-                                    text = if (minute in 0..59) "$minute" else "",
+                                    text = if (minute in 0..59) String.format("%02d", minute) else if (minute == -1) "분" else "",
                                     fontFamily = pretendard,
                                     fontWeight = SemiBold,
                                     fontSize = 14.sp,
@@ -443,6 +460,35 @@ private inline fun MakingReservationActivityContent(
                         color = GrayColor8
                     )
                 }
+            }
+
+            BPMSpacer(height = 30.dp)
+
+            Box(
+                modifier = Modifier
+                    .clip(shape = RoundedCornerShape(8.dp))
+                    .height(42.dp)
+                    .width(210.dp)
+                    .border(
+                        width = 1.dp,
+                        shape = RoundedCornerShape(8.dp),
+                        color = GrayColor5
+                    )
+                    .align(CenterHorizontally)
+                    .clickable { onClickSetTime("${String.format("%02d", hours[hoursLazyListState.firstVisibleItemIndex + 1])}:" +
+                            "${String.format("%02d", minutes[minutesLazyListState.firstVisibleItemIndex + 1])} " +
+                            "(${times[timesLazyListState.firstVisibleItemIndex + 1]})")
+                    }
+            ) {
+                Text(
+                    modifier = Modifier.align(Center),
+                    text = "확인",
+                    fontFamily = pretendard,
+                    fontWeight = SemiBold,
+                    fontSize = 14.sp,
+                    letterSpacing = 0.sp,
+                    color = GrayColor3
+                )
             }
         }
     }
@@ -511,10 +557,4 @@ private fun MakingReservationItemLayout(
 
         content()
     }
-}
-
-@Preview
-@Composable
-private fun Preview() {
-//    MakingReservationActivityContent()
 }
