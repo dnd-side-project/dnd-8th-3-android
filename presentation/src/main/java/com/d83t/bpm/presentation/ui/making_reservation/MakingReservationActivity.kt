@@ -68,7 +68,7 @@ class MakingReservationActivity : BaseComponentActivity() {
 
                     },
                     onClickSetTime = { timeText -> timeTextState.value = timeText },
-                    onClickSave = {  }
+                    onClickSave = { }
                 )
             }
         }
@@ -391,7 +391,7 @@ private inline fun MakingReservationActivityContent(
                                     Text(
                                         modifier = Modifier
                                             .align(Center)
-                                            .clickableWithoutRipple { scope.launch { hoursLazyListState.animateScrollToItem(index - 1) } },
+                                            .clickableWithoutRipple { scope.launch { if (index != 0) hoursLazyListState.animateScrollToItem(index - 1) } },
                                         text = if (hour in 1..12) String.format("%02d", hour) else if (hour == 0) "시" else "",
                                         fontFamily = pretendard,
                                         fontWeight = SemiBold,
@@ -425,7 +425,7 @@ private inline fun MakingReservationActivityContent(
                                     Text(
                                         modifier = Modifier
                                             .align(Center)
-                                            .clickableWithoutRipple { scope.launch { minutesLazyListState.animateScrollToItem(index - 1) } },
+                                            .clickableWithoutRipple { scope.launch { if (index != 0) minutesLazyListState.animateScrollToItem(index - 1) } },
                                         text = if (minute in 0..59) String.format("%02d", minute) else if (minute == -1) "분" else "",
                                         fontFamily = pretendard,
                                         fontWeight = SemiBold,
@@ -452,7 +452,7 @@ private inline fun MakingReservationActivityContent(
                                     Text(
                                         modifier = Modifier
                                             .align(Center)
-                                            .clickableWithoutRipple { scope.launch { timesLazyListState.animateScrollToItem(index - 1) } },
+                                            .clickableWithoutRipple { scope.launch { if (index != 0) timesLazyListState.animateScrollToItem(index - 1) } },
                                         text = times,
                                         fontFamily = pretendard,
                                         fontWeight = SemiBold,
