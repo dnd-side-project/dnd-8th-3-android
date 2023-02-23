@@ -361,10 +361,10 @@ private inline fun MakingReservationActivityContent(
             ) {
                 val hoursLazyListState = rememberLazyListState()
                 val minutesLazyListState = rememberLazyListState()
-                val timesLazyListState = rememberLazyListState()
+                val timeZonesLazyListState = rememberLazyListState()
                 val hours = (0..13).toList()
                 val minutes = (-1..60).toList()
-                val times = listOf("", "오후", "오전", "")
+                val timeZones = listOf("", "오후", "오전", "")
                 val scope = rememberCoroutineScope()
 
                 Box(
@@ -376,6 +376,7 @@ private inline fun MakingReservationActivityContent(
                         modifier = Modifier.align(Center),
                         horizontalArrangement = Arrangement.Center
                     ) {
+
                         LazyColumn(
                             modifier = Modifier
                                 .width(80.dp)
@@ -409,7 +410,6 @@ private inline fun MakingReservationActivityContent(
                             contentDescription = "timeDividerIcon"
                         )
 
-
                         LazyColumn(
                             modifier = Modifier
                                 .width(80.dp)
@@ -441,18 +441,18 @@ private inline fun MakingReservationActivityContent(
                             modifier = Modifier
                                 .width(50.dp)
                                 .height(120.dp),
-                            state = timesLazyListState,
-                            flingBehavior = rememberSnapperFlingBehavior(timesLazyListState),
+                            state = timeZonesLazyListState,
+                            flingBehavior = rememberSnapperFlingBehavior(timeZonesLazyListState),
                             horizontalAlignment = CenterHorizontally
                         ) {
-                            itemsIndexed(times) { index, times ->
-                                val textColorState = animateColorAsState(targetValue = if (index == remember { derivedStateOf { timesLazyListState.firstVisibleItemIndex } }.value + 1) Color.Black else GrayColor5)
+                            itemsIndexed(timeZones) { index, times ->
+                                val textColorState = animateColorAsState(targetValue = if (index == remember { derivedStateOf { timeZonesLazyListState.firstVisibleItemIndex } }.value + 1) Color.Black else GrayColor5)
 
                                 Box(modifier = Modifier.size(40.dp)) {
                                     Text(
                                         modifier = Modifier
                                             .align(Center)
-                                            .clickableWithoutRipple { scope.launch { if (index != 0) timesLazyListState.animateScrollToItem(index - 1) } },
+                                            .clickableWithoutRipple { scope.launch { if (index != 0) timeZonesLazyListState.animateScrollToItem(index - 1) } },
                                         text = times,
                                         fontFamily = pretendard,
                                         fontWeight = SemiBold,
@@ -500,7 +500,7 @@ private inline fun MakingReservationActivityContent(
                             onClickSetTime(
                                 "${String.format("%02d", hours[hoursLazyListState.firstVisibleItemIndex + 1])}:" +
                                         "${String.format("%02d", minutes[minutesLazyListState.firstVisibleItemIndex + 1])} " +
-                                        "(${times[timesLazyListState.firstVisibleItemIndex + 1]})"
+                                        "(${timeZones[timeZonesLazyListState.firstVisibleItemIndex + 1]})"
                             )
                         }
                 ) {
