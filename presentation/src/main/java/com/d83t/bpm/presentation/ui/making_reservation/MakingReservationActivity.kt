@@ -25,7 +25,11 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
@@ -33,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.d83t.bpm.presentation.R
@@ -93,7 +98,16 @@ private inline fun MakingReservationActivityContent(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(state = scrollState)
-            .background(color = Color.White),
+            .background(color = Color.White)
+            .nestedScroll(connection = object : NestedScrollConnection {
+                override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+                    return Velocity(0f, available.y)
+                }
+
+                override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+                    return Offset(0f, available.y)
+                }
+            }),
         verticalArrangement = SpaceBetween
     ) {
         Column {
