@@ -49,6 +49,10 @@
             android:exported="false"
             android:theme="@style/Theme.Bpm.NoActionBar" />
         <activity
+            android:name=".ui.register_studio.RegisterStudioActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Bpm.NoActionBar" />
+        <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
             <intent-filter>
