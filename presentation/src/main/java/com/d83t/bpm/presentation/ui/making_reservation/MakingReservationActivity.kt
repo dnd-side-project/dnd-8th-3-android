@@ -593,9 +593,9 @@ private fun MakingReservationItemLayout(
     expandedHeight: Dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val showExpandedItemColumn = remember { mutableStateOf(false) }
-    val columnHeightState = animateDpAsState(targetValue = if (showExpandedItemColumn.value) expandedHeight else 64.dp)
-    val expandIconRotateState = animateFloatAsState(targetValue = if (showExpandedItemColumn.value) 180f else 0f)
+    val expandState = remember { mutableStateOf(false) }
+    val columnHeightState = animateDpAsState(targetValue = if (expandState.value) expandedHeight else 64.dp)
+    val expandIconRotateState = animateFloatAsState(targetValue = if (expandState.value) 180f else 0f)
 
     Column(
         modifier = Modifier
@@ -608,7 +608,7 @@ private fun MakingReservationItemLayout(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickableWithoutRipple { showExpandedItemColumn.value = !showExpandedItemColumn.value },
+                .clickableWithoutRipple { expandState.value = !expandState.value },
             horizontalArrangement = SpaceBetween
         ) {
             Row {
@@ -647,6 +647,20 @@ private fun MakingReservationItemLayout(
 
         BPMSpacer(height = 20.dp)
 
-        content()
+        if (!expandState.value) {
+            Box {
+                Column {
+                    content()
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickableWithoutRipple { }
+                )
+            }
+        } else {
+            content()
+        }
     }
 }
