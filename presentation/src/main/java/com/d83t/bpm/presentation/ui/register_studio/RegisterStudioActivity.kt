@@ -407,7 +407,6 @@ private fun RegisterTextField(
 
                 Divider(
                     modifier = Modifier
-                        .padding(top = 24.dp)
                         .fillMaxWidth()
                         .align(BottomCenter),
                     color = GrayColor6,

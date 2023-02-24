@@ -56,6 +56,10 @@
             android:theme="@style/Theme.Bpm.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".ui.register_location.RegisterLocationActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Bpm.NoActionBar" />
+        <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
             <intent-filter>
