@@ -142,7 +142,6 @@ private inline fun MakingReservationActivityContent(
                     ) {
                         Text(
                             text = "바디프로필 업체를 검색해보세요",
-                            fontFamily = pretendard,
                             fontWeight = Medium,
                             fontSize = 14.sp,
                             letterSpacing = 0.sp,
@@ -193,7 +192,6 @@ private inline fun MakingReservationActivityContent(
                                         else -> "12"
                                     }
                                 }월",
-                        fontFamily = pretendard,
                         fontWeight = SemiBold,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp
@@ -231,7 +229,6 @@ private inline fun MakingReservationActivityContent(
                         modifier = Modifier.size(40.dp),
                         text = "월",
                         textAlign = TextAlign.Center,
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp
@@ -241,7 +238,6 @@ private inline fun MakingReservationActivityContent(
                         modifier = Modifier.size(40.dp),
                         text = "화",
                         textAlign = TextAlign.Center,
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp
@@ -251,7 +247,6 @@ private inline fun MakingReservationActivityContent(
                         modifier = Modifier.size(40.dp),
                         text = "수",
                         textAlign = TextAlign.Center,
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp
@@ -261,7 +256,6 @@ private inline fun MakingReservationActivityContent(
                         modifier = Modifier.size(40.dp),
                         text = "목",
                         textAlign = TextAlign.Center,
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp
@@ -271,7 +265,6 @@ private inline fun MakingReservationActivityContent(
                         modifier = Modifier.size(40.dp),
                         text = "금",
                         textAlign = TextAlign.Center,
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp
@@ -281,7 +274,6 @@ private inline fun MakingReservationActivityContent(
                         modifier = Modifier.size(40.dp),
                         text = "토",
                         textAlign = TextAlign.Center,
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp
@@ -291,7 +283,6 @@ private inline fun MakingReservationActivityContent(
                         modifier = Modifier.size(40.dp),
                         text = "일",
                         textAlign = TextAlign.Center,
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp
@@ -354,7 +345,6 @@ private inline fun MakingReservationActivityContent(
                                 Text(
                                     modifier = Modifier.align(Center),
                                     text = if (thisDay != null) "${thisDay.dayOfMonth}" else "",
-                                    fontFamily = pretendard,
                                     fontWeight = Medium,
                                     fontSize = 14.sp,
                                     letterSpacing = 0.sp,
@@ -411,7 +401,6 @@ private inline fun MakingReservationActivityContent(
                                             .align(Center)
                                             .clickableWithoutRipple { scope.launch { if (index != 0) hoursLazyListState.animateScrollToItem(index - 1) } },
                                         text = if (hour in 1..12) String.format("%02d", hour) else if (hour == 0) "시" else "",
-                                        fontFamily = pretendard,
                                         fontWeight = SemiBold,
                                         fontSize = 14.sp,
                                         letterSpacing = 0.sp,
@@ -444,7 +433,6 @@ private inline fun MakingReservationActivityContent(
                                             .align(Center)
                                             .clickableWithoutRipple { scope.launch { if (index != 0) minutesLazyListState.animateScrollToItem(index - 1) } },
                                         text = if (minute in 0..59) String.format("%02d", minute) else if (minute == -1) "분" else "",
-                                        fontFamily = pretendard,
                                         fontWeight = SemiBold,
                                         fontSize = 14.sp,
                                         letterSpacing = 0.sp,
@@ -471,7 +459,6 @@ private inline fun MakingReservationActivityContent(
                                             .align(Center)
                                             .clickableWithoutRipple { scope.launch { if (index != 0) timeZonesLazyListState.animateScrollToItem(index - 1) } },
                                         text = times,
-                                        fontFamily = pretendard,
                                         fontWeight = SemiBold,
                                         fontSize = 14.sp,
                                         letterSpacing = 0.sp,
@@ -524,7 +511,6 @@ private inline fun MakingReservationActivityContent(
                     Text(
                         modifier = Modifier.align(Center),
                         text = "확인",
-                        fontFamily = pretendard,
                         fontWeight = SemiBold,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp,
@@ -560,7 +546,6 @@ private inline fun MakingReservationActivityContent(
                             placeholder = {
                                 Text(
                                     text = "일정에 대한 메모를 입력해주세요.",
-                                    fontFamily = pretendard,
                                     fontWeight = Normal,
                                     fontSize = 14.sp,
                                     letterSpacing = 0.sp,
@@ -569,7 +554,6 @@ private inline fun MakingReservationActivityContent(
                             },
                             onValueChange = { memoTextState.value = it },
                             textStyle = TextStyle(
-                                fontFamily = pretendard,
                                 fontWeight = Normal,
                                 fontSize = 13.sp,
                                 letterSpacing = 0.sp,
@@ -639,7 +623,6 @@ private fun MakingReservationItemLayout(
                         .align(CenterVertically),
                     text = title,
                     textAlign = TextAlign.Center,
-                    fontFamily = pretendard,
                     fontWeight = Medium,
                     fontSize = 17.sp,
                     letterSpacing = 0.sp
@@ -648,7 +631,6 @@ private fun MakingReservationItemLayout(
                 if (isEssential) {
                     Text(
                         text = "*",
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 17.sp,
                         letterSpacing = 0.sp,

@@ -206,7 +206,6 @@ private fun SplashActivityContent(
             Text(
                 modifier = Modifier.align(Center),
                 text = "카카오톡으로 시작하기",
-                fontFamily = pretendard,
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
                 letterSpacing = 0.sp,

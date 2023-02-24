@@ -53,7 +53,6 @@ fun ScreenHeader(header: String) {
             Text(
                 modifier = Modifier.align(Center),
                 text = header,
-                fontFamily = pretendard,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 18.sp,
                 letterSpacing = 0.sp
@@ -97,7 +96,6 @@ inline fun RoundedCornerButton(
             modifier = Modifier.align(Center),
             text = text,
             color = textColor,
-            fontFamily = pretendard,
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
             letterSpacing = 0.sp
@@ -129,7 +127,6 @@ inline fun OutLinedRoundedCornerButton(
             modifier = Modifier.align(Center),
             text = text,
             color = textColor,
-            fontFamily = pretendard,
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
             letterSpacing = 0.sp
@@ -176,7 +173,6 @@ inline fun LikeButton(
 
             Text(
                 text = "좋아요",
-                fontFamily = pretendard,
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp,
                 letterSpacing = 0.sp,
@@ -187,7 +183,6 @@ inline fun LikeButton(
 
             Text(
                 text = "12",
-                fontFamily = pretendard,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp,
                 letterSpacing = 0.sp,
@@ -214,7 +209,6 @@ fun KeywordChip(
             )
             .clickableWithoutRipple { selectState.value = !selectState.value },
         text = text,
-        fontFamily = pretendard,
         fontWeight = FontWeight.Medium,
         fontSize = 12.sp,
         letterSpacing = 0.sp,

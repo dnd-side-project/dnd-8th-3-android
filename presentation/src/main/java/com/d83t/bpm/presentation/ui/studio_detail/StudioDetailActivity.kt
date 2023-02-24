@@ -152,7 +152,6 @@ private inline fun StudioDetailActivityContent(
                         Text(
                             modifier = Modifier.align(Center),
                             text = "1/1",
-                            fontFamily = pretendard,
                             fontWeight = FontWeight.Normal,
                             fontSize = 12.sp,
                             letterSpacing = 2.sp
@@ -171,7 +170,6 @@ private inline fun StudioDetailActivityContent(
                         Row(verticalAlignment = CenterVertically) {
                             Text(
                                 text = "서울",
-                                fontFamily = pretendard,
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp
@@ -184,7 +182,6 @@ private inline fun StudioDetailActivityContent(
 
                             Text(
                                 text = "서초구",
-                                fontFamily = pretendard,
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp
@@ -195,7 +192,6 @@ private inline fun StudioDetailActivityContent(
 
                         Text(
                             text = "스튜디오 이름",
-                            fontFamily = pretendard,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 19.sp,
                             letterSpacing = 0.sp
@@ -205,7 +201,6 @@ private inline fun StudioDetailActivityContent(
 
                         Text(
                             text = "스튜디오에 대한 간단한 한줄 설명을 붙여주세요.",
-                            fontFamily = pretendard,
                             fontSize = 13.sp,
                             fontWeight = Normal,
                             letterSpacing = 0.sp,
@@ -234,7 +229,6 @@ private inline fun StudioDetailActivityContent(
 
                                 Text(
                                     text = "4.0",
-                                    fontFamily = pretendard,
                                     fontSize = 14.sp,
                                     fontWeight = Normal,
                                     letterSpacing = 0.sp,
@@ -244,7 +238,6 @@ private inline fun StudioDetailActivityContent(
 
                             Text(
                                 text = "후기 504개",
-                                fontFamily = pretendard,
                                 fontWeight = Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp,
@@ -293,7 +286,6 @@ private inline fun StudioDetailActivityContent(
                 ) {
                     Text(
                         text = "위치 정보",
-                        fontFamily = pretendard,
                         fontWeight = SemiBold,
                         fontSize = 16.sp,
                         letterSpacing = 0.sp
@@ -302,7 +294,6 @@ private inline fun StudioDetailActivityContent(
                     Text(
                         modifier = Modifier.clickable { onClickInfoEditSuggestion() },
                         text = "정보수정 제안",
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp,
@@ -317,7 +308,6 @@ private inline fun StudioDetailActivityContent(
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Text(
                         text = "주소에 대한 정보를 적습니다.",
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 16.sp,
                         letterSpacing = 0.sp
@@ -327,7 +317,6 @@ private inline fun StudioDetailActivityContent(
 
                     Text(
                         text = "상세 주소에 대한 설명을 적는 곳입니다.",
-                        fontFamily = pretendard,
                         fontWeight = Normal,
                         fontSize = 12.sp,
                         letterSpacing = 0.sp,
@@ -422,7 +411,6 @@ private inline fun StudioDetailActivityContent(
                 ) {
                     Text(
                         text = "편의 정보",
-                        fontFamily = pretendard,
                         fontWeight = SemiBold,
                         fontSize = 16.sp,
                         letterSpacing = 0.sp
@@ -430,7 +418,6 @@ private inline fun StudioDetailActivityContent(
 
                     Text(
                         text = "마지막 업데이트 : 0000 00 00",
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp,
@@ -491,7 +478,6 @@ private inline fun StudioDetailActivityContent(
                             .padding(start = 16.dp)
                             .align(CenterStart),
                         text = "이런 점을 추천해요",
-                        fontFamily = pretendard,
                         fontWeight = SemiBold,
                         fontSize = 16.sp,
                         letterSpacing = 0.sp,
@@ -569,7 +555,6 @@ private inline fun StudioDetailActivityContent(
                 ) {
                     Text(
                         text = "업체 리뷰 120",
-                        fontFamily = pretendard,
                         fontWeight = SemiBold,
                         fontSize = 16.sp,
                         letterSpacing = 0.sp
@@ -577,7 +562,6 @@ private inline fun StudioDetailActivityContent(
 
                     Text(
                         text = "후기 작성하기",
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp,
@@ -607,7 +591,6 @@ private inline fun StudioDetailActivityContent(
 
                         Text(
                             text = "사진 리뷰만 보기",
-                            fontFamily = pretendard,
                             fontWeight = Medium,
                             fontSize = 14.sp,
                             letterSpacing = 0.sp
@@ -618,7 +601,6 @@ private inline fun StudioDetailActivityContent(
                         Text(
                             modifier = Modifier.clickableWithoutRipple { showReviewOrderByLike.value = true },
                             text = "좋아요순",
-                            fontFamily = pretendard,
                             fontWeight = Medium,
                             fontSize = 14.sp,
                             letterSpacing = 0.sp,
@@ -640,7 +622,6 @@ private inline fun StudioDetailActivityContent(
                         Text(
                             modifier = Modifier.clickableWithoutRipple { showReviewOrderByLike.value = false },
                             text = "최신순",
-                            fontFamily = pretendard,
                             fontWeight = Medium,
                             fontSize = 14.sp,
                             letterSpacing = 0.sp,
@@ -677,7 +658,6 @@ private inline fun StudioDetailActivityContent(
                         text = {
                             Text(
                                 text = tabName,
-                                fontFamily = pretendard,
                                 fontWeight = SemiBold,
                                 fontSize = 15.sp,
                                 letterSpacing = 0.sp
@@ -709,7 +689,6 @@ private fun ConvenienceInfo(
     ) {
         Text(
             text = type,
-            fontFamily = pretendard,
             fontWeight = Medium,
             fontSize = 13.sp,
             letterSpacing = 0.sp
@@ -717,7 +696,6 @@ private fun ConvenienceInfo(
 
         Text(
             text = detail,
-            fontFamily = pretendard,
             fontWeight = Normal,
             fontSize = 12.sp,
             letterSpacing = 0.sp,
@@ -768,7 +746,6 @@ private fun BestKeyword(
         Text(
             modifier = Modifier.padding(end = 16.dp),
             text = "+${count}",
-            fontFamily = pretendard,
             fontWeight = Medium,
             fontSize = 12.sp,
             letterSpacing = 0.sp,
@@ -807,7 +784,6 @@ private fun Review(
 
                     Text(
                         text = "닉네임",
-                        fontFamily = pretendard,
                         fontWeight = SemiBold,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp
@@ -816,7 +792,6 @@ private fun Review(
 
                 Text(
                     text = "2023.02.15",
-                    fontFamily = pretendard,
                     fontWeight = Medium,
                     fontSize = 12.sp,
                     letterSpacing = 0.5.sp
@@ -832,7 +807,6 @@ private fun Review(
             ) {
                 Text(
                     text = "스튜디오 이름",
-                    fontFamily = pretendard,
                     fontWeight = Medium,
                     fontSize = 14.sp,
                     letterSpacing = 0.sp
@@ -871,7 +845,6 @@ private fun Review(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = "One, two, three, four Baby, got me looking so crazy 빠져버리는 daydream got me feeling you 너도 말해줄래 누가 내게 뭐라든 남들과는 달라 넌 Maybe you could be the one 날 믿어봐 한 번 I'm not looking for just fun Maybe I could be the one Oh baby 예민하대 나 lately 너 없이는 나 매일매일이 yeah 재미없어 어쩌지 I just want you Call my phone right now I just wanna hear you're mine",
-                fontFamily = pretendard,
                 fontWeight = Normal,
                 fontSize = 13.sp,
                 letterSpacing = 0.sp,

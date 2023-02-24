@@ -22,12 +22,10 @@ val ColorPalette = lightColors(
 fun BPMTheme(
     content: @Composable () -> Unit
 ) {
-    val colors = ColorPalette
     CompositionLocalProvider(LocalOverscrollConfiguration.provides(null)) {
         MaterialTheme(
-            colors = colors,
+            colors = ColorPalette,
             typography = Typography,
-            shapes = Shapes,
             content = content
         )
     }

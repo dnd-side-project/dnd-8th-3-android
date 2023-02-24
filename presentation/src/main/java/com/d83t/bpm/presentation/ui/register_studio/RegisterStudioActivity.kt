@@ -135,7 +135,6 @@ private fun RegisterStudioActivityContent(
 
             Text(
                 text = "위치",
-                fontFamily = pretendard,
                 fontWeight = SemiBold,
                 fontSize = 14.sp,
                 letterSpacing = 0.sp,
@@ -153,7 +152,6 @@ private fun RegisterStudioActivityContent(
                         .fillMaxWidth()
                         .align(BottomCenter),
                     text = studioLocationTextState.value,
-                    fontFamily = pretendard,
                     fontWeight = FontWeight.Normal,
                     fontSize = 13.sp,
                     letterSpacing = 0.sp,
@@ -197,7 +195,6 @@ private fun RegisterStudioActivityContent(
         ) {
             Text(
                 text = "이런 점을 추천해요",
-                fontFamily = pretendard,
                 fontWeight = SemiBold,
                 fontSize = 16.sp,
                 letterSpacing = 0.sp
@@ -207,7 +204,6 @@ private fun RegisterStudioActivityContent(
 
             Text(
                 text = "최대 5개까지 선택가능해요",
-                fontFamily = pretendard,
                 fontWeight = Medium,
                 fontSize = 12.sp,
                 letterSpacing = 0.sp,
@@ -358,7 +354,6 @@ private fun RegisterTextField(
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = title,
-            fontFamily = pretendard,
             fontWeight = SemiBold,
             fontSize = 14.sp,
             letterSpacing = 0.sp,
@@ -380,7 +375,6 @@ private fun RegisterTextField(
                     value = textState.value,
                     onValueChange = { textState.value = it },
                     textStyle = TextStyle(
-                        fontFamily = pretendard,
                         fontWeight = FontWeight.Normal,
                         fontSize = 13.sp,
                         letterSpacing = 0.sp,

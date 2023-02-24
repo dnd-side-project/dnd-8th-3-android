@@ -205,7 +205,6 @@ private fun WritingReviewActivityContent(
                     Column {
                         Text(
                             text = "스튜디오 이름",
-                            fontFamily = pretendard,
                             fontWeight = Medium,
                             fontSize = 14.sp,
                             letterSpacing = 0.sp
@@ -215,7 +214,6 @@ private fun WritingReviewActivityContent(
 
                         Text(
                             text = "스튜디오에 대한 간단한 한 줄 설명을 붙여주세요.",
-                            fontFamily = pretendard,
                             fontWeight = Normal,
                             fontSize = 11.sp,
                             letterSpacing = 0.sp,
@@ -239,7 +237,6 @@ private fun WritingReviewActivityContent(
 
                         Text(
                             text = "4.0",
-                            fontFamily = pretendard,
                             fontWeight = Normal,
                             fontSize = 11.sp,
                             letterSpacing = 0.sp,
@@ -255,7 +252,6 @@ private fun WritingReviewActivityContent(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = "이 정도 만족했어요",
-            fontFamily = pretendard,
             fontWeight = SemiBold,
             fontSize = 16.sp,
             letterSpacing = 0.sp
@@ -266,7 +262,6 @@ private fun WritingReviewActivityContent(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = "만족한 정도를 별점으로 보여주세요",
-            fontFamily = pretendard,
             fontWeight = Medium,
             fontSize = 12.sp,
             letterSpacing = 0.2.sp,
@@ -305,7 +300,6 @@ private fun WritingReviewActivityContent(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = "이런 점을 추천해요",
-            fontFamily = pretendard,
             fontWeight = SemiBold,
             fontSize = 16.sp,
             letterSpacing = 0.sp
@@ -316,7 +310,6 @@ private fun WritingReviewActivityContent(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = "최대 5개까지 선택가능해요",
-            fontFamily = pretendard,
             fontWeight = Medium,
             fontSize = 12.sp,
             letterSpacing = 0.2.sp,
@@ -353,7 +346,6 @@ private fun WritingReviewActivityContent(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = "이런 경험이었어요",
-            fontFamily = pretendard,
             fontWeight = SemiBold,
             fontSize = 16.sp,
             letterSpacing = 0.sp
@@ -364,7 +356,6 @@ private fun WritingReviewActivityContent(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = "사진과 간단한 후기를 적어주세요",
-            fontFamily = pretendard,
             fontWeight = Medium,
             fontSize = 12.sp,
             letterSpacing = 0.2.sp,
@@ -422,7 +413,6 @@ private fun WritingReviewActivityContent(
                     value = contentTextState.value,
                     onValueChange = { contentTextState.value = it },
                     textStyle = TextStyle(
-                        fontFamily = pretendard,
                         fontWeight = Normal,
                         fontSize = 13.sp,
                         letterSpacing = 0.sp,
