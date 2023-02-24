@@ -48,6 +48,7 @@ import com.d83t.bpm.presentation.compose.KeywordChip
 import com.d83t.bpm.presentation.compose.RoundedCornerButton
 import com.d83t.bpm.presentation.compose.ScreenHeader
 import com.d83t.bpm.presentation.compose.theme.*
+import com.d83t.bpm.presentation.ui.register_studio.dummyKeywordChipList
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import com.d83t.bpm.presentation.util.convertUriToBitmap
 import com.google.accompanist.flowlayout.FlowRow
@@ -332,46 +333,9 @@ private fun WritingReviewActivityContent(
             mainAxisSpacing = 8.dp,
             crossAxisSpacing = 10.dp
         ) {
-            KeywordChip(
-                text = "친절해요",
-                isChosen = false
-            )
-            KeywordChip(
-                text = "소통이 빨라요",
-                isChosen = false
-            )
-            KeywordChip(
-                text = "소품이 다양해요",
-                isChosen = false
-            )
-            KeywordChip(
-                text = "세트장 구성이 다양해요",
-                isChosen = false
-            )
-            KeywordChip(
-                text = "제공하는 컨셉이 다양해요",
-                isChosen = false
-            )
-            KeywordChip(
-                text = "자연스럽게 연출해줘요",
-                isChosen = false
-            )
-            KeywordChip(
-                text = "시설이 깔끔해요",
-                isChosen = false
-            )
-            KeywordChip(
-                text = "원하는 스타일을 바로바로 파악해줘요",
-                isChosen = false
-            )
-            KeywordChip(
-                text = "주차하기 편해요",
-                isChosen = false
-            )
-            KeywordChip(
-                text = "보정을 꼼꼼하게 해줘요",
-                isChosen = false
-            )
+            dummyKeywordChipList.forEach { dummyKeyword ->
+                KeywordChip(text = dummyKeyword)
+            }
         }
 
         BPMSpacer(height = 20.dp)

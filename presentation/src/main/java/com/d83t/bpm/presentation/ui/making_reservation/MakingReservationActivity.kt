@@ -654,7 +654,7 @@ private fun MakingReservationItemLayout(
                 modifier = Modifier
                     .size(24.dp)
                     .rotate(expandIconRotateState.value),
-                painter = painterResource(id = R.drawable.ic_arrow_expand),
+                painter = painterResource(id = R.drawable.ic_arrow_expand_0),
                 contentDescription = "expandItemIcon"
             )
         }
