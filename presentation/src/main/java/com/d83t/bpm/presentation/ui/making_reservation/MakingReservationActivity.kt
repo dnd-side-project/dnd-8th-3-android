@@ -661,20 +661,18 @@ private fun MakingReservationItemLayout(
 
         BPMSpacer(height = 20.dp)
 
-        if (!expandState.value) {
-            Box {
-                Column {
-                    content()
-                }
+        Box {
+            Column {
+                content()
+            }
 
+            if (!expandState.value) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .clickableWithoutRipple { }
                 )
             }
-        } else {
-            content()
         }
     }
 }
