@@ -1,5 +1,6 @@
 package com.d83t.bpm.presentation.ui.register_studio
 
+import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.base.BaseViewModel
@@ -42,6 +44,8 @@ import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.addFocusCleaner
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import com.google.accompanist.flowlayout.FlowRow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 val dummyKeywordChipList = listOf(
     "친절해요",
@@ -71,6 +75,12 @@ class RegisterStudioActivity : BaseComponentActivity() {
     private val snsAddressTextState = mutableStateOf("")
     private val businessHoursTextState = mutableStateOf("")
     private val priceInfoTextState = mutableStateOf("")
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+    }
 
     override fun initUi() {
         setContent {
@@ -111,10 +121,12 @@ private fun RegisterStudioActivityContent(
     val detailInfoExpandState = remember { mutableStateOf(false) }
     val detailInfoColumnHeightState = animateDpAsState(targetValue = if (detailInfoExpandState.value) 500.dp else 64.dp)
     val focusManager = LocalFocusManager.current
-    LaunchedEffect(scrollState.maxValue) { scrollState.animateScrollTo(scrollState.maxValue) }
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
+            .windowInsetsPadding(insets = WindowInsets.systemBars.only(sides = WindowInsetsSides.Vertical))
+            .imePadding()
             .fillMaxWidth()
             .verticalScroll(state = scrollState)
             .background(color = Color.White)
@@ -253,7 +265,15 @@ private fun RegisterStudioActivityContent(
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth()
                         .align(Center)
-                        .clickableWithoutRipple { detailInfoExpandState.value = !detailInfoExpandState.value },
+                        .clickableWithoutRipple {
+                            detailInfoExpandState.value = !detailInfoExpandState.value
+                            if (detailInfoExpandState.value) {
+                                scope.launch {
+                                    delay(300L)
+                                    scrollState.animateScrollTo(scrollState.maxValue)
+                                }
+                            }
+                        },
                     horizontalArrangement = SpaceBetween,
                     verticalAlignment = CenterVertically
                 ) {
