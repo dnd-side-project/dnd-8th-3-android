@@ -39,7 +39,8 @@
         <activity
             android:name=".ui.writing_review.WritingReviewActivity"
             android:exported="false"
-            android:theme="@style/Theme.Bpm.NoActionBar" />
+            android:theme="@style/Theme.Bpm.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.review_detail.ReviewDetailActivity"
             android:exported="false"
@@ -47,21 +48,25 @@
         <activity
             android:name=".ui.making_reservation.MakingReservationActivity"
             android:exported="false"
-            android:theme="@style/Theme.Bpm.NoActionBar" />
+            android:theme="@style/Theme.Bpm.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.register_studio.RegisterStudioActivity"
             android:exported="false"
-            android:theme="@style/Theme.Bpm.NoActionBar" />
+            android:theme="@style/Theme.Bpm.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
-                <data android:host="oauth"
+                <data
+                    android:host="oauth"
                     android:scheme="kakaoced602989810575b0c1d032415db11c8" />
             </intent-filter>
         </activity>

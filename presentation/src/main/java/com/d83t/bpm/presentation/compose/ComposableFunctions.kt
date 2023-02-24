@@ -27,7 +27,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.d83t.bpm.presentation.R
-import com.d83t.bpm.presentation.compose.theme.*
+import com.d83t.bpm.presentation.compose.theme.GrayColor4
+import com.d83t.bpm.presentation.compose.theme.GrayColor8
+import com.d83t.bpm.presentation.compose.theme.GrayColor9
+import com.d83t.bpm.presentation.compose.theme.MainGreenColor
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 
 @Composable
