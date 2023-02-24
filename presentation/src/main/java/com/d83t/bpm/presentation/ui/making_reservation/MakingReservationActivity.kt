@@ -1,5 +1,6 @@
 package com.d83t.bpm.presentation.ui.making_reservation
 
+import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.base.BaseViewModel
@@ -63,6 +65,12 @@ class MakingReservationActivity : BaseComponentActivity() {
     private val selectedDateState = mutableStateOf<LocalDate?>(null)
     private val timeTextState = mutableStateOf("시간")
     private val memoTextState = mutableStateOf("")
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+    }
 
     override fun initUi() {
         setContent {
@@ -98,7 +106,9 @@ private inline fun MakingReservationActivityContent(
 
     Column(
         modifier = Modifier
+            .windowInsetsPadding(insets = WindowInsets.systemBars.only(sides = WindowInsetsSides.Vertical))
             .fillMaxSize()
+            .imePadding()
             .verticalScroll(state = scrollState)
             .background(color = Color.White)
             .addFocusCleaner(LocalFocusManager.current)

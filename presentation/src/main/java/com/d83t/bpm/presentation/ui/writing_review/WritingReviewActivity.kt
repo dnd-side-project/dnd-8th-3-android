@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -158,9 +157,8 @@ private fun WritingReviewActivityContent(
     onClickSendReview: () -> Unit
 ) {
     val scrollState = rememberScrollState()
-    val imeState = remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = remember { derivedStateOf { scrollState.maxValue } }.value) {
-        if (imeState.value) {
+    LaunchedEffect(scrollState.maxValue) {
+        if (contentTextState.value.isNotEmpty()) {
             scrollState.animateScrollTo(scrollState.maxValue)
         }
     }
@@ -420,8 +418,7 @@ private fun WritingReviewActivityContent(
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 262.dp)
-                        .onFocusEvent { event -> imeState.value = event.isFocused },
+                        .heightIn(min = 262.dp),
                     value = contentTextState.value,
                     onValueChange = { contentTextState.value = it },
                     textStyle = TextStyle(
