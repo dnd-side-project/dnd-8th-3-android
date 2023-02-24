@@ -6,7 +6,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
@@ -45,6 +44,7 @@ import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.compose.BPMSpacer
+import com.d83t.bpm.presentation.compose.KeywordChip
 import com.d83t.bpm.presentation.compose.RoundedCornerButton
 import com.d83t.bpm.presentation.compose.ScreenHeader
 import com.d83t.bpm.presentation.compose.theme.*
@@ -70,26 +70,26 @@ class WritingReviewActivity : BaseComponentActivity() {
         super.onCreate(savedInstanceState)
 
         addImageLauncher = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uris ->
-                uris?.let { _ ->
-                    if (uris.size + imageStateList.size <= 5) {
-                        try {
-                            imageStateList.addAll(uris.map { uri ->
-                                convertUriToBitmap(
-                                    contentResolver = contentResolver,
-                                    uri = uri
-                                ).asImageBitmap()
-                            })
-                            refreshImageList()
-                        } catch (e: Exception) {
-                            // TODO : Handle Error
-                        }
-                    } else {
-                        // TODO : Show Error Dialog
+            uris?.let { _ ->
+                if (uris.size + imageStateList.size <= 5) {
+                    try {
+                        imageStateList.addAll(uris.map { uri ->
+                            convertUriToBitmap(
+                                contentResolver = contentResolver,
+                                uri = uri
+                            ).asImageBitmap()
+                        })
+                        refreshImageList()
+                    } catch (e: Exception) {
+                        // TODO : Handle Error
                     }
-                } ?: run {
-                    // TODO : Handle Error
+                } else {
+                    // TODO : Show Error Dialog
                 }
+            } ?: run {
+                // TODO : Handle Error
             }
+        }
 
         replaceImageLauncher = registerForActivityResult(PickVisualMedia()) { uri ->
             uri?.let { _ ->
@@ -332,43 +332,43 @@ private fun WritingReviewActivityContent(
             mainAxisSpacing = 8.dp,
             crossAxisSpacing = 10.dp
         ) {
-            Keyword(
+            KeywordChip(
                 text = "친절해요",
                 isChosen = false
             )
-            Keyword(
+            KeywordChip(
                 text = "소통이 빨라요",
                 isChosen = false
             )
-            Keyword(
+            KeywordChip(
                 text = "소품이 다양해요",
                 isChosen = false
             )
-            Keyword(
+            KeywordChip(
                 text = "세트장 구성이 다양해요",
                 isChosen = false
             )
-            Keyword(
+            KeywordChip(
                 text = "제공하는 컨셉이 다양해요",
                 isChosen = false
             )
-            Keyword(
+            KeywordChip(
                 text = "자연스럽게 연출해줘요",
                 isChosen = false
             )
-            Keyword(
+            KeywordChip(
                 text = "시설이 깔끔해요",
                 isChosen = false
             )
-            Keyword(
+            KeywordChip(
                 text = "원하는 스타일을 바로바로 파악해줘요",
                 isChosen = false
             )
-            Keyword(
+            KeywordChip(
                 text = "주차하기 편해요",
                 isChosen = false
             )
-            Keyword(
+            KeywordChip(
                 text = "보정을 꼼꼼하게 해줘요",
                 isChosen = false
             )
@@ -482,33 +482,6 @@ private fun WritingReviewActivityContent(
 
         BPMSpacer(height = 12.dp)
     }
-}
-
-@Composable
-private fun Keyword(
-    text: String,
-    isChosen: Boolean
-) {
-    val selectState = remember { mutableStateOf(isChosen) }
-    val backgroundColorState = animateColorAsState(targetValue = if (selectState.value) MainGreenColor else GrayColor9)
-    val textColorState = animateColorAsState(targetValue = if (selectState.value) Color.Black else GrayColor4)
-
-    Text(
-        modifier = Modifier
-            .clip(RoundedCornerShape(60.dp))
-            .background(color = backgroundColorState.value)
-            .padding(
-                horizontal = 12.dp,
-                vertical = 8.dp
-            )
-            .clickableWithoutRipple { selectState.value = !selectState.value },
-        text = text,
-        fontFamily = pretendard,
-        fontWeight = Medium,
-        fontSize = 12.sp,
-        letterSpacing = 0.sp,
-        color = textColorState.value
-    )
 }
 
 @Composable
