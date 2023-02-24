@@ -7,7 +7,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.lazy.LazyRow
@@ -27,6 +26,7 @@ import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
@@ -71,6 +72,8 @@ class WritingReviewActivity : BaseComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         addImageLauncher = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uris ->
             uris?.let { _ ->
@@ -155,14 +158,21 @@ private fun WritingReviewActivityContent(
     onClickSendReview: () -> Unit
 ) {
     val scrollState = rememberScrollState()
-    LaunchedEffect(key1 = scrollState.maxValue) { scrollState.scrollBy(100f) }
+    val imeState = remember { mutableStateOf(false) }
+    LaunchedEffect(key1 = remember { derivedStateOf { scrollState.maxValue } }.value) {
+        if (imeState.value) {
+            scrollState.animateScrollTo(scrollState.maxValue)
+        }
+    }
 
     Column(
         modifier = Modifier
+            .windowInsetsPadding(insets = WindowInsets.systemBars.only(sides = WindowInsetsSides.Vertical))
+            .imePadding()
             .fillMaxWidth()
             .verticalScroll(state = scrollState)
             .background(color = Color.White)
-            .addFocusCleaner(LocalFocusManager.current)
+            .addFocusCleaner(focusManager = LocalFocusManager.current)
     ) {
         ScreenHeader(header = "리뷰 작성하기")
 
@@ -383,7 +393,8 @@ private fun WritingReviewActivityContent(
 
             for (i in imageStateList.indices.reversed()) {
                 item {
-                    ImagePlaceHolder(image = imageStateList[i],
+                    ImagePlaceHolder(
+                        image = imageStateList[i],
                         onClick = { replaceImage(i) },
                         onClickRemove = { removeImage(i) }
                     )
@@ -409,7 +420,8 @@ private fun WritingReviewActivityContent(
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 262.dp),
+                        .heightIn(min = 262.dp)
+                        .onFocusEvent { event -> imeState.value = event.isFocused },
                     value = contentTextState.value,
                     onValueChange = { contentTextState.value = it },
                     textStyle = TextStyle(
@@ -425,10 +437,11 @@ private fun WritingReviewActivityContent(
 
         BPMSpacer(height = 50.dp)
 
-        RoundedCornerButton(modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth()
-            .height(48.dp),
+        RoundedCornerButton(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+                .height(48.dp),
             text = "저장하기",
             textColor = Color.Black,
             buttonColor = MainGreenColor,
@@ -448,13 +461,18 @@ private fun ImagePlaceHolder(
     onClickRemove: (() -> Unit)? = null
 ) {
     val imageState = remember { mutableStateOf(image) }
+    val focusManager = LocalFocusManager.current
 
     Box(modifier = Modifier.size(105.dp)) {
         Box(modifier = Modifier
             .size(100.dp)
             .background(color = GrayColor10)
             .align(BottomStart)
-            .clickable { onClick() }) {
+            .clickable {
+                onClick()
+                focusManager.clearFocus()
+            }
+        ) {
             if (imageState.value != null) {
                 Image(
                     bitmap = imageState.value!!,
@@ -476,7 +494,8 @@ private fun ImagePlaceHolder(
                 .size(20.dp)
                 .background(color = Color.White)
                 .align(TopEnd)
-                .clickableWithoutRipple { onClickRemove?.invoke() }) {
+                .clickableWithoutRipple { onClickRemove?.invoke() }
+            ) {
                 Icon(
                     modifier = Modifier
                         .size(8.dp)
