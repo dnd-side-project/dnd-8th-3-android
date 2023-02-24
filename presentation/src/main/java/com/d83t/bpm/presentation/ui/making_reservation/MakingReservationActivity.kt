@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
@@ -47,6 +48,7 @@ import com.d83t.bpm.presentation.compose.BPMSpacer
 import com.d83t.bpm.presentation.compose.RoundedCornerButton
 import com.d83t.bpm.presentation.compose.ScreenHeader
 import com.d83t.bpm.presentation.compose.theme.*
+import com.d83t.bpm.presentation.util.addFocusCleaner
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -99,6 +101,7 @@ private inline fun MakingReservationActivityContent(
             .fillMaxSize()
             .verticalScroll(state = scrollState)
             .background(color = Color.White)
+            .addFocusCleaner(LocalFocusManager.current)
             .nestedScroll(connection = object : NestedScrollConnection {
                 override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
                     return Velocity(0f, available.y)
@@ -610,6 +613,7 @@ private fun MakingReservationItemLayout(
     val expandState = remember { mutableStateOf(false) }
     val columnHeightState = animateDpAsState(targetValue = if (expandState.value) expandedHeight else 64.dp)
     val expandIconRotateState = animateFloatAsState(targetValue = if (expandState.value) 180f else 0f)
+    val focusManager = LocalFocusManager.current
 
     Column(
         modifier = Modifier
@@ -622,7 +626,10 @@ private fun MakingReservationItemLayout(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickableWithoutRipple { expandState.value = !expandState.value },
+                .clickableWithoutRipple {
+                    expandState.value = !expandState.value
+                    focusManager.clearFocus()
+                },
             horizontalArrangement = SpaceBetween
         ) {
             Row {

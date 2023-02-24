@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
@@ -49,6 +50,7 @@ import com.d83t.bpm.presentation.compose.RoundedCornerButton
 import com.d83t.bpm.presentation.compose.ScreenHeader
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.ui.register_studio.dummyKeywordChipList
+import com.d83t.bpm.presentation.util.addFocusCleaner
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import com.d83t.bpm.presentation.util.convertUriToBitmap
 import com.google.accompanist.flowlayout.FlowRow
@@ -160,6 +162,7 @@ private fun WritingReviewActivityContent(
             .fillMaxWidth()
             .verticalScroll(state = scrollState)
             .background(color = Color.White)
+            .addFocusCleaner(LocalFocusManager.current)
     ) {
         ScreenHeader(header = "리뷰 작성하기")
 
