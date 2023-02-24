@@ -140,10 +140,10 @@ inline fun OutLinedRoundedCornerButton(
 @Composable
 inline fun LikeButton(
     isLiked: MutableState<Boolean>,
-    crossinline onClick:() -> Unit
+    crossinline onClick: () -> Unit
 ) {
     val buttonColorState = animateColorAsState(targetValue = if (isLiked.value) Color.Black else Color.White)
-    val contentColorState = animateColorAsState(targetValue = if(isLiked.value) MainGreenColor else Color.Black)
+    val contentColorState = animateColorAsState(targetValue = if (isLiked.value) MainGreenColor else Color.Black)
 
     Box(
         modifier = Modifier
@@ -200,16 +200,14 @@ inline fun LikeButton(
 @Composable
 fun KeywordChip(
     text: String,
-    isChosen: Boolean
+    isChosen: Boolean = false
 ) {
     val selectState = remember { mutableStateOf(isChosen) }
-    val backgroundColorState = animateColorAsState(targetValue = if (selectState.value) MainGreenColor else GrayColor9)
-    val textColorState = animateColorAsState(targetValue = if (selectState.value) Color.Black else GrayColor4)
 
     Text(
         modifier = Modifier
             .clip(RoundedCornerShape(60.dp))
-            .background(color = backgroundColorState.value)
+            .background(color = if (selectState.value) MainGreenColor else GrayColor9)
             .padding(
                 horizontal = 12.dp,
                 vertical = 8.dp
@@ -220,6 +218,6 @@ fun KeywordChip(
         fontWeight = FontWeight.Medium,
         fontSize = 12.sp,
         letterSpacing = 0.sp,
-        color = textColorState.value
+        color = if (selectState.value) Color.Black else GrayColor4
     )
 }
