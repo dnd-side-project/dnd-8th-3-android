@@ -12,6 +12,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterStart
@@ -25,10 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.d83t.bpm.presentation.R
-import com.d83t.bpm.presentation.compose.theme.GrayColor8
-import com.d83t.bpm.presentation.compose.theme.GrayColor9
-import com.d83t.bpm.presentation.compose.theme.MainGreenColor
-import com.d83t.bpm.presentation.compose.theme.pretendard
+import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 
 @Composable
@@ -196,4 +195,31 @@ inline fun LikeButton(
             )
         }
     }
+}
+
+@Composable
+fun KeywordChip(
+    text: String,
+    isChosen: Boolean
+) {
+    val selectState = remember { mutableStateOf(isChosen) }
+    val backgroundColorState = animateColorAsState(targetValue = if (selectState.value) MainGreenColor else GrayColor9)
+    val textColorState = animateColorAsState(targetValue = if (selectState.value) Color.Black else GrayColor4)
+
+    Text(
+        modifier = Modifier
+            .clip(RoundedCornerShape(60.dp))
+            .background(color = backgroundColorState.value)
+            .padding(
+                horizontal = 12.dp,
+                vertical = 8.dp
+            )
+            .clickableWithoutRipple { selectState.value = !selectState.value },
+        text = text,
+        fontFamily = pretendard,
+        fontWeight = FontWeight.Medium,
+        fontSize = 12.sp,
+        letterSpacing = 0.sp,
+        color = textColorState.value
+    )
 }
