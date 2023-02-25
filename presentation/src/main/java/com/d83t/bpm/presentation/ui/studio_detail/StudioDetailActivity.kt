@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -94,7 +94,6 @@ private inline fun StudioDetailActivityContent(
 ) {
     val scrollState = rememberScrollState()
     val tabState = remember { mutableStateOf(0) }
-    val tabs = listOf("상품설명", "리뷰")
     val scope = rememberCoroutineScope()
     val showExpandedKeywordColumn = remember { mutableStateOf(false) }
     val keywordColumnHeightState = animateDpAsState(targetValue = if (showExpandedKeywordColumn.value) 474.dp else 138.dp)
@@ -641,39 +640,60 @@ private inline fun StudioDetailActivityContent(
         Column {
             ScreenHeader("스튜디오 이름")
 
-            TabRow(
-                modifier = Modifier.height(40.dp),
-                selectedTabIndex = tabState.value,
-                backgroundColor = Color.White,
-                indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
-                        modifier = Modifier.tabIndicatorOffset(tabPositions[tabState.value]),
-                        color = Color.Black,
-                        height = 3.dp
-                    )
-                }
-            ) {
-                tabs.forEachIndexed { index, tabName ->
-                    Tab(
-                        text = {
-                            Text(
-                                text = tabName,
-                                fontWeight = SemiBold,
-                                fontSize = 15.sp,
-                                letterSpacing = 0.sp
-                            )
-                        },
-                        selected = tabState.value == index,
-                        onClick = {
-                            tabState.value = index
-                            scope.launch { scrollState.animateScrollTo(if (index == 0) 0 else studioDetailInfoHeightState.value) }
-                        },
-                        selectedContentColor = Color.Black,
-                        unselectedContentColor = GrayColor6
-                    )
-                }
+            Row(modifier = Modifier.fillMaxWidth()) {
+                StudioDetailTab(
+                    modifier = Modifier.weight(1f),
+                    text = "상품설명",
+                    tabIndex = 0,
+                    tabState = tabState,
+                    onClick = {
+                        tabState.value = 0
+                        scope.launch { scrollState.animateScrollTo(0) }
+                    }
+                )
+
+                StudioDetailTab(
+                    modifier = Modifier.weight(1f),
+                    text = "리뷰",
+                    tabIndex = 1,
+                    tabState = tabState,
+                    onClick = {
+                        tabState.value = 1
+                        scope.launch { scrollState.animateScrollTo(studioDetailInfoHeightState.value) }
+                    }
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun StudioDetailTab(
+    modifier: Modifier,
+    text: String,
+    tabIndex: Int,
+    tabState: MutableState<Int>,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .height(40.dp)
+            .clickable { onClick() }
+    ) {
+        Text(
+            modifier = Modifier.align(Center),
+            text = text,
+            fontWeight = SemiBold,
+            fontSize = 15.sp,
+            letterSpacing = 0.sp,
+            color = if (tabState.value == tabIndex) Color.Black else GrayColor6
+        )
+
+        Divider(
+            modifier = Modifier.align(BottomCenter),
+            thickness = 2.dp,
+            color = if (tabState.value == tabIndex) Color.Black else Color.White
+        )
     }
 }
 

@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
@@ -606,7 +605,6 @@ private fun MakingReservationItemLayout(
 ) {
     val expandState = remember { mutableStateOf(false) }
     val columnHeightState = animateDpAsState(targetValue = if (expandState.value) expandedHeight else 64.dp)
-    val expandIconRotateState = animateFloatAsState(targetValue = if (expandState.value) 180f else 0f)
     val focusManager = LocalFocusManager.current
 
     Column(
@@ -652,7 +650,7 @@ private fun MakingReservationItemLayout(
             Icon(
                 modifier = Modifier
                     .size(24.dp)
-                    .rotate(expandIconRotateState.value),
+                    .rotate(if (expandState.value) 180f else 0f),
                 painter = painterResource(id = R.drawable.ic_arrow_expand_0),
                 contentDescription = "expandItemIcon"
             )
