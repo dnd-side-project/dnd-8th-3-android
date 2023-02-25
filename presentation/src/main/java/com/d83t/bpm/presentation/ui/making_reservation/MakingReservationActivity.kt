@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -49,6 +48,7 @@ import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.compose.BPMSpacer
 import com.d83t.bpm.presentation.compose.RoundedCornerButton
 import com.d83t.bpm.presentation.compose.ScreenHeader
+import com.d83t.bpm.presentation.compose.TextFieldColorProvider
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.addFocusCleaner
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
@@ -547,7 +547,7 @@ private inline fun MakingReservationActivityContent(
                         .fillMaxWidth()
                         .height(110.dp)
                 ) {
-                    CompositionLocalProvider(LocalTextSelectionColors.provides(textSelectionColor())) {
+                    TextFieldColorProvider {
                         TextField(
                             modifier = Modifier
                                 .fillMaxWidth()

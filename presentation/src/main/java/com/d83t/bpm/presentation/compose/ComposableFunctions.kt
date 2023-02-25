@@ -2,18 +2,14 @@ package com.d83t.bpm.presentation.compose
 
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterStart
@@ -27,10 +23,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.d83t.bpm.presentation.R
-import com.d83t.bpm.presentation.compose.theme.GrayColor4
-import com.d83t.bpm.presentation.compose.theme.GrayColor8
-import com.d83t.bpm.presentation.compose.theme.GrayColor9
-import com.d83t.bpm.presentation.compose.theme.MainGreenColor
+import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 
 @Composable
@@ -66,6 +59,13 @@ fun ScreenHeader(header: String) {
             thickness = 1.dp,
             color = GrayColor8
         )
+    }
+}
+
+@Composable
+fun TextFieldColorProvider(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalTextSelectionColors.provides(textSelectionColor())) {
+        content()
     }
 }
 
