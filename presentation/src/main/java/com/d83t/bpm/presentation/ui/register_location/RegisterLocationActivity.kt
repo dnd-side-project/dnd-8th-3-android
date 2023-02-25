@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -30,8 +31,10 @@ import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.compose.BPMSpacer
 import com.d83t.bpm.presentation.compose.RoundedCornerButton
 import com.d83t.bpm.presentation.compose.ScreenHeader
+import com.d83t.bpm.presentation.compose.TextFieldColorProvider
 import com.d83t.bpm.presentation.compose.theme.BPMTheme
 import com.d83t.bpm.presentation.compose.theme.GrayColor14
+import com.d83t.bpm.presentation.compose.theme.GrayColor3
 import com.d83t.bpm.presentation.compose.theme.MainGreenColor
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import net.daum.mf.map.api.MapPoint
@@ -87,22 +90,25 @@ private fun RegisterLocationActivityContent(
                     .height(34.dp)
             ) {
                 Box {
-                    BasicTextField(
-                        modifier = Modifier
-                            .padding(end = 42.dp)
-                            .fillMaxWidth()
-                            .align(Center),
-                        value = searchTextState.value,
-                        onValueChange = { searchTextState.value = it },
-                        textStyle = TextStyle(
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 13.sp,
-                            letterSpacing = 0.sp,
-                            color = Color.Black
-                        ),
-                        singleLine = true,
-                        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
-                    )
+                    TextFieldColorProvider {
+                        BasicTextField(
+                            modifier = Modifier
+                                .padding(end = 42.dp)
+                                .fillMaxWidth()
+                                .align(Center),
+                            value = searchTextState.value,
+                            onValueChange = { searchTextState.value = it },
+                            textStyle = TextStyle(
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 13.sp,
+                                letterSpacing = 0.sp,
+                                color = Color.Black
+                            ),
+                            cursorBrush = SolidColor(GrayColor3),
+                            singleLine = true,
+                            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
+                        )
+                    }
 
                     Icon(
                         modifier = Modifier

@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -36,10 +37,7 @@ import androidx.core.view.WindowCompat
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.base.BaseViewModel
-import com.d83t.bpm.presentation.compose.BPMSpacer
-import com.d83t.bpm.presentation.compose.KeywordChip
-import com.d83t.bpm.presentation.compose.RoundedCornerButton
-import com.d83t.bpm.presentation.compose.ScreenHeader
+import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.addFocusCleaner
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
@@ -388,22 +386,25 @@ private fun RegisterTextField(
             BPMSpacer(height = 14.dp)
 
             Box {
-                BasicTextField(
-                    modifier = Modifier
-                        .padding(bottom = 4.dp)
-                        .fillMaxWidth(),
-                    value = textState.value,
-                    onValueChange = { textState.value = it },
-                    textStyle = TextStyle(
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 13.sp,
-                        letterSpacing = 0.sp,
-                        color = Color.Black
-                    ),
-                    singleLine = singleLine,
-                    keyboardOptions = keyboardOptions,
-                    keyboardActions = keyboardActions
-                )
+                TextFieldColorProvider {
+                    BasicTextField(
+                        modifier = Modifier
+                            .padding(bottom = 4.dp)
+                            .fillMaxWidth(),
+                        value = textState.value,
+                        onValueChange = { textState.value = it },
+                        textStyle = TextStyle(
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 13.sp,
+                            letterSpacing = 0.sp,
+                            color = Color.Black
+                        ),
+                        cursorBrush = SolidColor(GrayColor3),
+                        singleLine = singleLine,
+                        keyboardOptions = keyboardOptions,
+                        keyboardActions = keyboardActions
+                    )
+                }
 
                 Divider(
                     modifier = Modifier
