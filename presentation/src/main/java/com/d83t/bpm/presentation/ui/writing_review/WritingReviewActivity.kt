@@ -7,8 +7,10 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
+import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,7 +31,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -68,6 +72,7 @@ class WritingReviewActivity : BaseComponentActivity() {
     private var imageStateList = SnapshotStateList<ImageBitmap>()
     private var replaceImageIndex = -1
     private val contentTextState = mutableStateOf("")
+    private val ratingState = mutableStateOf(0f)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,6 +124,7 @@ class WritingReviewActivity : BaseComponentActivity() {
                 WritingReviewActivityContent(
                     imageStateList = imageStateList,
                     contentTextState = contentTextState,
+                    ratingState = ratingState,
                     addImage = { addImageLauncher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
                     replaceImage = { index ->
                         replaceImageIndex = index
@@ -151,6 +157,7 @@ class WritingReviewActivity : BaseComponentActivity() {
 private fun WritingReviewActivityContent(
     imageStateList: SnapshotStateList<ImageBitmap>,
     contentTextState: MutableState<String>,
+    ratingState: MutableState<Float>,
     addImage: () -> Unit,
     replaceImage: (Int) -> Unit,
     removeImage: (Int) -> Unit,
@@ -285,15 +292,48 @@ private fun WritingReviewActivityContent(
                 .fillMaxWidth()
                 .height(100.dp)
         ) {
-            Row(modifier = Modifier.align(Center)) {
-                repeat(5) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_star_large),
-                        contentDescription = "starIcon",
-                        tint = GrayColor8
+            val ratingDraggableAreaWidthState = remember { mutableStateOf(0) }
+
+            Row(
+                modifier = Modifier.align(Center),
+                horizontalArrangement = spacedBy(8.dp)
+            ) {
+                for (i in 1..5) {
+                    Image(
+                        modifier = Modifier.size(36.dp),
+                        painter = painterResource(
+                            id = if (i.toFloat() <= ratingState.value) R.drawable.ic_star_large_filled
+                            else if (i.toFloat() > ratingState.value && ratingState.value > i - 1) R.drawable.ic_star_large_half
+                            else R.drawable.ic_star_large_empty
+                        ),
+                        contentDescription = "starIcon"
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .align(Center)
+                    .onGloballyPositioned { coordinates -> ratingDraggableAreaWidthState.value = coordinates.size.width }
+                    .pointerInput(Unit) {
+                        detectDragGestures { change, _ ->
+                            ratingState.value = if (change.position.x >= ratingDraggableAreaWidthState.value) 5f
+                            else if (change.position.x <= 0) 0f
+                            else (change.position.x / ratingDraggableAreaWidthState.value) * 5
+                        }
+                    }
+            ) {
+                for (i in 1..10) {
+                    Box(
+                        modifier = Modifier
+                            .width(18.dp)
+                            .height(36.dp)
+                            .clickableWithoutRipple { ratingState.value = i * 0.5f }
                     )
 
-                    BPMSpacer(width = 8.dp)
+                    if (i % 2 == 0 && i != 10) {
+                        BPMSpacer(width = 8.dp)
+                    }
                 }
             }
         }
