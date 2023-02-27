@@ -412,7 +412,7 @@ private fun WritingReviewActivityContent(
         BPMSpacer(height = 15.dp)
 
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
             if (imageStateList.size < 5) {
@@ -437,39 +437,13 @@ private fun WritingReviewActivityContent(
 
         BPMSpacer(height = 20.dp)
 
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = SpaceBetween,
-            verticalAlignment = Alignment.Bottom
-        ) {
-            Text(
-                text = "바디프로필 촬영 경험담을 들려주세요",
-                fontWeight = Medium,
-                fontSize = 12.sp,
-                letterSpacing = 0.sp,
-                color = GrayColor4
-            )
-
-            Text(
-                text = "0/300",
-                fontWeight = Medium,
-                fontSize = 10.sp,
-                letterSpacing = 0.sp,
-                color = GrayColor4
-            )
-        }
-
-        BPMSpacer(height = 12.dp)
-
         BPMTextField(
             modifier = Modifier.padding(horizontal = 16.dp),
             textState = contentTextState,
+            label = "바디프로필 촬영 경험담을 들려주세요",
+            limit = 300,
             minHeight = 262.dp,
-            hint = "내용을 입력해주세요.",
-            hintColor = GrayColor6,
-            borderColor = GrayColor6
+            hint = "내용을 입력해주세요."
         )
 
         BPMSpacer(height = 50.dp)
