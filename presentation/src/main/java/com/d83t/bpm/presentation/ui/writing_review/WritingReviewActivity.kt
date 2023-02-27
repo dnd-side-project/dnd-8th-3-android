@@ -21,6 +21,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -403,7 +404,7 @@ private fun WritingReviewActivityContent(
 
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = "사진과 간단한 후기를 적어주세요",
+            text = "사진과 간단한 후기를 적어주세요 (최대 5장)",
             fontWeight = Medium,
             fontSize = 12.sp,
             letterSpacing = 0.2.sp,
@@ -438,6 +439,32 @@ private fun WritingReviewActivityContent(
                     )
                 }
             }
+        }
+
+        BPMSpacer(height = 20.dp)
+
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = SpaceBetween,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Text(
+                text = "바디프로필 촬영 경험담을 들려주세요",
+                fontWeight = Medium,
+                fontSize = 12.sp,
+                letterSpacing = 0.sp,
+                color = GrayColor4
+            )
+
+            Text(
+                text = "0/300",
+                fontWeight = Medium,
+                fontSize = 10.sp,
+                letterSpacing = 0.sp,
+                color = GrayColor4
+            )
         }
 
         BPMSpacer(height = 12.dp)
@@ -517,7 +544,11 @@ private fun ImagePlaceHolder(
                     contentScale = ContentScale.Crop
                 )
             } else {
-                // TODO : Show Icon
+                Image(
+                    modifier = Modifier.align(Center),
+                    painter = painterResource(id = R.drawable.ic_add_image),
+                    contentDescription = "addImage"
+                )
             }
         }
 
