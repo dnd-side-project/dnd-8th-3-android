@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
+import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -20,11 +21,13 @@ import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale.Companion.Crop
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
@@ -105,7 +108,7 @@ private inline fun StudioDetailActivityContent(
     val showReviewOrderByLike = remember { mutableStateOf(true) }
     val studioDetailInfoHeightState = remember { mutableStateOf(1) }
 
-    tabState.value = if (remember { derivedStateOf { scrollState.value > studioDetailInfoHeightState.value } }.value) 1 else 0
+    tabState.value = if (remember { derivedStateOf { scrollState.value >= studioDetailInfoHeightState.value } }.value) 1 else 0
 
     Box(modifier = Modifier.background(color = Color.White)) {
         Column(
@@ -366,6 +369,55 @@ private inline fun StudioDetailActivityContent(
                                 .height(180.dp)
                                 .clickableWithoutRipple { onClickMap() }
                         )
+
+                        Box(
+                            modifier = Modifier
+                                .padding(top = 24.dp)
+                                .shadow(
+                                    elevation = 8.dp,
+                                    shape = RoundedCornerShape(500.dp)
+                                )
+                                .clip(shape = RoundedCornerShape(500.dp))
+                                .border(
+                                    width = 1.dp,
+                                    color = GrayColor3,
+                                    shape = RoundedCornerShape(500.dp)
+                                )
+                                .height(36.dp)
+                                .background(color = Color.White)
+                                .align(TopEnd)
+                                .clickable {
+                                    scope.launch {
+                                        tabState.value = 1
+                                        scrollState.animateScrollTo(studioDetailInfoHeightState.value)
+                                    }
+                                },
+                        ) {
+                            Row(
+                                modifier = Modifier.align(Center),
+                                horizontalArrangement = spacedBy(4.dp),
+                                verticalAlignment = CenterVertically
+                            ) {
+                                BPMSpacer(width = 14.dp)
+
+                                Text(
+                                    modifier = Modifier.padding(vertical = 12.dp),
+                                    text = "리뷰 바로 작성하기",
+                                    fontWeight = SemiBold,
+                                    fontSize = 12.sp,
+                                    letterSpacing = 0.sp,
+                                    style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+                                )
+
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_arrow_down_small),
+                                    contentDescription = "downToReviewIcon",
+                                    tint = GrayColor6
+                                )
+
+                                BPMSpacer(width = 14.dp)
+                            }
+                        }
                     }
 
                     BPMSpacer(height = 12.dp)
