@@ -20,13 +20,12 @@ import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ContentScale.Companion.Crop
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
@@ -56,10 +55,13 @@ class StudioDetailActivity : BaseComponentActivity() {
     override val viewModel: BaseViewModel
         get() = TODO("Not yet implemented")
 
+    private val studioLikeState by lazy { mutableStateOf(false) }
+
     override fun initUi() {
         setContent {
             BPMTheme {
                 StudioDetailActivityContent(
+                    studioLikeState = studioLikeState,
                     onClickCallButton = {
 
                     },
@@ -86,6 +88,7 @@ class StudioDetailActivity : BaseComponentActivity() {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 private inline fun StudioDetailActivityContent(
+    studioLikeState: MutableState<Boolean>,
     crossinline onClickCallButton: () -> Unit,
     crossinline onClickInfoEditSuggestion: () -> Unit,
     crossinline onClickMap: () -> Unit,
@@ -118,21 +121,21 @@ private inline fun StudioDetailActivityContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1f)
+                        .aspectRatio(0.85f)
                 ) {
                     HorizontalPager(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1f),
+                            .aspectRatio(0.85f),
                         count = 1
                     ) {
                         Image(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .aspectRatio(1f),
+                                .aspectRatio(0.85f),
                             painter = painterResource(id = R.drawable.dummy_studio),
                             contentDescription = "studioImage",
-                            contentScale = ContentScale.Fit
+                            contentScale = Crop
                         )
                     }
 
@@ -145,13 +148,13 @@ private inline fun StudioDetailActivityContent(
                             .clip(RoundedCornerShape(40.dp))
                             .width(42.dp)
                             .height(25.dp)
-                            .background(color = FilteredGrayColor)
+                            .background(color = FilteredWhiteColor)
                             .align(BottomStart)
                     ) {
                         Text(
                             modifier = Modifier.align(Center),
                             text = "1/1",
-                            fontWeight = FontWeight.Normal,
+                            fontWeight = Normal,
                             fontSize = 12.sp,
                             letterSpacing = 2.sp
                         )
@@ -169,7 +172,7 @@ private inline fun StudioDetailActivityContent(
                         Row(verticalAlignment = CenterVertically) {
                             Text(
                                 text = "서울",
-                                fontWeight = FontWeight.Normal,
+                                fontWeight = Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp
                             )
@@ -181,7 +184,7 @@ private inline fun StudioDetailActivityContent(
 
                             Text(
                                 text = "서초구",
-                                fontWeight = FontWeight.Normal,
+                                fontWeight = Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp
                             )
@@ -191,7 +194,7 @@ private inline fun StudioDetailActivityContent(
 
                         Text(
                             text = "스튜디오 이름",
-                            fontWeight = FontWeight.SemiBold,
+                            fontWeight = SemiBold,
                             fontSize = 19.sp,
                             letterSpacing = 0.sp
                         )
@@ -245,13 +248,13 @@ private inline fun StudioDetailActivityContent(
                         }
                     }
 
-                    Icon(
+                    Image(
                         modifier = Modifier
-                            .size(24.dp)
-                            .align(TopEnd),
-                        painter = painterResource(id = R.drawable.ic_heart),
-                        contentDescription = "heartIcon",
-                        tint = GrayColor8
+                            .size(22.dp)
+                            .align(TopEnd)
+                            .clickableWithoutRipple { studioLikeState.value = !studioLikeState.value },
+                        painter = painterResource(id = if (studioLikeState.value) R.drawable.ic_heart_active else R.drawable.ic_heart_inactive),
+                        contentDescription = "heartImage"
                     )
                 }
 
@@ -291,7 +294,7 @@ private inline fun StudioDetailActivityContent(
                     )
 
                     Text(
-                        modifier = Modifier.clickable { onClickInfoEditSuggestion() },
+                        modifier = Modifier.clickableWithoutRipple { onClickInfoEditSuggestion() },
                         text = "정보수정 제안",
                         fontWeight = Medium,
                         fontSize = 14.sp,
@@ -350,7 +353,7 @@ private inline fun StudioDetailActivityContent(
                         ) {
                             Image(
                                 modifier = Modifier
-                                    .size(30.dp)
+                                    .size(36.dp)
                                     .align(CenterHorizontally),
                                 painter = painterResource(id = R.drawable.ic_marker),
                                 contentDescription = "mapMarkerIcon"
@@ -393,7 +396,7 @@ private inline fun StudioDetailActivityContent(
                     }
                 }
 
-                BPMSpacer(height = 24.dp)
+                BPMSpacer(height = 25.dp)
 
                 Divider(
                     thickness = 8.dp,
@@ -460,7 +463,7 @@ private inline fun StudioDetailActivityContent(
                     )
                 }
 
-                BPMSpacer(height = 24.dp)
+                BPMSpacer(height = 25.dp)
 
                 Divider(
                     thickness = 8.dp,
@@ -535,7 +538,7 @@ private inline fun StudioDetailActivityContent(
                     }
                 }
 
-                BPMSpacer(height = 24.dp)
+                BPMSpacer(height = 25.dp)
 
                 Divider(
                     thickness = 8.dp,
@@ -560,7 +563,7 @@ private inline fun StudioDetailActivityContent(
                     )
 
                     Text(
-                        text = "후기 작성하기",
+                        text = "리뷰 작성하기",
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp,
@@ -631,9 +634,46 @@ private inline fun StudioDetailActivityContent(
 
                 Divider(color = GrayColor13)
 
-                listOf(true, false, true, true, false).forEach { review ->
-                    Review(review)
-                } // dummy
+                Box {
+                    Column {
+                        listOf(true, false, true, true, false).forEach { review ->
+                            ReviewComposable(review)
+                        } // dummy
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    listOf(
+                                        Color(0X53FFFFFF),
+                                        Color(0X73FFFFFF),
+                                        Color(0XA2FFFFFF),
+                                        Color(0XD9FFFFFF),
+                                        Color(0XF2FFFFFF),
+                                    )
+                                )
+                            )
+                            .align(BottomCenter)
+                    ) {
+                        RoundedCornerButton(
+                            modifier = Modifier
+                                .padding(
+                                    vertical = 12.dp,
+                                    horizontal = 16.dp
+                                )
+                                .fillMaxWidth()
+                                .height(48.dp)
+                                .align(BottomCenter),
+                            text = "더보기",
+                            textColor = Color.White,
+                            buttonColor = Color.Black,
+                            onClick = {}
+                        )
+                    }
+                }
             }
         }
 
@@ -775,116 +815,101 @@ private fun BestKeyword(
 }
 
 @Composable
-private fun Review(
+private fun ReviewComposable(
     isLiked: Boolean
 ) {
     val likeState = remember { mutableStateOf(isLiked) }
 
-    Column {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth()
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+    ) {
+        BPMSpacer(height = 16.dp)
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = SpaceBetween,
+            verticalAlignment = CenterVertically
         ) {
-            BPMSpacer(height = 15.dp)
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = SpaceBetween,
-                verticalAlignment = CenterVertically
-            ) {
-                Row(verticalAlignment = CenterVertically) {
-                    Image(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(id = R.drawable.default_profile_image),
-                        contentDescription = "profileImage"
-                    )
-
-                    BPMSpacer(width = 8.dp)
-
-                    Text(
-                        text = "닉네임",
-                        fontWeight = SemiBold,
-                        fontSize = 14.sp,
-                        letterSpacing = 0.sp
-                    )
-                }
-
-                Text(
-                    text = "2023.02.15",
-                    fontWeight = Medium,
-                    fontSize = 12.sp,
-                    letterSpacing = 0.5.sp
+            Row(verticalAlignment = CenterVertically) {
+                Image(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(id = R.drawable.default_profile_image),
+                    contentDescription = "profileImage"
                 )
-            }
 
-            BPMSpacer(height = 12.dp)
+                BPMSpacer(width = 8.dp)
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = SpaceBetween,
-                verticalAlignment = CenterVertically
-            ) {
                 Text(
-                    text = "스튜디오 이름",
-                    fontWeight = Medium,
+                    text = "닉네임",
+                    fontWeight = SemiBold,
                     fontSize = 14.sp,
                     letterSpacing = 0.sp
                 )
-
-                Row {
-                    repeat(5) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_star_small),
-                            contentDescription = "starIcon",
-                            tint = GrayColor6
-                        )
-
-                        BPMSpacer(width = 2.dp)
-                    }
-                }
-            }
-
-            Row(modifier = Modifier.padding(vertical = 14.dp)) {
-                repeat(5) { index ->
-                    Image(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(60.dp),
-                        painter = painterResource(id = R.drawable.dummy_studio),
-                        contentDescription = "reviewImage",
-                        contentScale = Crop
-                    )
-
-                    if (index != 4) {
-                        BPMSpacer(width = 4.dp)
-                    }
-                }
             }
 
             Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = "One, two, three, four Baby, got me looking so crazy 빠져버리는 daydream got me feeling you 너도 말해줄래 누가 내게 뭐라든 남들과는 달라 넌 Maybe you could be the one 날 믿어봐 한 번 I'm not looking for just fun Maybe I could be the one Oh baby 예민하대 나 lately 너 없이는 나 매일매일이 yeah 재미없어 어쩌지 I just want you Call my phone right now I just wanna hear you're mine",
-                fontWeight = Normal,
-                fontSize = 13.sp,
-                letterSpacing = 0.sp,
-                maxLines = 4,
-                lineHeight = 19.sp,
-                overflow = Ellipsis
-            )
-
-            BPMSpacer(height = 25.dp)
-
-            LikeButton(
-                isLiked = likeState,
-                onClick = { }
+                text = "2023.02.15",
+                fontWeight = Medium,
+                fontSize = 12.sp,
+                letterSpacing = 0.5.sp
             )
         }
 
-        BPMSpacer(height = 20.dp)
+        BPMSpacer(height = 12.dp)
 
-        Divider(color = GrayColor13)
+        Row {
+            repeat(5) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_star_small),
+                    contentDescription = "starIcon",
+                    tint = GrayColor6
+                )
+
+                BPMSpacer(width = 2.dp)
+            }
+        }
+
+        Row(modifier = Modifier.padding(vertical = 14.dp)) {
+            repeat(5) { index ->
+                Image(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(60.dp),
+                    painter = painterResource(id = R.drawable.dummy_studio),
+                    contentDescription = "reviewImage",
+                    contentScale = Crop
+                )
+
+                if (index != 4) {
+                    BPMSpacer(width = 4.dp)
+                }
+            }
+        }
+
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "One, two, three, four Baby, got me looking so crazy 빠져버리는 daydream got me feeling you 너도 말해줄래 누가 내게 뭐라든 남들과는 달라 넌 Maybe you could be the one 날 믿어봐 한 번 I'm not looking for just fun Maybe I could be the one Oh baby 예민하대 나 lately 너 없이는 나 매일매일이 yeah 재미없어 어쩌지 I just want you Call my phone right now I just wanna hear you're mine",
+            fontWeight = Normal,
+            fontSize = 13.sp,
+            letterSpacing = 0.sp,
+            maxLines = 4,
+            lineHeight = 19.sp,
+            overflow = Ellipsis
+        )
+
+        BPMSpacer(height = 25.dp)
+
+        LikeButton(
+            likeState = likeState,
+            onClick = { }
+        )
     }
+
+    BPMSpacer(height = 20.dp)
+
+    Divider(color = GrayColor13)
 }
 
 
@@ -892,6 +917,7 @@ private fun Review(
 @Composable
 private fun Preview() {
     StudioDetailActivityContent(
+        studioLikeState = remember { mutableStateOf(false) },
         onClickCallButton = { /*TODO*/ },
         onClickInfoEditSuggestion = { /*TODO*/ },
         onClickMap = { /*TODO*/ },

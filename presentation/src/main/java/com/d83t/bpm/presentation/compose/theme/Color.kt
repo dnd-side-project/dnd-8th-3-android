@@ -27,7 +27,7 @@ val GrayColor11 = Color(0xFFF5F6F6)
 val GrayColor12 = Color(0xFFFEFFFE)
 val GrayColor13 = Color(0xFFEEEEEE)
 val GrayColor14 = Color(0xCCAFAFAF)
-val FilteredGrayColor = Color(0xAAE6E6E7)
+val FilteredWhiteColor = Color(0xB3FFFFFF)
 
 @Composable
 fun textSelectionColor() = TextSelectionColors(
