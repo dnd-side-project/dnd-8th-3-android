@@ -1,8 +1,9 @@
 package com.d83t.bpm.presentation.compose
 
 import androidx.activity.ComponentActivity
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
@@ -139,24 +140,21 @@ inline fun OutLinedRoundedCornerButton(
 
 @Composable
 inline fun LikeButton(
-    isLiked: MutableState<Boolean>,
+    likeState: MutableState<Boolean>,
     crossinline onClick: () -> Unit
 ) {
-    val buttonColorState = animateColorAsState(targetValue = if (isLiked.value) Color.Black else Color.White)
-    val contentColorState = animateColorAsState(targetValue = if (isLiked.value) MainGreenColor else Color.Black)
-
     Box(
         modifier = Modifier
             .clip(shape = RoundedCornerShape(12.dp))
             .height(28.dp)
             .border(
                 width = 1.dp,
-                color = if (isLiked.value) Color.Black else GrayColor9,
+                color = if (likeState.value) Color.Black else GrayColor9,
                 shape = RoundedCornerShape(12.dp)
             )
-            .background(color = buttonColorState.value)
-            .clickable {
-                isLiked.value = !isLiked.value
+            .background(color = if (likeState.value) Color.Black else Color.White)
+            .clickableWithoutRipple {
+                likeState.value = !likeState.value
                 onClick()
             }
     ) {
@@ -169,7 +167,7 @@ inline fun LikeButton(
             Icon(
                 painter = painterResource(id = R.drawable.ic_like),
                 contentDescription = "likeIcon",
-                tint = contentColorState.value
+                tint = if (likeState.value) MainGreenColor else Color.Black
             )
 
             BPMSpacer(width = 4.dp)
@@ -179,7 +177,7 @@ inline fun LikeButton(
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp,
                 letterSpacing = 0.sp,
-                color = contentColorState.value
+                color = if (likeState.value) MainGreenColor else Color.Black
             )
 
             BPMSpacer(width = 4.dp)
@@ -189,7 +187,7 @@ inline fun LikeButton(
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp,
                 letterSpacing = 0.sp,
-                color = contentColorState.value
+                color = if (likeState.value) MainGreenColor else Color.Black
             )
         }
     }

@@ -158,7 +158,7 @@ private inline fun ReviewDetailActivityContent(
                     .clip(RoundedCornerShape(40.dp))
                     .width(42.dp)
                     .height(25.dp)
-                    .background(color = FilteredGrayColor)
+                    .background(color = FilteredWhiteColor)
                     .align(Alignment.BottomStart)
             ) {
                 Text(
@@ -199,7 +199,7 @@ private inline fun ReviewDetailActivityContent(
             BPMSpacer(height = 20.dp)
 
             LikeButton(
-                isLiked = likeState,
+                likeState = likeState,
                 onClick = { onClickLike() }
             )
         }
