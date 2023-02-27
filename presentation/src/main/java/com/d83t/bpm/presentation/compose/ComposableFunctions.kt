@@ -14,12 +14,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterStart
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,7 +35,7 @@ import com.d83t.bpm.presentation.util.clickableWithoutRipple
 fun ScreenHeader(header: String) {
     val context = LocalContext.current as ComponentActivity
 
-    Column(Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -215,4 +219,40 @@ fun KeywordChip(
         letterSpacing = 0.sp,
         color = if (selectState.value) Color.Black else GrayColor4
     )
+}
+
+@Composable
+fun ReviewKeywordChip(
+    text: String
+) {
+    Box(
+        modifier = Modifier
+            .clip(shape = RoundedCornerShape(60.dp))
+            .background(color = GrayColor9),
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(
+                    horizontal = 12.dp,
+                    vertical = 8.dp
+                ),
+            horizontalArrangement = Arrangement.spacedBy(3.dp),
+            verticalAlignment = CenterVertically
+        ) {
+            Text(
+                text = "🤔",
+                fontSize = 12.sp,
+                style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+            )
+
+            Text(
+                text = text,
+                fontWeight = Normal,
+                fontSize = 12.sp,
+                color = GrayColor3,
+                letterSpacing = 0.sp,
+                style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+            )
+        }
+    }
 }
