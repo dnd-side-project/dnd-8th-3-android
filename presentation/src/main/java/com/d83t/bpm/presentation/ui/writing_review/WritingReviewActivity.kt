@@ -14,11 +14,9 @@ import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -37,7 +35,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
@@ -49,10 +46,7 @@ import androidx.lifecycle.lifecycleScope
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.base.BaseViewModel
-import com.d83t.bpm.presentation.compose.BPMSpacer
-import com.d83t.bpm.presentation.compose.KeywordChip
-import com.d83t.bpm.presentation.compose.RoundedCornerButton
-import com.d83t.bpm.presentation.compose.ScreenHeader
+import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.ui.register_studio.dummyKeywordChipList
 import com.d83t.bpm.presentation.util.addFocusCleaner
@@ -469,35 +463,14 @@ private fun WritingReviewActivityContent(
 
         BPMSpacer(height = 12.dp)
 
-        Box(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth()
-                .heightIn(min = 262.dp)
-                .border(
-                    width = 1.dp,
-                    shape = RoundedCornerShape(6.dp),
-                    color = GrayColor6
-                )
-                .background(color = Color.White)
-        ) {
-            CompositionLocalProvider(LocalTextSelectionColors.provides(textSelectionColor())) {
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 262.dp),
-                    value = contentTextState.value,
-                    onValueChange = { contentTextState.value = it },
-                    textStyle = TextStyle(
-                        fontWeight = Normal,
-                        fontSize = 13.sp,
-                        letterSpacing = 0.sp,
-                        color = Color.Black
-                    ),
-                    colors = textFieldColors()
-                )
-            }
-        }
+        BPMTextField(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            textState = contentTextState,
+            minHeight = 262.dp,
+            hint = "내용을 입력해주세요.",
+            hintColor = GrayColor6,
+            borderColor = GrayColor6
+        )
 
         BPMSpacer(height = 50.dp)
 
