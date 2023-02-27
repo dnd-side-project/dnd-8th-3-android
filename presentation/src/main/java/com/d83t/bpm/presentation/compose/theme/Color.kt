@@ -31,15 +31,15 @@ val FilteredWhiteColor = Color(0xB3FFFFFF)
 
 @Composable
 fun textSelectionColor() = TextSelectionColors(
-    handleColor = GrayColor3,
-    backgroundColor = GrayColor6
+    handleColor = Color.Black,
+    backgroundColor = Color.Black
 )
 
 @Composable
 fun textFieldColors() = TextFieldDefaults.textFieldColors(
     textColor = Color.Black,
     backgroundColor = Color.White,
-    cursorColor = GrayColor3,
+    cursorColor = Color.Black,
     focusedIndicatorColor = Color.Transparent,
     unfocusedIndicatorColor = Color.Transparent,
     disabledIndicatorColor = Color.Transparent,

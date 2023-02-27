@@ -7,12 +7,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -25,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -142,6 +145,66 @@ inline fun OutLinedRoundedCornerButton(
             fontSize = 16.sp,
             letterSpacing = 0.sp
         )
+    }
+}
+
+@Composable
+fun BPMTextField(
+    modifier: Modifier,
+    textState: MutableState<String>,
+    minHeight: Dp,
+    hint: String? = null,
+    hintColor: Color? = null,
+    borderColor: Color,
+    singleLine: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = minHeight)
+            .border(
+                width = 1.dp,
+                shape = RoundedCornerShape(12.dp),
+                color = borderColor
+            )
+            .background(color = Color.White)
+    ) {
+        Row(verticalAlignment = CenterVertically) {
+            CompositionLocalProvider(LocalTextSelectionColors.provides(textSelectionColor())) {
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = minHeight),
+                    value = textState.value,
+                    onValueChange = { updatedText -> textState.value = updatedText },
+                    textStyle = TextStyle(
+                        fontWeight = Normal,
+                        fontSize = 13.sp,
+                        letterSpacing = 0.sp,
+                        color = Color.Black
+                    ),
+                    placeholder = {
+                        if (hint != null &&
+                            hintColor != null
+                        ) {
+                            Text(
+                                text = hint,
+                                fontWeight = Medium,
+                                fontSize = 13.sp,
+                                letterSpacing = 0.sp,
+                                color = hintColor
+                            )
+                        }
+                    },
+                    colors = textFieldColors(),
+                    singleLine = singleLine,
+                    keyboardOptions = keyboardOptions,
+                    keyboardActions = keyboardActions
+                )
+            }
+        }
     }
 }
 
@@ -276,7 +339,7 @@ inline fun LikeButton(
             modifier = Modifier
                 .padding(horizontal = 10.dp)
                 .align(Center),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = CenterVertically
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_like),
@@ -288,7 +351,7 @@ inline fun LikeButton(
 
             Text(
                 text = "좋아요",
-                fontWeight = FontWeight.Medium,
+                fontWeight = Medium,
                 fontSize = 12.sp,
                 letterSpacing = 0.sp,
                 color = if (likeState.value) MainGreenColor else Color.Black
