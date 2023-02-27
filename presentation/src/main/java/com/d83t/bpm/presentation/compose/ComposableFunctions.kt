@@ -15,6 +15,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -152,57 +153,83 @@ inline fun OutLinedRoundedCornerButton(
 fun BPMTextField(
     modifier: Modifier,
     textState: MutableState<String>,
+    label: String,
+    limit: Int,
     minHeight: Dp,
     hint: String? = null,
-    hintColor: Color? = null,
-    borderColor: Color,
     singleLine: Boolean = false,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = minHeight)
-            .border(
-                width = 1.dp,
-                shape = RoundedCornerShape(12.dp),
-                color = borderColor
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 3.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Text(
+                text = label,
+                fontWeight = Medium,
+                fontSize = 12.sp,
+                letterSpacing = 0.sp,
+                color = GrayColor4
             )
-            .background(color = Color.White)
-    ) {
-        Row(verticalAlignment = CenterVertically) {
-            CompositionLocalProvider(LocalTextSelectionColors.provides(textSelectionColor())) {
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = minHeight),
-                    value = textState.value,
-                    onValueChange = { updatedText -> textState.value = updatedText },
-                    textStyle = TextStyle(
-                        fontWeight = Normal,
-                        fontSize = 13.sp,
-                        letterSpacing = 0.sp,
-                        color = Color.Black
-                    ),
-                    placeholder = {
-                        if (hint != null &&
-                            hintColor != null
-                        ) {
-                            Text(
-                                text = hint,
-                                fontWeight = Medium,
-                                fontSize = 13.sp,
-                                letterSpacing = 0.sp,
-                                color = hintColor
-                            )
-                        }
-                    },
-                    colors = textFieldColors(),
-                    singleLine = singleLine,
-                    keyboardOptions = keyboardOptions,
-                    keyboardActions = keyboardActions
+
+            Text(
+                text = "${textState.value.length}/$limit",
+                fontWeight = Medium,
+                fontSize = 10.sp,
+                letterSpacing = 0.sp,
+                color = GrayColor4
+            )
+        }
+
+        BPMSpacer(height = 10.dp)
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = minHeight)
+                .border(
+                    width = 1.dp,
+                    shape = RoundedCornerShape(12.dp),
+                    color = if (textState.value.isNotEmpty()) GrayColor5 else GrayColor6
                 )
+                .background(color = Color.White)
+        ) {
+            Row(verticalAlignment = CenterVertically) {
+                CompositionLocalProvider(LocalTextSelectionColors.provides(textSelectionColor())) {
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = minHeight),
+                        value = textState.value,
+                        onValueChange = { updatedText -> textState.value = updatedText },
+                        textStyle = TextStyle(
+                            fontWeight = Normal,
+                            fontSize = 13.sp,
+                            letterSpacing = 0.sp,
+                            color = Color.Black
+                        ),
+                        placeholder = {
+                            if (hint != null) {
+                                Text(
+                                    text = hint,
+                                    fontWeight = Medium,
+                                    fontSize = 13.sp,
+                                    letterSpacing = 0.sp,
+                                    color = GrayColor6
+                                )
+                            }
+                        },
+                        colors = textFieldColors(),
+                        singleLine = singleLine,
+                        keyboardOptions = keyboardOptions,
+                        keyboardActions = keyboardActions
+                    )
+                }
             }
         }
     }
