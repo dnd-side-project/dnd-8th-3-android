@@ -35,7 +35,6 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -687,7 +686,7 @@ private inline fun StudioDetailActivityContent(
                 Divider(color = GrayColor13)
 
                 Box {
-                    Column {
+                    Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                         listOf(true, false, true, true, false).forEach { review ->
                             ReviewComposable(review)
                         } // dummy
@@ -865,105 +864,6 @@ private fun BestKeyword(
         )
     }
 }
-
-@Composable
-private fun ReviewComposable(
-    isLiked: Boolean
-) {
-    val likeState = remember { mutableStateOf(isLiked) }
-
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth()
-    ) {
-        BPMSpacer(height = 16.dp)
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = SpaceBetween,
-            verticalAlignment = CenterVertically
-        ) {
-            Row(verticalAlignment = CenterVertically) {
-                Image(
-                    modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = R.drawable.default_profile_image),
-                    contentDescription = "profileImage"
-                )
-
-                BPMSpacer(width = 8.dp)
-
-                Text(
-                    text = "닉네임",
-                    fontWeight = SemiBold,
-                    fontSize = 14.sp,
-                    letterSpacing = 0.sp
-                )
-            }
-
-            Text(
-                text = "2023.02.15",
-                fontWeight = Medium,
-                fontSize = 12.sp,
-                letterSpacing = 0.5.sp
-            )
-        }
-
-        BPMSpacer(height = 12.dp)
-
-        Row {
-            repeat(5) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_star_small),
-                    contentDescription = "starIcon",
-                    tint = GrayColor6
-                )
-
-                BPMSpacer(width = 2.dp)
-            }
-        }
-
-        Row(modifier = Modifier.padding(vertical = 14.dp)) {
-            repeat(5) { index ->
-                Image(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(60.dp),
-                    painter = painterResource(id = R.drawable.dummy_studio),
-                    contentDescription = "reviewImage",
-                    contentScale = Crop
-                )
-
-                if (index != 4) {
-                    BPMSpacer(width = 4.dp)
-                }
-            }
-        }
-
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "One, two, three, four Baby, got me looking so crazy 빠져버리는 daydream got me feeling you 너도 말해줄래 누가 내게 뭐라든 남들과는 달라 넌 Maybe you could be the one 날 믿어봐 한 번 I'm not looking for just fun Maybe I could be the one Oh baby 예민하대 나 lately 너 없이는 나 매일매일이 yeah 재미없어 어쩌지 I just want you Call my phone right now I just wanna hear you're mine",
-            fontWeight = Normal,
-            fontSize = 13.sp,
-            letterSpacing = 0.sp,
-            maxLines = 4,
-            lineHeight = 19.sp,
-            overflow = Ellipsis
-        )
-
-        BPMSpacer(height = 25.dp)
-
-        LikeButton(
-            likeState = likeState,
-            onClick = { }
-        )
-    }
-
-    BPMSpacer(height = 20.dp)
-
-    Divider(color = GrayColor13)
-}
-
 
 @Preview(showBackground = true)
 @Composable
