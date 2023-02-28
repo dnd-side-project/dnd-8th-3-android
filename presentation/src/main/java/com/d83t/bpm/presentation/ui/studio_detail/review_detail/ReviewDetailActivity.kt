@@ -1,4 +1,4 @@
-package com.d83t.bpm.presentation.ui.review_detail
+package com.d83t.bpm.presentation.ui.studio_detail.review_detail
 
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*

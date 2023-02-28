@@ -1,4 +1,4 @@
-package com.d83t.bpm.presentation.ui.register_location
+package com.d83t.bpm.presentation.ui.register_studio.register_location
 
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image

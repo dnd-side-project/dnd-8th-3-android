@@ -1,4 +1,4 @@
-package com.d83t.bpm.presentation.ui.writing_review
+package com.d83t.bpm.presentation.ui.studio_detail.writing_review
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
