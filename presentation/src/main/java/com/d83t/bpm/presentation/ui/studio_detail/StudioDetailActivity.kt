@@ -107,8 +107,8 @@ private inline fun StudioDetailActivityContent(
     val showExpandedKeywordColumn = remember { mutableStateOf(false) }
     val keywordColumnHeightState = animateDpAsState(targetValue = if (showExpandedKeywordColumn.value) 474.dp else 138.dp)
     val expandIconRotateState = animateFloatAsState(targetValue = if (showExpandedKeywordColumn.value) 180f else 0f)
-    val showImageReviewOnly = remember { mutableStateOf(false) }
-    val showReviewOrderByLike = remember { mutableStateOf(true) }
+    val showImageReviewOnlyState = remember { mutableStateOf(false) }
+    val showReviewOrderByLikeState = remember { mutableStateOf(true) }
     val studioDetailInfoHeightState = remember { mutableStateOf(1) }
     val reviewHeaderPositionState = remember { mutableStateOf(0f) }
 
@@ -554,98 +554,19 @@ private inline fun StudioDetailActivityContent(
             }
 
             Column {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth()
-                        .height(55.dp)
-                        .onGloballyPositioned { coordinates -> reviewHeaderPositionState.value = coordinates.positionInWindow().y },
-                    horizontalArrangement = SpaceBetween,
-                    verticalAlignment = CenterVertically
-                ) {
-                    Text(
-                        text = "업체 리뷰 120",
-                        fontWeight = SemiBold,
-                        fontSize = 16.sp,
-                        letterSpacing = 0.sp
-                    )
-
-                    Text(
-                        text = "리뷰 작성하기",
-                        fontWeight = Medium,
-                        fontSize = 14.sp,
-                        letterSpacing = 0.sp,
-                        color = GrayColor4
-                    )
-                }
-
-                Divider(color = GrayColor13)
-
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth()
-                        .height(55.dp),
-                    horizontalArrangement = SpaceBetween,
-                    verticalAlignment = CenterVertically
-                ) {
-                    Row(modifier = Modifier.clickableWithoutRipple { showImageReviewOnly.value = !showImageReviewOnly.value }) {
-                        Icon(
-                            modifier = Modifier.align(CenterVertically),
-                            painter = painterResource(id = R.drawable.ic_check_field),
-                            contentDescription = "checkFieldIcon",
-                            tint = if (showImageReviewOnly.value) Color.Black else GrayColor7
-                        )
-
-                        BPMSpacer(width = 8.dp)
-
-                        Text(
-                            text = "사진 리뷰만 보기",
-                            fontWeight = Medium,
-                            fontSize = 14.sp,
-                            letterSpacing = 0.sp
-                        )
-                    }
-
-                    Row {
-                        Text(
-                            modifier = Modifier.clickableWithoutRipple { showReviewOrderByLike.value = true },
-                            text = "좋아요순",
-                            fontWeight = Medium,
-                            fontSize = 14.sp,
-                            letterSpacing = 0.sp,
-                            color = if (showReviewOrderByLike.value) Color.Black else GrayColor6
-                        )
-
-                        BPMSpacer(width = 20.dp)
-
-                        Divider(
-                            modifier = Modifier
-                                .height(12.dp)
-                                .width(1.dp)
-                                .align(CenterVertically),
-                            color = GrayColor3
-                        )
-
-                        BPMSpacer(width = 20.dp)
-
-                        Text(
-                            modifier = Modifier.clickableWithoutRipple { showReviewOrderByLike.value = false },
-                            text = "최신순",
-                            fontWeight = Medium,
-                            fontSize = 14.sp,
-                            letterSpacing = 0.sp,
-                            color = if (showReviewOrderByLike.value) GrayColor6 else Color.Black
-                        )
-                    }
-                }
-
-                Divider(color = GrayColor13)
+                ReviewListHeader(
+                    modifier = Modifier.onGloballyPositioned { coordinates -> reviewHeaderPositionState.value = coordinates.positionInWindow().y },
+                    showImageReviewOnlyState = showImageReviewOnlyState,
+                    showReviewOrderByLikeState = showReviewOrderByLikeState
+                )
 
                 Box {
-                    Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                    Column {
                         listOf(true, false, true, true, false).forEach { review ->
-                            ReviewComposable(review)
+                            ReviewComposable(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                isLiked = review
+                            )
                         } // dummy
                     }
 
