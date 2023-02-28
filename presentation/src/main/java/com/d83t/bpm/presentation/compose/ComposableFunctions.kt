@@ -26,6 +26,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
@@ -275,11 +277,12 @@ fun BPMTextField(
 
 @Composable
 fun ReviewComposable(
+    modifier: Modifier = Modifier,
     isLiked: Boolean
 ) {
     val likeState = remember { mutableStateOf(isLiked) }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = modifier.fillMaxWidth()) {
         BPMSpacer(height = 16.dp)
 
         Row(
@@ -487,6 +490,100 @@ fun ReviewKeywordChip(
                 letterSpacing = 0.sp,
                 style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
             )
+        }
+    }
+}
+
+@Composable
+fun ReviewListHeader(
+    modifier: Modifier = Modifier,
+    showImageReviewOnlyState: MutableState<Boolean>,
+    showReviewOrderByLikeState: MutableState<Boolean>
+) {
+    Column {
+        Row(
+            modifier = modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+                .height(55.dp),
+            horizontalArrangement = SpaceBetween,
+            verticalAlignment = CenterVertically
+        ) {
+            Text(
+                text = "업체 리뷰 120",
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+                letterSpacing = 0.sp
+            )
+
+            Text(
+                text = "리뷰 작성하기",
+                fontWeight = Medium,
+                fontSize = 14.sp,
+                letterSpacing = 0.sp,
+                color = GrayColor4
+            )
+        }
+
+        Divider(color = GrayColor13)
+
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+                .height(55.dp),
+            horizontalArrangement = SpaceBetween,
+            verticalAlignment = CenterVertically
+        ) {
+            Row(modifier = Modifier.clickableWithoutRipple { showImageReviewOnlyState.value = !showImageReviewOnlyState.value }) {
+                Icon(
+                    modifier = Modifier.align(CenterVertically),
+                    painter = painterResource(id = R.drawable.ic_check_field),
+                    contentDescription = "checkFieldIcon",
+                    tint = if (showImageReviewOnlyState.value) Color.Black else GrayColor7
+                )
+
+                BPMSpacer(width = 8.dp)
+
+                Text(
+                    text = "사진 리뷰만 보기",
+                    fontWeight = Medium,
+                    fontSize = 14.sp,
+                    letterSpacing = 0.sp
+                )
+            }
+
+            Row {
+                Text(
+                    modifier = Modifier.clickableWithoutRipple { showReviewOrderByLikeState.value = true },
+                    text = "좋아요순",
+                    fontWeight = Medium,
+                    fontSize = 14.sp,
+                    letterSpacing = 0.sp,
+                    color = if (showReviewOrderByLikeState.value) Color.Black else GrayColor6
+                )
+
+                BPMSpacer(width = 20.dp)
+
+                Divider(
+                    modifier = Modifier
+                        .height(12.dp)
+                        .width(1.dp)
+                        .align(CenterVertically),
+                    color = GrayColor3
+                )
+
+                BPMSpacer(width = 20.dp)
+
+                Text(
+                    modifier = Modifier.clickableWithoutRipple { showReviewOrderByLikeState.value = false },
+                    text = "최신순",
+                    fontWeight = Medium,
+                    fontSize = 14.sp,
+                    letterSpacing = 0.sp,
+                    color = if (showReviewOrderByLikeState.value) GrayColor6 else Color.Black
+                )
+            }
         }
     }
 }
