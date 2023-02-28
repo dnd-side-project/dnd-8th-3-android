@@ -2,35 +2,26 @@ package com.d83t.bpm.presentation.ui.register_studio
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment.Companion.BottomCenter
-import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterEnd
+import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
-import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
@@ -40,9 +31,7 @@ import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.addFocusCleaner
-import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import com.google.accompanist.flowlayout.FlowRow
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 val dummyKeywordChipList = listOf(
@@ -116,8 +105,6 @@ private fun RegisterStudioActivityContent(
     onClickLocation: () -> Unit
 ) {
     val scrollState = rememberScrollState()
-    val detailInfoExpandState = remember { mutableStateOf(false) }
-    val detailInfoColumnHeightState = animateDpAsState(targetValue = if (detailInfoExpandState.value) 500.dp else 64.dp)
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
 
@@ -132,61 +119,62 @@ private fun RegisterStudioActivityContent(
     ) {
         ScreenHeader(header = "새 업체 등록하기")
 
-        BPMSpacer(height = 30.dp)
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .height(55.dp),
+            verticalAlignment = CenterVertically
+        ) {
+            Text(
+                text = "업체 정보",
+                textAlign = TextAlign.Center,
+                fontWeight = SemiBold,
+                fontSize = 16.sp,
+                letterSpacing = 0.sp
+            )
+
+            Text(
+                text = "*",
+                fontWeight = SemiBold,
+                fontSize = 16.sp,
+                letterSpacing = 0.sp,
+                color = Color.Red
+            )
+        }
+
+        Divider(color = GrayColor13)
+
+        BPMSpacer(height = 25.dp)
 
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            RegisterTextField(
-                title = "업체 이름",
+            BPMTextField(
                 textState = studioNameTextState,
-                singleLine = true
+                label = "업체 이름",
+                singleLine = true,
+                hint = "업체 이름을 입력해주세요"
             )
 
             BPMSpacer(height = 25.dp)
 
-            Text(
-                text = "위치",
-                fontWeight = SemiBold,
-                fontSize = 14.sp,
-                letterSpacing = 0.sp,
-                color = GrayColor3
+            BPMTextField(
+                textState = studioLocationTextState,
+                label = "위치",
+                hint = "업체 위치를 등록해주세요",
+                iconSize = 30.dp,
+                singleLine = true,
+                icon = {
+                    Icon(
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .size(30.dp)
+                            .align(CenterEnd),
+                        painter = painterResource(id = R.drawable.ic_location),
+                        contentDescription = "locationIcon",
+                        tint = GrayColor6
+                    )
+                },
+                onClick = { onClickLocation() }
             )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(36.dp)
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(bottom = 4.dp)
-                        .fillMaxWidth()
-                        .align(BottomCenter),
-                    text = studioLocationTextState.value,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 13.sp,
-                    letterSpacing = 0.sp,
-                    color = Color.Black
-                )
-
-                Icon(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .align(TopEnd)
-                        .clickableWithoutRipple { onClickLocation() },
-                    painter = painterResource(id = R.drawable.ic_location),
-                    contentDescription = "studioLocationIcon",
-                    tint = GrayColor6
-                )
-
-                Divider(
-                    modifier = Modifier
-                        .padding(top = 24.dp)
-                        .fillMaxWidth()
-                        .align(BottomCenter),
-                    color = GrayColor6,
-                    thickness = 1.dp
-                )
-            }
         }
 
         BPMSpacer(height = 30.dp)
@@ -196,7 +184,7 @@ private fun RegisterStudioActivityContent(
             color = GrayColor11
         )
 
-        BPMSpacer(height = 34.dp)
+        BPMSpacer(height = 20.dp)
 
         Column(
             modifier = Modifier
@@ -246,100 +234,66 @@ private fun RegisterStudioActivityContent(
             color = GrayColor11
         )
 
-        BPMSpacer(height = 14.dp)
-
-        Column(
+        Box(
             modifier = Modifier
+                .padding(horizontal = 16.dp)
                 .fillMaxWidth()
-                .height(detailInfoColumnHeightState.value)
+                .height(55.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth()
-                        .align(Center)
-                        .clickableWithoutRipple {
-                            detailInfoExpandState.value = !detailInfoExpandState.value
-                            if (detailInfoExpandState.value) {
-                                scope.launch {
-                                    delay(300L)
-                                    scrollState.animateScrollTo(scrollState.maxValue)
-                                }
-                            }
-                        },
-                    horizontalArrangement = SpaceBetween,
-                    verticalAlignment = CenterVertically
-                ) {
-                    Text(
-                        text = "추가정보",
-                        fontWeight = Medium,
-                        fontSize = 17.sp,
-                        letterSpacing = 0.sp
-                    )
+            Text(
+                modifier = Modifier.align(CenterStart),
+                text = "업체 추가 정보",
+                fontWeight = SemiBold,
+                fontSize = 16.sp,
+                letterSpacing = 0.sp
+            )
+        }
 
-                    Icon(
-                        modifier = Modifier.rotate(if (detailInfoExpandState.value) 0f else 180f),
-                        painter = painterResource(id = R.drawable.ic_arrow_expand_1),
-                        contentDescription = "expandColumnIcon",
-                        tint = GrayColor5
-                    )
-                }
+        Divider(color = GrayColor8)
 
-                Divider(
-                    modifier = Modifier.align(BottomCenter),
-                    color = GrayColor8
-                )
-            }
+        BPMSpacer(height = 26.dp)
 
-            Box {
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    BPMSpacer(height = 36.dp)
-
-                    RegisterTextField(
-                        title = "전화번호",
-                        textState = phoneNumberTextState,
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                        keyboardActions = KeyboardActions(onDone = { focusManager.moveFocus(FocusDirection.Next) })
-                    )
-
-                    BPMSpacer(height = 24.dp)
-
-                    RegisterTextField(
-                        title = "SNS 주소",
-                        textState = snsAddressTextState
-                    )
-
-                    BPMSpacer(height = 24.dp)
-
-                    RegisterTextField(
-                        title = "영업시간",
-                        textState = businessHoursTextState
-                    )
-
-                    BPMSpacer(height = 24.dp)
-
-                    RegisterTextField(
-                        title = "가격정보",
-                        textState = priceInfoTextState
-                    )
-
-                    BPMSpacer(height = 35.dp)
-                }
-
-                if (!detailInfoExpandState.value) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clickableWithoutRipple { }
-                    )
+        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            LaunchedEffect(key1 = scrollState.maxValue) {
+                scope.launch {
+                    scrollState.animateScrollTo(scrollState.maxValue)
                 }
             }
+
+            BPMTextField(
+                textState = phoneNumberTextState,
+                label = "전화번호",
+                hint = "000-0000-0000",
+                singleLine = false,
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+            )
+
+            BPMSpacer(height = 22.dp)
+
+            BPMTextField(
+                textState = snsAddressTextState,
+                label = "SNS 주소",
+                hint = "인스타그램 @BodyProfileManager",
+                singleLine = false
+            )
+
+            BPMSpacer(height = 22.dp)
+
+            BPMTextField(
+                textState = businessHoursTextState,
+                label = "영업시간",
+                hint = "12:00~19:00",
+                singleLine = false
+            )
+
+            BPMSpacer(height = 22.dp)
+
+            BPMTextField(
+                textState = priceInfoTextState,
+                label = "가격정보",
+                hint = "프로필 0000원",
+                singleLine = false
+            )
         }
 
         BPMSpacer(height = 35.dp)
@@ -358,62 +312,5 @@ private fun RegisterStudioActivityContent(
         )
 
         BPMSpacer(height = 12.dp)
-    }
-}
-
-@Composable
-private fun RegisterTextField(
-    title: String,
-    textState: MutableState<String>,
-    singleLine: Boolean = false,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default
-) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = title,
-            fontWeight = SemiBold,
-            fontSize = 14.sp,
-            letterSpacing = 0.sp,
-            color = GrayColor3
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 36.dp)
-        ) {
-            BPMSpacer(height = 14.dp)
-
-            Box {
-                TextFieldColorProvider {
-                    BasicTextField(
-                        modifier = Modifier
-                            .padding(bottom = 4.dp)
-                            .fillMaxWidth(),
-                        value = textState.value,
-                        onValueChange = { textState.value = it },
-                        textStyle = TextStyle(
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 13.sp,
-                            letterSpacing = 0.sp,
-                            color = Color.Black
-                        ),
-                        cursorBrush = SolidColor(GrayColor3),
-                        singleLine = singleLine,
-                        keyboardOptions = keyboardOptions,
-                        keyboardActions = keyboardActions
-                    )
-                }
-
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(BottomCenter),
-                    color = GrayColor6,
-                    thickness = 1.dp
-                )
-            }
-        }
     }
 }
