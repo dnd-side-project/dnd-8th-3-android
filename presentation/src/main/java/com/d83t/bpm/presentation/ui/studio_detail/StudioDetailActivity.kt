@@ -6,10 +6,12 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
+import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment.Companion.BottomCenter
+import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -20,20 +22,23 @@ import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ContentScale.Companion.Crop
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,10 +46,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.base.BaseViewModel
-import com.d83t.bpm.presentation.compose.BPMSpacer
-import com.d83t.bpm.presentation.compose.OutLinedRoundedCornerButton
-import com.d83t.bpm.presentation.compose.RoundedCornerButton
-import com.d83t.bpm.presentation.compose.ScreenHeader
+import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -59,10 +61,13 @@ class StudioDetailActivity : BaseComponentActivity() {
     override val viewModel: BaseViewModel
         get() = TODO("Not yet implemented")
 
+    private val studioLikeState by lazy { mutableStateOf(false) }
+
     override fun initUi() {
         setContent {
             BPMTheme {
                 StudioDetailActivityContent(
+                    studioLikeState = studioLikeState,
                     onClickCallButton = {
 
                     },
@@ -89,6 +94,7 @@ class StudioDetailActivity : BaseComponentActivity() {
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 private inline fun StudioDetailActivityContent(
+    studioLikeState: MutableState<Boolean>,
     crossinline onClickCallButton: () -> Unit,
     crossinline onClickInfoEditSuggestion: () -> Unit,
     crossinline onClickMap: () -> Unit,
@@ -97,16 +103,16 @@ private inline fun StudioDetailActivityContent(
 ) {
     val scrollState = rememberScrollState()
     val tabState = remember { mutableStateOf(0) }
-    val tabs = listOf("상품설명", "리뷰")
     val scope = rememberCoroutineScope()
     val showExpandedKeywordColumn = remember { mutableStateOf(false) }
     val keywordColumnHeightState = animateDpAsState(targetValue = if (showExpandedKeywordColumn.value) 474.dp else 138.dp)
     val expandIconRotateState = animateFloatAsState(targetValue = if (showExpandedKeywordColumn.value) 180f else 0f)
-    val showImageReviewOnly = remember { mutableStateOf(false) }
-    val showReviewOrderByLike = remember { mutableStateOf(true) }
+    val showImageReviewOnlyState = remember { mutableStateOf(false) }
+    val showReviewOrderByLikeState = remember { mutableStateOf(true) }
     val studioDetailInfoHeightState = remember { mutableStateOf(1) }
+    val reviewHeaderPositionState = remember { mutableStateOf(0f) }
 
-    tabState.value = if (remember { derivedStateOf { scrollState.value > studioDetailInfoHeightState.value } }.value) 1 else 0
+    tabState.value = if (remember { derivedStateOf { scrollState.value >= studioDetailInfoHeightState.value } }.value) 1 else 0
 
     Box(modifier = Modifier.background(color = Color.White)) {
         Column(
@@ -122,21 +128,21 @@ private inline fun StudioDetailActivityContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1f)
+                        .aspectRatio(0.85f)
                 ) {
                     HorizontalPager(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1f),
+                            .aspectRatio(0.85f),
                         count = 1
                     ) {
                         Image(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .aspectRatio(1f),
+                                .aspectRatio(0.85f),
                             painter = painterResource(id = R.drawable.dummy_studio),
                             contentDescription = "studioImage",
-                            contentScale = ContentScale.Fit
+                            contentScale = Crop
                         )
                     }
 
@@ -149,14 +155,13 @@ private inline fun StudioDetailActivityContent(
                             .clip(RoundedCornerShape(40.dp))
                             .width(42.dp)
                             .height(25.dp)
-                            .background(color = FilteredGrayColor)
+                            .background(color = FilteredWhiteColor)
                             .align(BottomStart)
                     ) {
                         Text(
                             modifier = Modifier.align(Center),
                             text = "1/1",
-                            fontFamily = pretendard,
-                            fontWeight = FontWeight.Normal,
+                            fontWeight = Normal,
                             fontSize = 12.sp,
                             letterSpacing = 2.sp
                         )
@@ -174,8 +179,7 @@ private inline fun StudioDetailActivityContent(
                         Row(verticalAlignment = CenterVertically) {
                             Text(
                                 text = "서울",
-                                fontFamily = pretendard,
-                                fontWeight = FontWeight.Normal,
+                                fontWeight = Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp
                             )
@@ -187,8 +191,7 @@ private inline fun StudioDetailActivityContent(
 
                             Text(
                                 text = "서초구",
-                                fontFamily = pretendard,
-                                fontWeight = FontWeight.Normal,
+                                fontWeight = Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp
                             )
@@ -198,8 +201,7 @@ private inline fun StudioDetailActivityContent(
 
                         Text(
                             text = "스튜디오 이름",
-                            fontFamily = pretendard,
-                            fontWeight = FontWeight.SemiBold,
+                            fontWeight = SemiBold,
                             fontSize = 19.sp,
                             letterSpacing = 0.sp
                         )
@@ -208,7 +210,6 @@ private inline fun StudioDetailActivityContent(
 
                         Text(
                             text = "스튜디오에 대한 간단한 한줄 설명을 붙여주세요.",
-                            fontFamily = pretendard,
                             fontSize = 13.sp,
                             fontWeight = Normal,
                             letterSpacing = 0.sp,
@@ -237,7 +238,6 @@ private inline fun StudioDetailActivityContent(
 
                                 Text(
                                     text = "4.0",
-                                    fontFamily = pretendard,
                                     fontSize = 14.sp,
                                     fontWeight = Normal,
                                     letterSpacing = 0.sp,
@@ -247,7 +247,6 @@ private inline fun StudioDetailActivityContent(
 
                             Text(
                                 text = "후기 504개",
-                                fontFamily = pretendard,
                                 fontWeight = Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp,
@@ -256,13 +255,13 @@ private inline fun StudioDetailActivityContent(
                         }
                     }
 
-                    Icon(
+                    Image(
                         modifier = Modifier
-                            .size(24.dp)
-                            .align(TopEnd),
-                        painter = painterResource(id = R.drawable.ic_heart),
-                        contentDescription = "heartIcon",
-                        tint = GrayColor8
+                            .size(22.dp)
+                            .align(TopEnd)
+                            .clickableWithoutRipple { studioLikeState.value = !studioLikeState.value },
+                        painter = painterResource(id = if (studioLikeState.value) R.drawable.ic_heart_active else R.drawable.ic_heart_inactive),
+                        contentDescription = "heartImage"
                     )
                 }
 
@@ -296,16 +295,14 @@ private inline fun StudioDetailActivityContent(
                 ) {
                     Text(
                         text = "위치 정보",
-                        fontFamily = pretendard,
                         fontWeight = SemiBold,
                         fontSize = 16.sp,
                         letterSpacing = 0.sp
                     )
 
                     Text(
-                        modifier = Modifier.clickable { onClickInfoEditSuggestion() },
+                        modifier = Modifier.clickableWithoutRipple { onClickInfoEditSuggestion() },
                         text = "정보수정 제안",
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp,
@@ -320,7 +317,6 @@ private inline fun StudioDetailActivityContent(
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Text(
                         text = "주소에 대한 정보를 적습니다.",
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 16.sp,
                         letterSpacing = 0.sp
@@ -330,7 +326,6 @@ private inline fun StudioDetailActivityContent(
 
                     Text(
                         text = "상세 주소에 대한 설명을 적는 곳입니다.",
-                        fontFamily = pretendard,
                         fontWeight = Normal,
                         fontSize = 12.sp,
                         letterSpacing = 0.sp,
@@ -365,7 +360,7 @@ private inline fun StudioDetailActivityContent(
                         ) {
                             Image(
                                 modifier = Modifier
-                                    .size(30.dp)
+                                    .size(36.dp)
                                     .align(CenterHorizontally),
                                 painter = painterResource(id = R.drawable.ic_marker),
                                 contentDescription = "mapMarkerIcon"
@@ -408,7 +403,7 @@ private inline fun StudioDetailActivityContent(
                     }
                 }
 
-                BPMSpacer(height = 24.dp)
+                BPMSpacer(height = 25.dp)
 
                 Divider(
                     thickness = 8.dp,
@@ -425,7 +420,6 @@ private inline fun StudioDetailActivityContent(
                 ) {
                     Text(
                         text = "편의 정보",
-                        fontFamily = pretendard,
                         fontWeight = SemiBold,
                         fontSize = 16.sp,
                         letterSpacing = 0.sp
@@ -433,7 +427,6 @@ private inline fun StudioDetailActivityContent(
 
                     Text(
                         text = "마지막 업데이트 : 0000 00 00",
-                        fontFamily = pretendard,
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp,
@@ -477,7 +470,7 @@ private inline fun StudioDetailActivityContent(
                     )
                 }
 
-                BPMSpacer(height = 24.dp)
+                BPMSpacer(height = 25.dp)
 
                 Divider(
                     thickness = 8.dp,
@@ -494,7 +487,6 @@ private inline fun StudioDetailActivityContent(
                             .padding(start = 16.dp)
                             .align(CenterStart),
                         text = "이런 점을 추천해요",
-                        fontFamily = pretendard,
                         fontWeight = SemiBold,
                         fontSize = 16.sp,
                         letterSpacing = 0.sp,
@@ -553,7 +545,7 @@ private inline fun StudioDetailActivityContent(
                     }
                 }
 
-                BPMSpacer(height = 24.dp)
+                BPMSpacer(height = 25.dp)
 
                 Divider(
                     thickness = 8.dp,
@@ -562,141 +554,172 @@ private inline fun StudioDetailActivityContent(
             }
 
             Column {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth()
-                        .height(55.dp),
-                    horizontalArrangement = SpaceBetween,
-                    verticalAlignment = CenterVertically
-                ) {
-                    Text(
-                        text = "업체 리뷰 120",
-                        fontFamily = pretendard,
-                        fontWeight = SemiBold,
-                        fontSize = 16.sp,
-                        letterSpacing = 0.sp
-                    )
+                ReviewListHeader(
+                    modifier = Modifier.onGloballyPositioned { coordinates -> reviewHeaderPositionState.value = coordinates.positionInWindow().y },
+                    showImageReviewOnlyState = showImageReviewOnlyState,
+                    showReviewOrderByLikeState = showReviewOrderByLikeState
+                )
 
-                    Text(
-                        text = "후기 작성하기",
-                        fontFamily = pretendard,
-                        fontWeight = Medium,
-                        fontSize = 14.sp,
-                        letterSpacing = 0.sp,
-                        color = GrayColor4
-                    )
-                }
-
-                Divider(color = GrayColor13)
-
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth()
-                        .height(55.dp),
-                    horizontalArrangement = SpaceBetween,
-                    verticalAlignment = CenterVertically
-                ) {
-                    Row(modifier = Modifier.clickableWithoutRipple { showImageReviewOnly.value = !showImageReviewOnly.value }) {
-                        Icon(
-                            modifier = Modifier.align(CenterVertically),
-                            painter = painterResource(id = R.drawable.ic_check_field),
-                            contentDescription = "checkFieldIcon",
-                            tint = if (showImageReviewOnly.value) Color.Black else GrayColor7
-                        )
-
-                        BPMSpacer(width = 8.dp)
-
-                        Text(
-                            text = "사진 리뷰만 보기",
-                            fontFamily = pretendard,
-                            fontWeight = Medium,
-                            fontSize = 14.sp,
-                            letterSpacing = 0.sp
-                        )
+                Box {
+                    Column {
+                        listOf(true, false, true, true, false).forEach { review ->
+                            ReviewComposable(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                isLiked = review
+                            )
+                        } // dummy
                     }
 
-                    Row {
-                        Text(
-                            modifier = Modifier.clickableWithoutRipple { showReviewOrderByLike.value = true },
-                            text = "좋아요순",
-                            fontFamily = pretendard,
-                            fontWeight = Medium,
-                            fontSize = 14.sp,
-                            letterSpacing = 0.sp,
-                            color = if (showReviewOrderByLike.value) Color.Black else GrayColor6
-                        )
-
-                        BPMSpacer(width = 20.dp)
-
-                        Divider(
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    listOf(
+                                        Color(0X53FFFFFF),
+                                        Color(0X73FFFFFF),
+                                        Color(0XA2FFFFFF),
+                                        Color(0XD9FFFFFF),
+                                        Color(0XF2FFFFFF),
+                                    )
+                                )
+                            )
+                            .align(BottomCenter)
+                    ) {
+                        RoundedCornerButton(
                             modifier = Modifier
-                                .height(12.dp)
-                                .width(1.dp)
-                                .align(CenterVertically),
-                            color = GrayColor3
-                        )
-
-                        BPMSpacer(width = 20.dp)
-
-                        Text(
-                            modifier = Modifier.clickableWithoutRipple { showReviewOrderByLike.value = false },
-                            text = "최신순",
-                            fontFamily = pretendard,
-                            fontWeight = Medium,
-                            fontSize = 14.sp,
-                            letterSpacing = 0.sp,
-                            color = if (showReviewOrderByLike.value) GrayColor6 else Color.Black
+                                .padding(
+                                    vertical = 12.dp,
+                                    horizontal = 16.dp
+                                )
+                                .fillMaxWidth()
+                                .height(48.dp)
+                                .align(BottomCenter),
+                            text = "더보기",
+                            textColor = Color.White,
+                            buttonColor = Color.Black,
+                            onClick = {}
                         )
                     }
                 }
-
-                Divider(color = GrayColor13)
-
-                listOf(true, false, true, true, false).forEach { review ->
-                    Review(review)
-                } // dummy
             }
         }
 
         Column {
             ScreenHeader("스튜디오 이름")
 
-            TabRow(
-                modifier = Modifier.height(40.dp),
-                selectedTabIndex = tabState.value,
-                backgroundColor = Color.White,
-                indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
-                        modifier = Modifier.tabIndicatorOffset(tabPositions[tabState.value]),
-                        color = Color.Black,
-                        height = 3.dp
-                    )
-                }
-            ) {
-                tabs.forEachIndexed { index, tabName ->
-                    Tab(
-                        text = {
-                            Text(
-                                text = tabName,
-                                fontFamily = pretendard,
-                                fontWeight = SemiBold,
-                                fontSize = 15.sp,
-                                letterSpacing = 0.sp
-                            )
+            Row(modifier = Modifier.fillMaxWidth()) {
+                StudioDetailTab(
+                    modifier = Modifier.weight(1f),
+                    text = "상품설명",
+                    tabIndex = 0,
+                    tabState = tabState,
+                    onClick = {
+                        tabState.value = 0
+                        scope.launch { scrollState.animateScrollTo(0) }
+                    }
+                )
+
+                StudioDetailTab(
+                    modifier = Modifier.weight(1f),
+                    text = "리뷰",
+                    tabIndex = 1,
+                    tabState = tabState,
+                    onClick = {
+                        tabState.value = 1
+                        scope.launch { scrollState.animateScrollTo(studioDetailInfoHeightState.value) }
+                    }
+                )
+            }
+        }
+
+        with(LocalDensity.current) {
+            val screenHeightDp = LocalConfiguration.current.screenHeightDp.dp
+            if (remember { derivedStateOf { reviewHeaderPositionState.value >= screenHeightDp.toPx() } }.value) {
+                Box(
+                    modifier = Modifier
+                        .padding(
+                            bottom = 25.dp,
+                            end = 16.dp
+                        )
+                        .shadow(
+                            elevation = 8.dp,
+                            shape = RoundedCornerShape(50.dp)
+                        )
+                        .clip(shape = RoundedCornerShape(50.dp))
+                        .border(
+                            width = 1.dp,
+                            color = GrayColor3,
+                            shape = RoundedCornerShape(50.dp)
+                        )
+                        .height(36.dp)
+                        .background(color = Color.White)
+                        .align(BottomEnd)
+                        .clickable {
+                            scope.launch {
+                                tabState.value = 1
+                                scrollState.animateScrollTo(studioDetailInfoHeightState.value)
+                            }
                         },
-                        selected = tabState.value == index,
-                        onClick = {
-                            tabState.value = index
-                            scope.launch { scrollState.animateScrollTo(if (index == 0) 0 else studioDetailInfoHeightState.value) }
-                        },
-                        selectedContentColor = Color.Black,
-                        unselectedContentColor = GrayColor6
-                    )
+                ) {
+                    Row(
+                        modifier = Modifier.align(Center),
+                        horizontalArrangement = spacedBy(4.dp),
+                        verticalAlignment = CenterVertically
+                    ) {
+                        BPMSpacer(width = 14.dp)
+
+                        Text(
+                            modifier = Modifier.padding(vertical = 12.dp),
+                            text = "리뷰 바로 작성하기",
+                            fontWeight = SemiBold,
+                            fontSize = 12.sp,
+                            letterSpacing = 0.sp,
+                            style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+                        )
+
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_arrow_down_small),
+                            contentDescription = "downToReviewIcon",
+                            tint = GrayColor6
+                        )
+
+                        BPMSpacer(width = 14.dp)
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun StudioDetailTab(
+    modifier: Modifier,
+    text: String,
+    tabIndex: Int,
+    tabState: MutableState<Int>,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .height(40.dp)
+            .clickable { onClick() }
+    ) {
+        Text(
+            modifier = Modifier.align(Center),
+            text = text,
+            fontWeight = SemiBold,
+            fontSize = 15.sp,
+            letterSpacing = 0.sp,
+            color = if (tabState.value == tabIndex) Color.Black else GrayColor6
+        )
+
+        Divider(
+            modifier = Modifier.align(BottomCenter),
+            thickness = 2.dp,
+            color = if (tabState.value == tabIndex) Color.Black else Color.White
+        )
     }
 }
 
@@ -712,7 +735,6 @@ private fun ConvenienceInfo(
     ) {
         Text(
             text = type,
-            fontFamily = pretendard,
             fontWeight = Medium,
             fontSize = 13.sp,
             letterSpacing = 0.sp
@@ -720,7 +742,6 @@ private fun ConvenienceInfo(
 
         Text(
             text = detail,
-            fontFamily = pretendard,
             fontWeight = Normal,
             fontSize = 12.sp,
             letterSpacing = 0.sp,
@@ -771,7 +792,6 @@ private fun BestKeyword(
         Text(
             modifier = Modifier.padding(end = 16.dp),
             text = "+${count}",
-            fontFamily = pretendard,
             fontWeight = Medium,
             fontSize = 12.sp,
             letterSpacing = 0.sp,
@@ -780,168 +800,11 @@ private fun BestKeyword(
     }
 }
 
-@Composable
-private fun Review(
-    liked: Boolean
-) {
-    Column {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth()
-        ) {
-            BPMSpacer(height = 15.dp)
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = SpaceBetween,
-                verticalAlignment = CenterVertically
-            ) {
-                Row(verticalAlignment = CenterVertically) {
-                    Image(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(id = R.drawable.default_profile_image),
-                        contentDescription = "profileImage"
-                    )
-
-                    BPMSpacer(width = 8.dp)
-
-                    Text(
-                        text = "닉네임",
-                        fontFamily = pretendard,
-                        fontWeight = SemiBold,
-                        fontSize = 14.sp,
-                        letterSpacing = 0.sp
-                    )
-                }
-
-                Text(
-                    text = "2023.02.15",
-                    fontFamily = pretendard,
-                    fontWeight = Medium,
-                    fontSize = 12.sp,
-                    letterSpacing = 0.5.sp
-                )
-            }
-
-            BPMSpacer(height = 12.dp)
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = SpaceBetween,
-                verticalAlignment = CenterVertically
-            ) {
-                Text(
-                    text = "스튜디오 이름",
-                    fontFamily = pretendard,
-                    fontWeight = Medium,
-                    fontSize = 14.sp,
-                    letterSpacing = 0.sp
-                )
-
-                Row {
-                    repeat(5) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_star_small),
-                            contentDescription = "starIcon",
-                            tint = GrayColor6
-                        )
-
-                        BPMSpacer(width = 2.dp)
-                    }
-                }
-            }
-
-            Row(modifier = Modifier.padding(vertical = 14.dp)) {
-                repeat(5) { index ->
-                    Image(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(60.dp),
-                        painter = painterResource(id = R.drawable.dummy_studio),
-                        contentDescription = "reviewImage",
-                        contentScale = Crop
-                    )
-
-                    if (index != 4) {
-                        BPMSpacer(width = 4.dp)
-                    }
-                }
-            }
-
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = "One, two, three, four Baby, got me looking so crazy 빠져버리는 daydream got me feeling you 너도 말해줄래 누가 내게 뭐라든 남들과는 달라 넌 Maybe you could be the one 날 믿어봐 한 번 I'm not looking for just fun Maybe I could be the one Oh baby 예민하대 나 lately 너 없이는 나 매일매일이 yeah 재미없어 어쩌지 I just want you Call my phone right now I just wanna hear you're mine",
-                fontFamily = pretendard,
-                fontWeight = Normal,
-                fontSize = 13.sp,
-                letterSpacing = 0.sp,
-                maxLines = 4,
-                lineHeight = 19.sp,
-                overflow = Ellipsis
-            )
-
-            BPMSpacer(height = 25.dp)
-
-            Box(
-                modifier = Modifier
-                    .clip(shape = RoundedCornerShape(12.dp))
-                    .height(28.dp)
-                    .border(
-                        width = 1.dp,
-                        color = if (liked) Color.Black else GrayColor9,
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    .background(color = if (liked) Color.Black else Color.White)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp)
-                        .align(Center),
-                    verticalAlignment = CenterVertically
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_like),
-                        contentDescription = "likeIcon",
-                        tint = if (liked) MainGreenColor else Color.Black
-                    )
-
-                    BPMSpacer(width = 4.dp)
-
-                    Text(
-                        text = "좋아요",
-                        fontFamily = pretendard,
-                        fontWeight = Medium,
-                        fontSize = 12.sp,
-                        letterSpacing = 0.sp,
-                        color = if (liked) MainGreenColor else Color.Black
-                    )
-
-                    BPMSpacer(width = 4.dp)
-
-                    Text(
-                        text = "12",
-                        fontFamily = pretendard,
-                        fontWeight = SemiBold,
-                        fontSize = 12.sp,
-                        letterSpacing = 0.sp,
-                        color = if (liked) MainGreenColor else Color.Black
-                    )
-                }
-            }
-        }
-
-        BPMSpacer(height = 20.dp)
-
-        Divider(color = GrayColor13)
-    }
-}
-
-
 @Preview(showBackground = true)
 @Composable
 private fun Preview() {
     StudioDetailActivityContent(
+        studioLikeState = remember { mutableStateOf(false) },
         onClickCallButton = { /*TODO*/ },
         onClickInfoEditSuggestion = { /*TODO*/ },
         onClickMap = { /*TODO*/ },

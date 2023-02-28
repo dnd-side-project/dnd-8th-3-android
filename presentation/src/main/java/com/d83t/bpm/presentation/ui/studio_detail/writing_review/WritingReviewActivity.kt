@@ -1,4 +1,4 @@
-package com.d83t.bpm.presentation.ui.writing_review
+package com.d83t.bpm.presentation.ui.studio_detail.writing_review
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -6,19 +6,17 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
+import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment.Companion.BottomStart
@@ -31,23 +29,26 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.base.BaseViewModel
-import com.d83t.bpm.presentation.compose.BPMSpacer
-import com.d83t.bpm.presentation.compose.RoundedCornerButton
-import com.d83t.bpm.presentation.compose.ScreenHeader
+import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
+import com.d83t.bpm.presentation.ui.register_studio.dummyKeywordChipList
+import com.d83t.bpm.presentation.util.addFocusCleaner
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import com.d83t.bpm.presentation.util.convertUriToBitmap
 import com.google.accompanist.flowlayout.FlowRow
@@ -65,31 +66,34 @@ class WritingReviewActivity : BaseComponentActivity() {
     private var imageStateList = SnapshotStateList<ImageBitmap>()
     private var replaceImageIndex = -1
     private val contentTextState = mutableStateOf("")
+    private val ratingState = mutableStateOf(0f)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         addImageLauncher = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uris ->
-                uris?.let { _ ->
-                    if (uris.size + imageStateList.size <= 5) {
-                        try {
-                            imageStateList.addAll(uris.map { uri ->
-                                convertUriToBitmap(
-                                    contentResolver = contentResolver,
-                                    uri = uri
-                                ).asImageBitmap()
-                            })
-                            refreshImageList()
-                        } catch (e: Exception) {
-                            // TODO : Handle Error
-                        }
-                    } else {
-                        // TODO : Show Error Dialog
+            uris?.let { _ ->
+                if (uris.size + imageStateList.size <= 5) {
+                    try {
+                        imageStateList.addAll(uris.map { uri ->
+                            convertUriToBitmap(
+                                contentResolver = contentResolver,
+                                uri = uri
+                            ).asImageBitmap()
+                        })
+                        refreshImageList()
+                    } catch (e: Exception) {
+                        // TODO : Handle Error
                     }
-                } ?: run {
-                    // TODO : Handle Error
+                } else {
+                    // TODO : Show Error Dialog
                 }
+            } ?: run {
+                // TODO : Handle Error
             }
+        }
 
         replaceImageLauncher = registerForActivityResult(PickVisualMedia()) { uri ->
             uri?.let { _ ->
@@ -114,6 +118,7 @@ class WritingReviewActivity : BaseComponentActivity() {
                 WritingReviewActivityContent(
                     imageStateList = imageStateList,
                     contentTextState = contentTextState,
+                    ratingState = ratingState,
                     addImage = { addImageLauncher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
                     replaceImage = { index ->
                         replaceImageIndex = index
@@ -146,18 +151,27 @@ class WritingReviewActivity : BaseComponentActivity() {
 private fun WritingReviewActivityContent(
     imageStateList: SnapshotStateList<ImageBitmap>,
     contentTextState: MutableState<String>,
+    ratingState: MutableState<Float>,
     addImage: () -> Unit,
     replaceImage: (Int) -> Unit,
     removeImage: (Int) -> Unit,
     onClickSendReview: () -> Unit
 ) {
     val scrollState = rememberScrollState()
-    LaunchedEffect(key1 = scrollState.maxValue) { scrollState.scrollBy(100f) }
+    LaunchedEffect(scrollState.maxValue) {
+        if (contentTextState.value.isNotEmpty()) {
+            scrollState.animateScrollTo(scrollState.maxValue)
+        }
+    }
 
     Column(
         modifier = Modifier
+            .windowInsetsPadding(insets = WindowInsets.systemBars.only(sides = WindowInsetsSides.Vertical))
+            .imePadding()
             .fillMaxWidth()
             .verticalScroll(state = scrollState)
+            .background(color = Color.White)
+            .addFocusCleaner(focusManager = LocalFocusManager.current)
     ) {
         ScreenHeader(header = "리뷰 작성하기")
 
@@ -200,7 +214,6 @@ private fun WritingReviewActivityContent(
                     Column {
                         Text(
                             text = "스튜디오 이름",
-                            fontFamily = pretendard,
                             fontWeight = Medium,
                             fontSize = 14.sp,
                             letterSpacing = 0.sp
@@ -210,7 +223,6 @@ private fun WritingReviewActivityContent(
 
                         Text(
                             text = "스튜디오에 대한 간단한 한 줄 설명을 붙여주세요.",
-                            fontFamily = pretendard,
                             fontWeight = Normal,
                             fontSize = 11.sp,
                             letterSpacing = 0.sp,
@@ -234,7 +246,6 @@ private fun WritingReviewActivityContent(
 
                         Text(
                             text = "4.0",
-                            fontFamily = pretendard,
                             fontWeight = Normal,
                             fontSize = 11.sp,
                             letterSpacing = 0.sp,
@@ -250,7 +261,6 @@ private fun WritingReviewActivityContent(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = "이 정도 만족했어요",
-            fontFamily = pretendard,
             fontWeight = SemiBold,
             fontSize = 16.sp,
             letterSpacing = 0.sp
@@ -261,7 +271,6 @@ private fun WritingReviewActivityContent(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = "만족한 정도를 별점으로 보여주세요",
-            fontFamily = pretendard,
             fontWeight = Medium,
             fontSize = 12.sp,
             letterSpacing = 0.2.sp,
@@ -277,15 +286,48 @@ private fun WritingReviewActivityContent(
                 .fillMaxWidth()
                 .height(100.dp)
         ) {
-            Row(modifier = Modifier.align(Center)) {
-                repeat(5) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_start_large),
-                        contentDescription = "starIcon",
-                        tint = GrayColor8
+            val ratingDraggableAreaWidthState = remember { mutableStateOf(0) }
+
+            Row(
+                modifier = Modifier.align(Center),
+                horizontalArrangement = spacedBy(8.dp)
+            ) {
+                for (i in 1..5) {
+                    Image(
+                        modifier = Modifier.size(36.dp),
+                        painter = painterResource(
+                            id = if (i.toFloat() <= ratingState.value) R.drawable.ic_star_large_filled
+                            else if (i.toFloat() > ratingState.value && ratingState.value > i - 1) R.drawable.ic_star_large_half
+                            else R.drawable.ic_star_large_empty
+                        ),
+                        contentDescription = "starIcon"
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .align(Center)
+                    .onGloballyPositioned { coordinates -> ratingDraggableAreaWidthState.value = coordinates.size.width }
+                    .pointerInput(Unit) {
+                        detectDragGestures { change, _ ->
+                            ratingState.value = if (change.position.x >= ratingDraggableAreaWidthState.value) 5f
+                            else if (change.position.x <= 0) 0f
+                            else (change.position.x / ratingDraggableAreaWidthState.value) * 5
+                        }
+                    }
+            ) {
+                for (i in 1..10) {
+                    Box(
+                        modifier = Modifier
+                            .width(18.dp)
+                            .height(36.dp)
+                            .clickableWithoutRipple { ratingState.value = i * 0.5f }
                     )
 
-                    BPMSpacer(width = 8.dp)
+                    if (i % 2 == 0 && i != 10) {
+                        BPMSpacer(width = 8.dp)
+                    }
                 }
             }
         }
@@ -300,7 +342,6 @@ private fun WritingReviewActivityContent(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = "이런 점을 추천해요",
-            fontFamily = pretendard,
             fontWeight = SemiBold,
             fontSize = 16.sp,
             letterSpacing = 0.sp
@@ -311,7 +352,6 @@ private fun WritingReviewActivityContent(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = "최대 5개까지 선택가능해요",
-            fontFamily = pretendard,
             fontWeight = Medium,
             fontSize = 12.sp,
             letterSpacing = 0.2.sp,
@@ -331,46 +371,9 @@ private fun WritingReviewActivityContent(
             mainAxisSpacing = 8.dp,
             crossAxisSpacing = 10.dp
         ) {
-            Keyword(
-                text = "친절해요",
-                isChosen = false
-            )
-            Keyword(
-                text = "소통이 빨라요",
-                isChosen = false
-            )
-            Keyword(
-                text = "소품이 다양해요",
-                isChosen = false
-            )
-            Keyword(
-                text = "세트장 구성이 다양해요",
-                isChosen = false
-            )
-            Keyword(
-                text = "제공하는 컨셉이 다양해요",
-                isChosen = false
-            )
-            Keyword(
-                text = "자연스럽게 연출해줘요",
-                isChosen = false
-            )
-            Keyword(
-                text = "시설이 깔끔해요",
-                isChosen = false
-            )
-            Keyword(
-                text = "원하는 스타일을 바로바로 파악해줘요",
-                isChosen = false
-            )
-            Keyword(
-                text = "주차하기 편해요",
-                isChosen = false
-            )
-            Keyword(
-                text = "보정을 꼼꼼하게 해줘요",
-                isChosen = false
-            )
+            dummyKeywordChipList.forEach { dummyKeyword ->
+                KeywordChip(text = dummyKeyword)
+            }
         }
 
         BPMSpacer(height = 20.dp)
@@ -385,7 +388,6 @@ private fun WritingReviewActivityContent(
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = "이런 경험이었어요",
-            fontFamily = pretendard,
             fontWeight = SemiBold,
             fontSize = 16.sp,
             letterSpacing = 0.sp
@@ -395,8 +397,7 @@ private fun WritingReviewActivityContent(
 
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = "사진과 간단한 후기를 적어주세요",
-            fontFamily = pretendard,
+            text = "사진과 간단한 후기를 적어주세요 (최대 5장)",
             fontWeight = Medium,
             fontSize = 12.sp,
             letterSpacing = 0.2.sp,
@@ -410,7 +411,7 @@ private fun WritingReviewActivityContent(
         BPMSpacer(height = 15.dp)
 
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
             if (imageStateList.size < 5) {
@@ -424,7 +425,8 @@ private fun WritingReviewActivityContent(
 
             for (i in imageStateList.indices.reversed()) {
                 item {
-                    ImagePlaceHolder(image = imageStateList[i],
+                    ImagePlaceHolder(
+                        image = imageStateList[i],
                         onClick = { replaceImage(i) },
                         onClickRemove = { removeImage(i) }
                     )
@@ -432,45 +434,25 @@ private fun WritingReviewActivityContent(
             }
         }
 
-        BPMSpacer(height = 12.dp)
+        BPMSpacer(height = 20.dp)
 
-        Box(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth()
-                .heightIn(min = 262.dp)
-                .border(
-                    width = 1.dp,
-                    shape = RoundedCornerShape(6.dp),
-                    color = GrayColor6
-                )
-                .background(color = Color.White)
-        ) {
-            CompositionLocalProvider(LocalTextSelectionColors.provides(textSelectionColor())) {
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 262.dp),
-                    value = contentTextState.value,
-                    onValueChange = { contentTextState.value = it },
-                    textStyle = TextStyle(
-                        fontFamily = pretendard,
-                        fontWeight = Normal,
-                        fontSize = 13.sp,
-                        letterSpacing = 0.sp,
-                        color = Color.Black
-                    ),
-                    colors = textFieldColors()
-                )
-            }
-        }
+        BPMTextField(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            textState = contentTextState,
+            singleLine = false,
+            label = "바디프로필 촬영 경험담을 들려주세요",
+            limit = 300,
+            minHeight = 262.dp,
+            hint = "내용을 입력해주세요."
+        )
 
         BPMSpacer(height = 50.dp)
 
-        RoundedCornerButton(modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .fillMaxWidth()
-            .height(48.dp),
+        RoundedCornerButton(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+                .height(48.dp),
             text = "저장하기",
             textColor = Color.Black,
             buttonColor = MainGreenColor,
@@ -484,46 +466,24 @@ private fun WritingReviewActivityContent(
 }
 
 @Composable
-private fun Keyword(
-    text: String,
-    isChosen: Boolean
-) {
-    val selectState = remember { mutableStateOf(isChosen) }
-    val backgroundColorState = animateColorAsState(targetValue = if (selectState.value) MainGreenColor else GrayColor9)
-    val textColorState = animateColorAsState(targetValue = if (selectState.value) Color.Black else GrayColor4)
-
-    Text(
-        modifier = Modifier
-            .clip(RoundedCornerShape(60.dp))
-            .background(color = backgroundColorState.value)
-            .padding(
-                horizontal = 12.dp,
-                vertical = 8.dp
-            )
-            .clickableWithoutRipple { selectState.value = !selectState.value },
-        text = text,
-        fontFamily = pretendard,
-        fontWeight = Medium,
-        fontSize = 12.sp,
-        letterSpacing = 0.sp,
-        color = textColorState.value
-    )
-}
-
-@Composable
 private fun ImagePlaceHolder(
     image: ImageBitmap?,
     onClick: () -> Unit,
     onClickRemove: (() -> Unit)? = null
 ) {
     val imageState = remember { mutableStateOf(image) }
+    val focusManager = LocalFocusManager.current
 
     Box(modifier = Modifier.size(105.dp)) {
         Box(modifier = Modifier
             .size(100.dp)
             .background(color = GrayColor10)
             .align(BottomStart)
-            .clickable { onClick() }) {
+            .clickable {
+                onClick()
+                focusManager.clearFocus()
+            }
+        ) {
             if (imageState.value != null) {
                 Image(
                     bitmap = imageState.value!!,
@@ -531,7 +491,11 @@ private fun ImagePlaceHolder(
                     contentScale = ContentScale.Crop
                 )
             } else {
-                // TODO : Show Icon
+                Image(
+                    modifier = Modifier.align(Center),
+                    painter = painterResource(id = R.drawable.ic_add_image),
+                    contentDescription = "addImage"
+                )
             }
         }
 
@@ -545,7 +509,8 @@ private fun ImagePlaceHolder(
                 .size(20.dp)
                 .background(color = Color.White)
                 .align(TopEnd)
-                .clickableWithoutRipple { onClickRemove?.invoke() }) {
+                .clickableWithoutRipple { onClickRemove?.invoke() }
+            ) {
                 Icon(
                     modifier = Modifier
                         .size(8.dp)

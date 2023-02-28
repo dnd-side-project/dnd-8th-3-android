@@ -24,13 +24,14 @@ val GrayColor8 = Color(0xFFE6E6E7)
 val GrayColor9 = Color(0xFFF0F0F1)
 val GrayColor10 = Color(0xFFF4F6F6)
 val GrayColor11 = Color(0xFFF5F6F6)
-val GrayColor12 = Color(0xFFFEFFFE)
+val GrayColor12 = Color(0x80000000)
 val GrayColor13 = Color(0xFFEEEEEE)
-val FilteredGrayColor = Color(0xAAE6E6E7)
+val GrayColor14 = Color(0xCCAFAFAF)
+val FilteredWhiteColor = Color(0xB3FFFFFF)
 
 @Composable
 fun textSelectionColor() = TextSelectionColors(
-    handleColor = GrayColor3,
+    handleColor = Color.Black,
     backgroundColor = GrayColor6
 )
 
@@ -38,7 +39,7 @@ fun textSelectionColor() = TextSelectionColors(
 fun textFieldColors() = TextFieldDefaults.textFieldColors(
     textColor = Color.Black,
     backgroundColor = Color.White,
-    cursorColor = GrayColor3,
+    cursorColor = Color.Black,
     focusedIndicatorColor = Color.Transparent,
     unfocusedIndicatorColor = Color.Transparent,
     disabledIndicatorColor = Color.Transparent,

@@ -28,29 +28,65 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.sign_up.SignUpActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Bpm.NoActionBar" />
+        <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Bpm.NoActionBar" />
         <activity
             android:name=".ui.studio_detail.StudioDetailActivity"
-            android:exported="true"
+            android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Bpm.NoActionBar" />
         <activity
-            android:name=".ui.writing_review.WritingReviewActivity"
+            android:name=".ui.studio_detail.writing_review.WritingReviewActivity"
             android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Bpm.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.studio_detail.review_detail.ReviewDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Bpm.NoActionBar" />
-
+        <activity
+            android:name=".ui.making_reservation.MakingReservationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Bpm.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.register_studio.RegisterStudioActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Bpm.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.register_studio.register_location.RegisterLocationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Bpm.NoActionBar" />
+        <activity
+            android:name=".ui.studio_detail.review_list.ReviewListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Bpm.NoActionBar" />
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
-                <data android:host="oauth"
+                <data
+                    android:host="oauth"
                     android:scheme="kakaoced602989810575b0c1d032415db11c8" />
             </intent-filter>
         </activity>
