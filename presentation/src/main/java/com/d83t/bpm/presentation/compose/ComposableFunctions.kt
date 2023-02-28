@@ -356,6 +356,8 @@ fun ReviewComposable(
             }
         }
 
+        BPMSpacer(height = 10.dp)
+
         Text(
             modifier = Modifier.fillMaxWidth(),
             text = "One, two, three, four Baby, got me looking so crazy 빠져버리는 daydream got me feeling you 너도 말해줄래 누가 내게 뭐라든 남들과는 달라 넌 Maybe you could be the one 날 믿어봐 한 번 I'm not looking for just fun Maybe I could be the one Oh baby 예민하대 나 lately 너 없이는 나 매일매일이 yeah 재미없어 어쩌지 I just want you Call my phone right now I just wanna hear you're mine",
