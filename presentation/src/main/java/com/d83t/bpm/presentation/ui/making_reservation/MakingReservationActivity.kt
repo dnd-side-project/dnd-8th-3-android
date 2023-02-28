@@ -127,8 +127,9 @@ private inline fun MakingReservationActivityContent(
 
             MakingReservationItemLayout(
                 isEssential = false,
-                title = "스튜디오",
-                expandedHeight = 124.dp
+                label = "어디에서 촬영하시나요?",
+                title = "스튜디오 이름",
+                expandedHeight = 135.dp
             ) {
                 Box(
                     modifier = Modifier
@@ -170,8 +171,9 @@ private inline fun MakingReservationActivityContent(
 
             MakingReservationItemLayout(
                 isEssential = true,
+                label = "예약한 촬영 날짜를 입력해주세요",
                 title = if (selectedDateState.value != null) selectedDateState.value.toString().replace("-", ".") else "날짜",
-                expandedHeight = 416.dp
+                expandedHeight = 439.dp
             ) {
                 val currentDate = LocalDate.now()
                 val calendarState = remember { mutableStateOf(LocalDate.now()) }
@@ -372,8 +374,9 @@ private inline fun MakingReservationActivityContent(
 
             MakingReservationItemLayout(
                 isEssential = false,
+                label = "자세한 시간을 입력해주세요",
                 title = timeTextState.value,
-                expandedHeight = 278.dp
+                expandedHeight = 290.dp
             ) {
                 val hoursLazyListState = rememberLazyListState()
                 val minutesLazyListState = rememberLazyListState()
@@ -532,8 +535,9 @@ private inline fun MakingReservationActivityContent(
 
             MakingReservationItemLayout(
                 isEssential = false,
+                label = "어떤 촬영 일정인지 메모를 남겨주세요",
                 title = "메모",
-                expandedHeight = 194.dp
+                expandedHeight = 205.dp
             ) {
                 Box(
                     modifier = Modifier
@@ -586,8 +590,8 @@ private inline fun MakingReservationActivityContent(
                     .fillMaxWidth()
                     .height(48.dp),
                 text = "저장하기",
-                textColor = Color.White,
-                buttonColor = GrayColor5,
+                textColor = GrayColor7,
+                buttonColor = GrayColor9,
                 onClick = { onClickSave() }
             )
 
@@ -599,12 +603,13 @@ private inline fun MakingReservationActivityContent(
 @Composable
 private fun MakingReservationItemLayout(
     isEssential: Boolean,
+    label: String,
     title: String,
     expandedHeight: Dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val expandState = remember { mutableStateOf(false) }
-    val columnHeightState = animateDpAsState(targetValue = if (expandState.value) expandedHeight else 64.dp)
+    val columnHeightState = animateDpAsState(targetValue = if (expandState.value) expandedHeight else 77.dp)
     val focusManager = LocalFocusManager.current
 
     Column(
@@ -613,63 +618,91 @@ private fun MakingReservationItemLayout(
             .fillMaxWidth()
             .height(columnHeightState.value)
     ) {
-        BPMSpacer(height = 20.dp)
-
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(76.dp)
                 .clickableWithoutRipple {
                     expandState.value = !expandState.value
                     focusManager.clearFocus()
-                },
-            horizontalArrangement = SpaceBetween
+                }
         ) {
-            Row {
-                Text(
-                    modifier = Modifier
-                        .height(24.dp)
-                        .align(CenterVertically),
-                    text = title,
-                    textAlign = TextAlign.Center,
-                    fontWeight = Medium,
-                    fontSize = 17.sp,
-                    letterSpacing = 0.sp
-                )
+            Column(modifier = Modifier.align(Center)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = SpaceBetween,
+                    verticalAlignment = CenterVertically
+                ) {
+                    Row {
+                        Text(
+                            text = label,
+                            fontWeight = SemiBold,
+                            fontSize = 12.sp,
+                            letterSpacing = 0.sp,
+                            color = GrayColor5
+                        )
 
-                if (isEssential) {
-                    Text(
-                        text = "*",
-                        fontWeight = Medium,
-                        fontSize = 17.sp,
-                        letterSpacing = 0.sp,
-                        color = Color.Red
+                        if (isEssential) {
+                            Text(
+                                text = "*",
+                                fontWeight = SemiBold,
+                                fontSize = 12.sp,
+                                letterSpacing = 0.sp,
+                                color = Color.Red
+                            )
+                        }
+                    }
+
+                    Icon(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .rotate(if (expandState.value) 180f else 0f),
+                        painter = painterResource(id = R.drawable.ic_arrow_expand_0),
+                        contentDescription = "expandItemIcon"
                     )
                 }
-            }
 
-            Icon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .rotate(if (expandState.value) 180f else 0f),
-                painter = painterResource(id = R.drawable.ic_arrow_expand_0),
-                contentDescription = "expandItemIcon"
-            )
+                Row {
+                    Text(
+                        modifier = Modifier
+                            .height(24.dp)
+                            .align(CenterVertically),
+                        text = title,
+                        textAlign = TextAlign.Center,
+                        fontWeight = Medium,
+                        fontSize = 17.sp,
+                        letterSpacing = 0.sp
+                    )
+
+                    if (isEssential) {
+                        Text(
+                            text = "*",
+                            fontWeight = Medium,
+                            fontSize = 17.sp,
+                            letterSpacing = 0.sp,
+                            color = Color.Red
+                        )
+                    }
+                }
+            }
         }
 
-        BPMSpacer(height = 20.dp)
+        BPMSpacer(height = 1.dp)
 
-        Box {
-            Column {
-                content()
-            }
+        if (!expandState.value) {
+            Box {
+                Column {
+                    content()
+                }
 
-            if (!expandState.value) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .clickableWithoutRipple { }
                 )
             }
+        } else {
+            content()
         }
     }
 }
