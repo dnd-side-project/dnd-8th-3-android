@@ -41,13 +41,11 @@ import com.d83t.bpm.presentation.compose.BPMSpacer
 import com.d83t.bpm.presentation.compose.RoundedCornerButton
 import com.d83t.bpm.presentation.compose.ScreenHeader
 import com.d83t.bpm.presentation.compose.TextFieldColorProvider
-import com.d83t.bpm.presentation.compose.theme.BPMTheme
-import com.d83t.bpm.presentation.compose.theme.GrayColor3
-import com.d83t.bpm.presentation.compose.theme.GrayColor7
-import com.d83t.bpm.presentation.compose.theme.MainGreenColor
+import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
+import net.daum.mf.map.api.MapView.MapViewEventListener
 
 class RegisterLocationActivity : BaseComponentActivity() {
     override val viewModel: BaseViewModel
@@ -61,6 +59,9 @@ class RegisterLocationActivity : BaseComponentActivity() {
                 RegisterLocationActivityContent(
                     searchTextState = searchTextState,
                     onClickSearch = {
+
+                    },
+                    onClickChangeLocation = { _, _ ->
 
                     },
                     onClickSetLocation = { _, _ ->
@@ -78,9 +79,12 @@ class RegisterLocationActivity : BaseComponentActivity() {
 private fun RegisterLocationActivityContent(
     searchTextState: MutableState<String>,
     onClickSearch: () -> Unit,
+    onClickChangeLocation: (Double, Double) -> Unit,
     onClickSetLocation: (Double, Double) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
+    val changeableState = remember { mutableStateOf(false) }
+    val locationState = remember { mutableStateOf<MapPoint?>(null) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -155,6 +159,31 @@ private fun RegisterLocationActivityContent(
                                 ),
                                 false
                             )
+
+                            setMapViewEventListener(object : MapViewEventListener {
+                                override fun onMapViewInitialized(p0: MapView?) {
+                                    locationState.value = p0?.mapCenterPoint
+                                }
+
+                                override fun onMapViewZoomLevelChanged(p0: MapView?, p1: Int) {}
+                                override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {}
+                                override fun onMapViewDoubleTapped(p0: MapView?, p1: MapPoint?) {}
+                                override fun onMapViewLongPressed(p0: MapView?, p1: MapPoint?) {}
+                                override fun onMapViewDragStarted(p0: MapView?, p1: MapPoint?) {}
+                                override fun onMapViewDragEnded(p0: MapView?, p1: MapPoint?) {}
+                                override fun onMapViewMoveFinished(p0: MapView?, p1: MapPoint?) {}
+                                override fun onMapViewCenterPointMoved(p0: MapView?, p1: MapPoint?) {
+                                    if (p1 != null) {
+                                        with(p1.mapPointGeoCoord) {
+                                            if (String.format("%.6f", latitude) != (35.858902).toString() ||
+                                                String.format("%.6f", longitude) != (128.498795).toString()
+                                            ) {
+                                                changeableState.value = true
+                                            }
+                                        }
+                                    }
+                                }
+                            })
                         }
                     }
                 )
@@ -177,13 +206,20 @@ private fun RegisterLocationActivityContent(
                         .clip(shape = RoundedCornerShape(50.dp))
                         .border(
                             width = 1.dp,
-                            color = GrayColor3,
+                            color = if (changeableState.value) GrayColor3 else GrayColor8,
                             shape = RoundedCornerShape(50.dp)
                         )
                         .height(36.dp)
                         .background(color = Color.White)
                         .align(BottomCenter)
-                        .clickable { onClickSetLocation(0.0, 0.0) },
+                        .clickable {
+                            if (locationState.value != null) {
+                                onClickChangeLocation(
+                                    locationState.value!!.mapPointGeoCoord.latitude,
+                                    locationState.value!!.mapPointGeoCoord.longitude
+                                )
+                            }
+                        },
                 ) {
                     Row(
                         modifier = Modifier.align(Center),
@@ -198,7 +234,8 @@ private fun RegisterLocationActivityContent(
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 12.sp,
                             letterSpacing = 0.sp,
-                            style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+                            style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false)),
+                            color = if (changeableState.value) Color.Black else GrayColor6
                         )
 
                         BPMSpacer(width = 14.dp)
@@ -236,6 +273,9 @@ private fun Preview() {
     RegisterLocationActivityContent(
         searchTextState = remember { mutableStateOf("") },
         onClickSearch = {
+
+        },
+        onClickChangeLocation = { _, _ ->
 
         },
         onClickSetLocation = { _, _ ->
