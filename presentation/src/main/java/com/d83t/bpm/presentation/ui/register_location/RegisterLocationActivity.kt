@@ -2,23 +2,32 @@ package com.d83t.bpm.presentation.ui.register_location
 
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,8 +42,8 @@ import com.d83t.bpm.presentation.compose.RoundedCornerButton
 import com.d83t.bpm.presentation.compose.ScreenHeader
 import com.d83t.bpm.presentation.compose.TextFieldColorProvider
 import com.d83t.bpm.presentation.compose.theme.BPMTheme
-import com.d83t.bpm.presentation.compose.theme.GrayColor14
 import com.d83t.bpm.presentation.compose.theme.GrayColor3
+import com.d83t.bpm.presentation.compose.theme.GrayColor7
 import com.d83t.bpm.presentation.compose.theme.MainGreenColor
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import net.daum.mf.map.api.MapPoint
@@ -113,7 +122,10 @@ private fun RegisterLocationActivityContent(
                     Icon(
                         modifier = Modifier
                             .size(42.dp)
-                            .clickableWithoutRipple { onClickSearch() }
+                            .clickableWithoutRipple {
+                                focusManager.clearFocus()
+                                onClickSearch()
+                            }
                             .align(CenterEnd),
                         painter = painterResource(id = R.drawable.ic_search),
                         contentDescription = "searchLocationIcon"
@@ -124,7 +136,7 @@ private fun RegisterLocationActivityContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(BottomCenter),
-                    color = GrayColor14,
+                    color = GrayColor7,
                     thickness = 1.dp
                 )
             }
@@ -149,11 +161,49 @@ private fun RegisterLocationActivityContent(
 
                 Image(
                     modifier = Modifier
-                        .size(46.dp)
+                        .size(54.dp)
                         .align(Center),
                     painter = painterResource(id = R.drawable.ic_marker),
                     contentDescription = "mapMarkerIcon"
                 )
+
+                Box(
+                    modifier = Modifier
+                        .padding(bottom = 30.dp)
+                        .shadow(
+                            elevation = 8.dp,
+                            shape = RoundedCornerShape(50.dp)
+                        )
+                        .clip(shape = RoundedCornerShape(50.dp))
+                        .border(
+                            width = 1.dp,
+                            color = GrayColor3,
+                            shape = RoundedCornerShape(50.dp)
+                        )
+                        .height(36.dp)
+                        .background(color = Color.White)
+                        .align(BottomCenter)
+                        .clickable { onClickSetLocation(0.0, 0.0) },
+                ) {
+                    Row(
+                        modifier = Modifier.align(Center),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        BPMSpacer(width = 14.dp)
+
+                        Text(
+                            modifier = Modifier.padding(vertical = 12.dp),
+                            text = "이 위치로 변경하기",
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 12.sp,
+                            letterSpacing = 0.sp,
+                            style = TextStyle(platformStyle = PlatformTextStyle(includeFontPadding = false))
+                        )
+
+                        BPMSpacer(width = 14.dp)
+                    }
+                }
             }
         }
 
@@ -171,12 +221,10 @@ private fun RegisterLocationActivityContent(
                     )
                     .fillMaxWidth()
                     .fillMaxSize(),
-                text = "이 위치로 설정하기",
+                text = "위치 등록하기",
                 textColor = Color.Black,
                 buttonColor = MainGreenColor,
-                onClick = {
-                    onClickSetLocation(0.0, 0.0)
-                }
+                onClick = { onClickSetLocation(0.0, 0.0) }
             )
         }
     }

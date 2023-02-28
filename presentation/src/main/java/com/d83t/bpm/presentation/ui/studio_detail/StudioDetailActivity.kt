@@ -724,13 +724,13 @@ private inline fun StudioDetailActivityContent(
                         )
                         .shadow(
                             elevation = 8.dp,
-                            shape = RoundedCornerShape(500.dp)
+                            shape = RoundedCornerShape(50.dp)
                         )
-                        .clip(shape = RoundedCornerShape(500.dp))
+                        .clip(shape = RoundedCornerShape(50.dp))
                         .border(
                             width = 1.dp,
                             color = GrayColor3,
-                            shape = RoundedCornerShape(500.dp)
+                            shape = RoundedCornerShape(50.dp)
                         )
                         .height(36.dp)
                         .background(color = Color.White)
