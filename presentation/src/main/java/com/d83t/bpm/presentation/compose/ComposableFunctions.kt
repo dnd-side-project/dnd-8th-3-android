@@ -6,22 +6,25 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Alignment.Companion.TopStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -151,22 +154,25 @@ inline fun OutLinedRoundedCornerButton(
 
 @Composable
 fun BPMTextField(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     textState: MutableState<String>,
     label: String,
-    limit: Int,
-    minHeight: Dp,
+    limit: Int? = null,
+    minHeight: Dp = 42.dp,
+    iconSize: Dp = 0.dp,
+    singleLine: Boolean,
     hint: String? = null,
-    singleLine: Boolean = false,
+    onClick: (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    icon: @Composable (BoxScope.() -> Unit)? = null
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.background(color = Color.White)) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 3.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = SpaceBetween,
             verticalAlignment = Alignment.Bottom
         ) {
             Text(
@@ -177,13 +183,15 @@ fun BPMTextField(
                 color = GrayColor4
             )
 
-            Text(
-                text = "${textState.value.length}/$limit",
-                fontWeight = Medium,
-                fontSize = 10.sp,
-                letterSpacing = 0.sp,
-                color = GrayColor4
-            )
+            if (limit != null) {
+                Text(
+                    text = "${textState.value.length}/$limit",
+                    fontWeight = Medium,
+                    fontSize = 10.sp,
+                    letterSpacing = 0.sp,
+                    color = GrayColor4
+                )
+            }
         }
 
         BPMSpacer(height = 10.dp)
@@ -197,39 +205,65 @@ fun BPMTextField(
                     shape = RoundedCornerShape(12.dp),
                     color = if (textState.value.isNotEmpty()) GrayColor5 else GrayColor6
                 )
-                .background(color = Color.White)
+                .clickableWithoutRipple { onClick?.invoke() }
         ) {
-            Row(verticalAlignment = CenterVertically) {
+            if (hint != null && textState.value.isEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 14.dp,
+                            vertical = 12.dp
+                        )
+                        .heightIn(min = minHeight - 24.dp)
+                        .align(if (singleLine) CenterStart else TopStart),
+                    text = hint,
+                    fontWeight = Medium,
+                    fontSize = 13.sp,
+                    letterSpacing = 0.sp,
+                    color = GrayColor6
+                )
+            }
+
+            if (onClick == null) {
                 CompositionLocalProvider(LocalTextSelectionColors.provides(textSelectionColor())) {
-                    TextField(
+                    BasicTextField(
                         modifier = Modifier
+                            .padding(
+                                horizontal = 14.dp,
+                                vertical = 12.dp
+                            )
                             .fillMaxWidth()
-                            .heightIn(min = minHeight),
+                            .heightIn(min = minHeight - 24.dp)
+                            .align(if (singleLine) CenterStart else TopStart),
                         value = textState.value,
-                        onValueChange = { updatedText -> textState.value = updatedText },
+                        onValueChange = { textState.value = it },
+                        singleLine = singleLine,
+                        keyboardOptions = keyboardOptions,
+                        keyboardActions = keyboardActions,
+                        cursorBrush = SolidColor(Color.Black),
                         textStyle = TextStyle(
-                            fontWeight = Normal,
+                            fontWeight = Medium,
                             fontSize = 13.sp,
                             letterSpacing = 0.sp,
                             color = Color.Black
-                        ),
-                        placeholder = {
-                            if (hint != null) {
-                                Text(
-                                    text = hint,
-                                    fontWeight = Medium,
-                                    fontSize = 13.sp,
-                                    letterSpacing = 0.sp,
-                                    color = GrayColor6
-                                )
-                            }
-                        },
-                        colors = textFieldColors(),
-                        singleLine = singleLine,
-                        keyboardOptions = keyboardOptions,
-                        keyboardActions = keyboardActions
+                        )
                     )
                 }
+            } else {
+                Text(
+                    modifier = Modifier
+                        .padding(
+                            start = 14.dp,
+                            end = if (icon == null) 14.dp else 14.dp + iconSize,
+                        )
+                        .padding(vertical = 8.dp)
+                        .align(if (singleLine) CenterStart else TopStart),
+                    text = textState.value,
+                    fontWeight = Medium,
+                    fontSize = 13.sp,
+                    letterSpacing = 0.sp,
+                    color = Color.Black
+                )
             }
         }
     }
@@ -246,7 +280,7 @@ fun ReviewComposable(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = SpaceBetween,
             verticalAlignment = CenterVertically
         ) {
             Row(verticalAlignment = CenterVertically) {
@@ -268,7 +302,7 @@ fun ReviewComposable(
 
             Text(
                 text = "2023.02.15",
-                fontWeight = FontWeight.Medium,
+                fontWeight = Medium,
                 fontSize = 12.sp,
                 letterSpacing = 0.5.sp
             )
@@ -414,7 +448,7 @@ fun KeywordChip(
             )
             .clickableWithoutRipple { selectState.value = !selectState.value },
         text = text,
-        fontWeight = FontWeight.Medium,
+        fontWeight = Medium,
         fontSize = 12.sp,
         letterSpacing = 0.sp,
         color = if (selectState.value) Color.Black else GrayColor4

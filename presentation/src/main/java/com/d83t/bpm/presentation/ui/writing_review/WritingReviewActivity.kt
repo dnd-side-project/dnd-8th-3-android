@@ -19,7 +19,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomStart
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -440,6 +439,7 @@ private fun WritingReviewActivityContent(
         BPMTextField(
             modifier = Modifier.padding(horizontal = 16.dp),
             textState = contentTextState,
+            singleLine = false,
             label = "바디프로필 촬영 경험담을 들려주세요",
             limit = 300,
             minHeight = 262.dp,

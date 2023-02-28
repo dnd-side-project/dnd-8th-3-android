@@ -32,7 +32,7 @@ val FilteredWhiteColor = Color(0xB3FFFFFF)
 @Composable
 fun textSelectionColor() = TextSelectionColors(
     handleColor = Color.Black,
-    backgroundColor = Color.Black
+    backgroundColor = GrayColor6
 )
 
 @Composable
