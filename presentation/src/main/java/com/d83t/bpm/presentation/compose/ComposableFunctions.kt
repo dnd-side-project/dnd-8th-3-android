@@ -215,13 +215,17 @@ fun BPMTextField(
                             vertical = 12.dp
                         )
                         .heightIn(min = minHeight - 24.dp)
-                        .align(if (singleLine) CenterStart else TopStart),
+                        .align(TopStart),
                     text = hint,
                     fontWeight = Medium,
                     fontSize = 13.sp,
                     letterSpacing = 0.sp,
                     color = GrayColor6
                 )
+            }
+
+            if (icon != null) {
+                icon()
             }
 
             if (onClick == null) {
@@ -234,7 +238,7 @@ fun BPMTextField(
                             )
                             .fillMaxWidth()
                             .heightIn(min = minHeight - 24.dp)
-                            .align(if (singleLine) CenterStart else TopStart),
+                            .align(TopStart),
                         value = textState.value,
                         onValueChange = { textState.value = it },
                         singleLine = singleLine,
@@ -257,7 +261,7 @@ fun BPMTextField(
                             end = if (icon == null) 14.dp else 14.dp + iconSize,
                         )
                         .padding(vertical = 8.dp)
-                        .align(if (singleLine) CenterStart else TopStart),
+                        .align(TopStart),
                     text = textState.value,
                     fontWeight = Medium,
                     fontSize = 13.sp,
