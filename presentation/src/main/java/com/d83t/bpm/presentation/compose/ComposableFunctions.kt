@@ -585,5 +585,7 @@ fun ReviewListHeader(
                 )
             }
         }
+
+        Divider(color = GrayColor13)
     }
 }

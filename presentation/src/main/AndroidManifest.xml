@@ -43,13 +43,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Bpm.NoActionBar" />
         <activity
-            android:name=".ui.writing_review.WritingReviewActivity"
+            android:name=".ui.studio_detail.writing_review.WritingReviewActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Bpm.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.review_detail.ReviewDetailActivity"
+            android:name=".ui.studio_detail.review_detail.ReviewDetailActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Bpm.NoActionBar" />
@@ -66,7 +66,12 @@
             android:theme="@style/Theme.Bpm.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.register_location.RegisterLocationActivity"
+            android:name=".ui.register_studio.register_location.RegisterLocationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Bpm.NoActionBar" />
+        <activity
+            android:name=".ui.studio_detail.review_list.ReviewListActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Bpm.NoActionBar" />
