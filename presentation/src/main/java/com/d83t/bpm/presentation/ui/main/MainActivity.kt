@@ -56,9 +56,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
 
     private fun setUpNavigation() {
         bind {
-            val currentFragment = supportFragmentManager.primaryNavigationFragment
-            if (currentFragment == null) {
-                changeFragment(binding.mainTab.selectedItemId)
+            if (supportFragmentManager.primaryNavigationFragment == null) {
+                changeFragment()
             }
 
             mainTab.setOnItemSelectedListener {
@@ -68,7 +67,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         }
     }
 
-    private fun changeFragment(fragmentId: Int) {
+    private fun changeFragment(fragmentId: Int? = null) {
         val fragment = when (fragmentId) {
             R.id.nav_noti -> {
                 NotificationFragment.newInstance()
@@ -83,6 +82,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
                 MyPageFragment.newInstance()
             }
             else -> {
+                binding.mainTab.selectedItemId = R.id.nav_home
                 HomeFragment.newInstance()
             }
         }
