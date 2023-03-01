@@ -1,39 +1,38 @@
 package com.d83t.bpm.data.repositoryImpl
 
-import com.d83t.bpm.data.model.response.SignUpResponse.Companion.toDataModel
+import com.d83t.bpm.data.model.request.ScheduleRequest
+import com.d83t.bpm.data.model.response.ScheduleResponse.Companion.toDataModel
 import com.d83t.bpm.data.network.BPMResponse
 import com.d83t.bpm.data.network.BPMResponseHandler
 import com.d83t.bpm.data.network.ErrorResponse.Companion.toDataModel
 import com.d83t.bpm.data.network.MainApi
-import com.d83t.bpm.data.util.createImageMultipartBody
 import com.d83t.bpm.domain.model.ResponseState
-import com.d83t.bpm.domain.model.UserInfo
-import com.d83t.bpm.domain.repository.SignUpRepository
+import com.d83t.bpm.domain.model.Schedule
+import com.d83t.bpm.domain.repository.MakingReservationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
-import java.io.File
 import javax.inject.Inject
 
-class SignUpRepositoryImpl @Inject constructor(
+class MakingReservationRepositoryImpl @Inject constructor(
     private val mainApi: MainApi
-) : SignUpRepository {
-    override suspend fun sendSignUp(
-        kakaoId: Long,
-        nickname: String,
-        bio: String,
-        image: File
-    ): Flow<ResponseState<UserInfo>> {
+) : MakingReservationRepository {
+
+    override suspend fun sendSchedule(
+        studioName: String,
+        date: String,
+        time: String,
+        memo: String
+    ): Flow<ResponseState<Schedule>> {
         return flow {
             BPMResponseHandler().handle {
-                mainApi.signUp(
-                    kakaoId = kakaoId,
-                    nickname = nickname,
-                    bio = bio,
-                    file = createImageMultipartBody(
-                        key = "file",
-                        file = image
+                mainApi.sendSchedule(
+                    schedule = ScheduleRequest(
+                        studioName = studioName,
+                        date = date,
+                        time = time,
+                        memo = memo
                     )
                 )
             }.onEach { result ->

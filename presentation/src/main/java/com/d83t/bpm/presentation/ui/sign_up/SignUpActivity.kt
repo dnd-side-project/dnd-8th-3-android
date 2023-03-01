@@ -90,9 +90,7 @@ class SignUpActivity : BaseComponentActivity() {
 
                 viewModel.state.collectAsStateWithLifecycle().value.also { state ->
                     when (state) {
-                        is SignUpState.Init -> {
-
-                        }
+                        is SignUpState.Init -> Unit
                         is SignUpState.Loading -> {
                             Box(
                                 modifier = Modifier
@@ -103,9 +101,7 @@ class SignUpActivity : BaseComponentActivity() {
                             }
                         }
                         is SignUpState.SignUpSuccess -> goToMainActivity()
-                        is SignUpState.Error -> {
-
-                        }
+                        is SignUpState.Error -> Unit
                     }
                 }
             }

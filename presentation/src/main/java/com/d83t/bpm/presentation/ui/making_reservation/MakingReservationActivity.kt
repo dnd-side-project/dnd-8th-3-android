@@ -1,7 +1,10 @@
 package com.d83t.bpm.presentation.ui.making_reservation
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.*
@@ -41,26 +44,26 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
-import com.d83t.bpm.presentation.base.BaseViewModel
-import com.d83t.bpm.presentation.compose.BPMSpacer
-import com.d83t.bpm.presentation.compose.RoundedCornerButton
-import com.d83t.bpm.presentation.compose.ScreenHeader
-import com.d83t.bpm.presentation.compose.TextFieldColorProvider
+import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.addFocusCleaner
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
+import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
+import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 
+@AndroidEntryPoint
 class MakingReservationActivity : BaseComponentActivity() {
-    override val viewModel: BaseViewModel
-        get() = TODO("Not yet implemented")
+    override val viewModel: MakingReservationViewModel by viewModels()
 
+    private val studioNameState = mutableStateOf("")
     private val selectedDateState = mutableStateOf<LocalDate?>(null)
     private val timeTextState = mutableStateOf("시간")
     private val memoTextState = mutableStateOf("")
@@ -78,17 +81,55 @@ class MakingReservationActivity : BaseComponentActivity() {
                     selectedDateState = selectedDateState,
                     timeTextState = timeTextState,
                     memoTextState = memoTextState,
-                    onClickSearchStudio = {
-
-                    },
+                    onClickSearchStudio = { },
                     onClickSetTime = { timeText -> timeTextState.value = timeText },
-                    onClickSave = { }
+                    onClickSave = { viewModel.onClickSave() }
                 )
+
+                viewModel.state.collectAsStateWithLifecycle().value.also { state ->
+                    when(state) {
+                        is MakingReservationState.Init -> Unit
+                        is MakingReservationState.Loading -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(color = Color(0x50000000))
+                            ) {
+                                LoadingScreen(modifier = Modifier.align(Center))
+                            }
+                        }
+                        is MakingReservationState.SaveSuccess -> Unit
+                        is MakingReservationState.Error -> Unit
+                    }
+                }
             }
         }
     }
 
-    override fun setupCollect() = Unit
+    override fun setupCollect() {
+        repeatCallDefaultOnStarted {
+            viewModel.event.collect { event ->
+                when (event) {
+                    MakingReservationViewEvent.Save -> {
+                        viewModel.saveSchedule(
+                            studioName = studioNameState.value,
+                            date = selectedDateState.value.toString().replace("-", "."),
+                            time = timeTextState.value,
+                            memo = memoTextState.value
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    companion object {
+
+        fun newIntent(context: Context): Intent {
+            return Intent(context, MakingReservationActivity::class.java)
+        }
+
+    }
 }
 
 @OptIn(ExperimentalSnapperApi::class)
@@ -143,7 +184,10 @@ private inline fun MakingReservationActivityContent(
                 ) {
                     Row(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
+                            .padding(
+                                start = 16.dp,
+                                end = 8.dp
+                            )
                             .fillMaxWidth()
                             .align(Center)
                             .clickableWithoutRipple { onClickSearchStudio() },
@@ -590,9 +634,9 @@ private inline fun MakingReservationActivityContent(
                     .fillMaxWidth()
                     .height(48.dp),
                 text = "저장하기",
-                textColor = GrayColor7,
-                buttonColor = GrayColor9,
-                onClick = { onClickSave() }
+                textColor = if (selectedDateState.value != null) Color.Black else GrayColor7,
+                buttonColor = if (selectedDateState.value != null) MainGreenColor else GrayColor9,
+                onClick = { if (selectedDateState.value != null) onClickSave() }
             )
 
             BPMSpacer(height = 20.dp)
