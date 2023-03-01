@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="content"
+            type="String" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingHorizontal="20dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/Font.Pretendard.Medium.15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{content}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="마이페이지 컨텐츠" />
+
+        <com.google.android.material.chip.Chip
+            style="@style/Font.Pretendard.Medium.12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/mypage_content_disable"
+            android:textColor="@color/gray_06"
+            app:chipBackgroundColor="@color/gray_12"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

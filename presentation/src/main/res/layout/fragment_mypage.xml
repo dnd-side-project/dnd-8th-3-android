@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
 
     <data>
+
+        <variable
+            name="vm"
+            type="com.d83t.bpm.presentation.ui.main.mypage.MyPageViewModel" />
 
     </data>
 
@@ -9,11 +15,250 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/nav_mypage"/>
+        <include
+            android:id="@+id/action_bar"
+            layout="@layout/layout_action_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            bind:backEnable="@{false}"
+            bind:titleText="@{@string/nav_mypage}" />
 
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/action_bar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
+                    android:layout_marginTop="22dp"
+                    android:src="@drawable/default_profile_image"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/profile_name"
+                    style="@style/Font.Pretendard.Semibold.16"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="10dp"
+                    android:maxLines="1"
+                    android:text="유저 이름"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/profile_image" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/profile_description"
+                    style="@style/Font.Pretendard.Medium.13"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="14dp"
+                    android:text="바디프로필 텍스트"
+                    android:textAlignment="center"
+                    android:textColor="@color/gray_05"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/profile_name" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guide_profile_center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.5" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container_post"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="4dp"
+                    android:paddingVertical="13dp"
+                    app:layout_constraintEnd_toStartOf="@id/guide_profile_center"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/profile_description">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/profile_post_count"
+                        style="@style/Font.Pretendard.Semibold.18"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="22"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/profile_post"
+                        style="@style/Font.Pretendard.Semibold.12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="@string/mypage_post"
+                        android:textColor="@color/gray_05"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/profile_post_count" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container_scrap"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="10dp"
+                    android:paddingVertical="13dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/guide_profile_center"
+                    app:layout_constraintTop_toBottomOf="@id/profile_description">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/profile_scarp_count"
+                        style="@style/Font.Pretendard.Semibold.18"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="22"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/profile_scrap"
+                        style="@style/Font.Pretendard.Semibold.12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="@string/mypage_scrap"
+                        android:textColor="@color/gray_05"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/profile_scarp_count" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/divider_profile_post_scarp"
+                    android:layout_width="2dp"
+                    android:layout_height="0dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="@color/gray_10"
+                    app:layout_constraintBottom_toBottomOf="@id/container_scrap"
+                    app:layout_constraintEnd_toEndOf="@id/container_scrap"
+                    app:layout_constraintStart_toStartOf="@id/container_post"
+                    app:layout_constraintTop_toTopOf="@id/container_post" />
+
+                <View
+                    android:id="@+id/divider_profile"
+                    android:layout_width="0dp"
+                    android:layout_height="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/gray_12"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/divider_profile_post_scarp" />
+
+                <include
+                    android:id="@+id/book_info"
+                    layout="@layout/layout_mypage_book"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="14dp"
+                    android:clickable="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/divider_profile" />
+
+                <include
+                    android:id="@+id/content_history_bf"
+                    layout="@layout/layout_mypage_content_disable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/book_info"
+                    bind:content="@{@string/mypage_content_history_bf}" />
+
+                <include
+                    android:id="@+id/content_history_post"
+                    layout="@layout/layout_mypage_content_disable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/content_history_bf"
+                    bind:content="@{@string/mypage_content_history_post}" />
+
+                <View
+                    android:id="@+id/divider_book_info"
+                    android:layout_width="0dp"
+                    android:layout_height="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/gray_12"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/content_history_post" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/content_profile_edit"
+                    style="@style/Font.Pretendard.Medium.15"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="20dp"
+                    android:text="@string/mypage_content_profile_edit"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/divider_book_info" />
+
+                <include
+                    android:id="@+id/content_notice"
+                    layout="@layout/layout_mypage_content_disable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/content_profile_edit"
+                    bind:content="@{@string/mypage_content_notice}" />
+
+                <include
+                    android:id="@+id/content_version"
+                    layout="@layout/layout_mypage_content_disable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/content_notice"
+                    bind:content="@{@string/mypage_content_version_info}" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/content_version" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
