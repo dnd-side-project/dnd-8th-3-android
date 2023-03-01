@@ -1,7 +1,11 @@
 package com.d83t.bpm.presentation.di
 
 import com.d83t.bpm.data.network.MainApi
+import com.d83t.bpm.presentation.App
 import com.d83t.bpm.presentation.BuildConfig
+import com.facebook.flipper.android.AndroidFlipperClient
+import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
+import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,19 +26,29 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideHttpClient(): OkHttpClient {
-        val interceptor = HttpLoggingInterceptor()
-//        if (BuildConfig.DEBUG) {
-//            interceptor.level = HttpLoggingInterceptor.Level.HEADERS
-//        } else {
-//            interceptor.level = HttpLoggingInterceptor.Level.NONE
-//        }
-
-        return OkHttpClient
+        val client = OkHttpClient
             .Builder()
             .readTimeout(15, TimeUnit.SECONDS)
             .connectTimeout(15, TimeUnit.SECONDS)
-            .addNetworkInterceptor(interceptor)
-            .build()
+
+        if (BuildConfig.DEBUG) {
+            client.addNetworkInterceptor(
+                FlipperOkhttpInterceptor(
+                    AndroidFlipperClient.getInstance(App().applicationContext).getPlugin(
+                        NetworkFlipperPlugin.ID
+                    )
+                )
+            )
+            client.addNetworkInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.HEADERS
+            })
+        } else {
+            client.addNetworkInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.NONE
+            })
+        }
+
+        return client.build()
     }
 
 
