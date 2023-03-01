@@ -1,8 +1,10 @@
 package com.d83t.bpm.presentation.di
 
+import com.d83t.bpm.domain.repository.SignUpRepository
 import com.d83t.bpm.domain.repository.SplashRepository
 import com.d83t.bpm.domain.usecase.splash.GetKakaoUserIdUseCase
 import com.d83t.bpm.domain.usecase.splash.SetKakaoUserIdUseCase
+import com.d83t.bpm.domain.usecase.splash.sign_up.SignUpUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,5 +25,11 @@ object UseCaseModule {
     @ViewModelScoped
     fun provideSetKakaoUserIdUseCase(splashRepository: SplashRepository): SetKakaoUserIdUseCase {
         return SetKakaoUserIdUseCase(splashRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideSignUpUseCase(signUpRepository: SignUpRepository): SignUpUseCase {
+        return SignUpUseCase(signUpRepository)
     }
 }

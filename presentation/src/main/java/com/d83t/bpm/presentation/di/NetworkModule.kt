@@ -21,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    val BASE_URL = ""
+    val BASE_URL = "http://3.36.240.13:8080/"
 
     @Singleton
     @Provides
