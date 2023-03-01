@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ErrorResponse(
-    val timeStamp: String? = null,
+    val timestamp: String? = null,
     val status: String? = null,
     val error: String? = null,
     val code: String? = null,

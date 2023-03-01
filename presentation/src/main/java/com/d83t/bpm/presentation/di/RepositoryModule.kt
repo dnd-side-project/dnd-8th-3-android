@@ -38,7 +38,7 @@ object RepositoryModule {
     @Provides
     fun provideSignUpRepository(
         mainApi: MainApi
-    ) : SignUpRepository {
+    ): SignUpRepository {
         return SignUpRepositoryImpl(mainApi)
     }
 }
