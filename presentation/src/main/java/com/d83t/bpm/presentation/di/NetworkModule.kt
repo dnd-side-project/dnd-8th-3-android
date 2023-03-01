@@ -32,13 +32,13 @@ object NetworkModule {
             .connectTimeout(15, TimeUnit.SECONDS)
 
         if (BuildConfig.DEBUG) {
-            client.addNetworkInterceptor(
-                FlipperOkhttpInterceptor(
-                    AndroidFlipperClient.getInstance(App().applicationContext).getPlugin(
-                        NetworkFlipperPlugin.ID
-                    )
-                )
-            )
+//            client.addNetworkInterceptor(
+//                FlipperOkhttpInterceptor(
+//                    AndroidFlipperClient.getInstance(App().applicationContext).getPlugin(
+//                        NetworkFlipperPlugin.ID
+//                    )
+//                )
+//            )
             client.addNetworkInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.HEADERS
             })

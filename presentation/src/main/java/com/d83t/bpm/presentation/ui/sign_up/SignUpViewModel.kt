@@ -47,6 +47,10 @@ class SignUpViewModel @Inject constructor(
         nickname: String,
         bio: String
     ) {
+        viewModelScope.launch(mainDispatcher) {
+            _state.emit(SignUpState.Loading)
+        }
+
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
             signUpUseCase(
                 kakaoId = kakaoId,

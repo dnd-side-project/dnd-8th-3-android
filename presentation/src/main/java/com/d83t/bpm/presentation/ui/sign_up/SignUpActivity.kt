@@ -42,13 +42,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
-import com.d83t.bpm.presentation.compose.BPMSpacer
-import com.d83t.bpm.presentation.compose.RoundedCornerButton
-import com.d83t.bpm.presentation.compose.ScreenHeader
-import com.d83t.bpm.presentation.compose.TextFieldColorProvider
+import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.ui.main.MainActivity
 import com.d83t.bpm.presentation.util.convertUriToBitmap
+import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -90,27 +88,21 @@ class SignUpActivity : BaseComponentActivity() {
                     onClickSignUp = { viewModel.onClickSignUp() }
                 )
 
-                viewModel.event.collectAsStateWithLifecycle(initialValue = Unit).value.also { event ->
-                    when (event) {
-                        is SignUpViewEvent.SignUp -> {
-                            viewModel.signUp(
-                                kakaoId = 0L, // kakao id
-                                nickname = nicknameTextState.value,
-                                bio = bioTextState.value,
-                                image = imageState.value ?: BitmapFactory.decodeResource(this@SignUpActivity.resources, R.drawable.default_profile_image).asImageBitmap()
-                            )
-                        }
-                    }
-                }
-
                 viewModel.state.collectAsStateWithLifecycle().value.also { state ->
                     when (state) {
                         is SignUpState.Init -> {
 
                         }
-                        is SignUpState.SignUpSuccess -> {
-                            goToMainActivity()
+                        is SignUpState.Loading -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(color = Color(0x50000000))
+                            ) {
+                                LoadingScreen(modifier = Modifier.align(Center))
+                            }
                         }
+                        is SignUpState.SignUpSuccess -> goToMainActivity()
                         is SignUpState.Error -> {
 
                         }
@@ -125,7 +117,22 @@ class SignUpActivity : BaseComponentActivity() {
         finish()
     }
 
-    override fun setupCollect() = Unit
+    override fun setupCollect() {
+        repeatCallDefaultOnStarted {
+            viewModel.event.collect { event ->
+                when (event) {
+                    SignUpViewEvent.SignUp -> {
+                        viewModel.signUp(
+                            kakaoId = 960422L, // kakao id
+                            nickname = nicknameTextState.value,
+                            bio = bioTextState.value,
+                            image = imageState.value ?: BitmapFactory.decodeResource(this@SignUpActivity.resources, R.drawable.default_profile_image).asImageBitmap()
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     companion object {
 

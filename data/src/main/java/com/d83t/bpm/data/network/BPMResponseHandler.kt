@@ -17,11 +17,9 @@ class BPMResponseHandler {
                     emit(BPMResponse.Error(ErrorResponse(message = "Unknown ErrorOccurred.")))
                 }
             } else {
-                emit(
-                    BPMResponse.Error(
-                        Gson().fromJson(response.errorBody()?.string(), ErrorResponse::class.java)
-                    )
-                )
+                if (response.errorBody() != null) {
+                    emit(BPMResponse.Error(Gson().fromJson(response.errorBody()!!.string(), ErrorResponse::class.java)))
+                }
             }
         }
     }
