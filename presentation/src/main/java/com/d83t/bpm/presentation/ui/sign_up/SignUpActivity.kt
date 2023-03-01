@@ -1,10 +1,20 @@
 package com.d83t.bpm.presentation.ui.sign_up
 
+import android.content.Context
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Text
@@ -18,52 +28,121 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale.Companion.Crop
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
-import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.compose.BPMSpacer
 import com.d83t.bpm.presentation.compose.RoundedCornerButton
 import com.d83t.bpm.presentation.compose.ScreenHeader
 import com.d83t.bpm.presentation.compose.TextFieldColorProvider
 import com.d83t.bpm.presentation.compose.theme.*
+import com.d83t.bpm.presentation.ui.main.MainActivity
+import com.d83t.bpm.presentation.util.convertUriToBitmap
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SignUpActivity : BaseComponentActivity() {
-    override val viewModel: BaseViewModel
-        get() = TODO("Not yet implemented")
+    override val viewModel: SignUpViewModel by viewModels()
 
+    private lateinit var imageLauncher: ActivityResultLauncher<PickVisualMediaRequest>
+    private val imageState = mutableStateOf<ImageBitmap?>(null)
     private val nicknameTextState = mutableStateOf("")
     private val bioTextState = mutableStateOf("")
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        imageLauncher = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let { _ ->
+                try {
+                    imageState.value = (convertUriToBitmap(
+                        contentResolver = contentResolver,
+                        uri = uri
+                    ).asImageBitmap())
+                } catch (e: Exception) {
+                    // TODO : Handle Error
+                }
+            } ?: run {
+                // TODO : Handle Error
+            }
+        }
+    }
 
     override fun initUi() {
         setContent {
             BPMTheme {
                 SignUpActivityContent(
+                    imageState = imageState,
                     nicknameTextState = nicknameTextState,
                     bioTextState = bioTextState,
-                    onClickSave = {
-
-                    }
+                    onClickGetImage = { imageLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+                    onClickSignUp = { viewModel.onClickSignUp() }
                 )
+
+                viewModel.event.collectAsStateWithLifecycle(initialValue = Unit).value.also { event ->
+                    when (event) {
+                        is SignUpViewEvent.SignUp -> {
+                            viewModel.signUp(
+                                kakaoId = 0L, // kakao id
+                                nickname = nicknameTextState.value,
+                                bio = bioTextState.value,
+                                image = imageState.value ?: BitmapFactory.decodeResource(this@SignUpActivity.resources, R.drawable.default_profile_image).asImageBitmap()
+                            )
+                        }
+                    }
+                }
+
+                viewModel.state.collectAsStateWithLifecycle().value.also { state ->
+                    when (state) {
+                        is SignUpState.Init -> {
+
+                        }
+                        is SignUpState.SignUpSuccess -> {
+                            goToMainActivity()
+                        }
+                        is SignUpState.Error -> {
+
+                        }
+                    }
+                }
             }
         }
     }
 
+    private fun goToMainActivity() {
+        startActivity(MainActivity.newIntent(this@SignUpActivity))
+        finish()
+    }
+
     override fun setupCollect() = Unit
+
+    companion object {
+
+        fun newIntent(context: Context): Intent {
+            return Intent(context, SignUpActivity::class.java)
+        }
+
+    }
 }
 
 @Composable
 private inline fun SignUpActivityContent(
+    imageState: MutableState<ImageBitmap?>,
     nicknameTextState: MutableState<String>,
     bioTextState: MutableState<String>,
-    crossinline onClickSave: () -> Unit
+    crossinline onClickGetImage: () -> Unit,
+    crossinline onClickSignUp: () -> Unit
 ) {
     val omissionState = remember { mutableStateOf(false) }
 
@@ -83,15 +162,18 @@ private inline fun SignUpActivityContent(
             ) {
                 Image(
                     modifier = Modifier
+                        .clip(shape = CircleShape)
                         .size(130.dp)
                         .align(CenterHorizontally),
-                    painter = painterResource(id = R.drawable.default_profile_image),
-                    contentDescription = "profileImage"
+                    bitmap = imageState.value ?: BitmapFactory.decodeResource(LocalContext.current.resources, R.drawable.default_profile_image).asImageBitmap(),
+                    contentDescription = "profileImage",
+                    contentScale = Crop
                 )
 
                 BPMSpacer(height = 16.dp)
 
                 Text(
+                    modifier = Modifier.clickable { onClickGetImage() },
                     text = "프로필 사진 등록",
                     fontWeight = Medium,
                     fontSize = 15.sp,
@@ -107,7 +189,7 @@ private inline fun SignUpActivityContent(
                 ProfileTextField(
                     isEssential = true,
                     title = "닉네임",
-                    hint = "닉네임",
+                    hint = "어깨_매니저",
                     textState = nicknameTextState,
                     omissionState = omissionState
                 )
@@ -117,7 +199,7 @@ private inline fun SignUpActivityContent(
                 ProfileTextField(
                     isEssential = false,
                     title = "한줄 소개",
-                    hint = "안녕하세요!!",
+                    hint = "회원님 반갑습니다. 제 특기는 어깨춤 추기입니다.",
                     textState = bioTextState
                 )
             }
@@ -133,13 +215,14 @@ private inline fun SignUpActivityContent(
                 .height(48.dp)
                 .align(BottomCenter),
             text = "저장하기",
-            textColor = GrayColor7,
-            buttonColor = GrayColor11,
+            textColor = if (nicknameTextState.value.isNotEmpty()) Color.Black else GrayColor7,
+            buttonColor = if (nicknameTextState.value.isNotEmpty()) MainGreenColor else GrayColor11,
             onClick = {
                 if (nicknameTextState.value.isEmpty()) {
                     omissionState.value = true
+                } else {
+                    onClickSignUp()
                 }
-                onClickSave()
             }
         )
     }
@@ -200,6 +283,7 @@ private fun ProfileTextField(
                         letterSpacing = 0.sp
                     ),
                     cursorBrush = SolidColor(Color.Black),
+                    singleLine = true
                 )
 
                 if (textState.value.isEmpty()) {
