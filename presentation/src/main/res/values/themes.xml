@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Bpm" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.Bpm" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/black</item>
@@ -32,8 +32,12 @@
         <item name="fontFamily">@font/pyeongchang_regular</item>
     </style>
 
-    <style name="Theme.Bpm.Font.PyeongChang.PeaceLight" parent="Theme.Bpm.Font">
+    <style name="Theme.Bpm.Font.PyeongChangPeace.Light" parent="Theme.Bpm.Font">
         <item name="fontFamily">@font/pyeongchang_peace_light</item>
+    </style>
+
+    <style name="Theme.Bpm.Font.PyeongChangPeace.Bold" parent="Theme.Bpm.Font">
+        <item name="fontFamily">@font/pyeongchang_peace_bold</item>
     </style>
 
     <style name="Theme.Bpm.Font.PyeongChang.Bold" parent="Theme.Bpm.Font">
@@ -64,8 +68,12 @@
         <item name="android:textSize">15dp</item>
     </style>
 
-    <style name="Font.PyeongChang.Peace.12" parent="Theme.Bpm.Font.PyeongChang.PeaceLight">
+    <style name="Font.PyeongChangPeace.Light.12" parent="Theme.Bpm.Font.PyeongChangPeace.Light">
         <item name="android:textSize">12dp</item>
+    </style>
+
+    <style name="Font.PyeongChangPeace.Bold.20" parent="Theme.Bpm.Font.PyeongChangPeace.Bold">
+        <item name="android:textSize">20dp</item>
     </style>
 
     <style name="Font.Pretendard.Semibold.18" parent="Theme.Bpm.Font.Pretendard.Semibold">

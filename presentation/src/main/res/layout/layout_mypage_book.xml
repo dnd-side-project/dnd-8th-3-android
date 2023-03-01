@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/gray_12"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingStart="18dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="14dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/arrow"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_arrow_right"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/plan_count"
+                style="@style/Font.PyeongChangPeace.Bold.20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/pyeongchang_bold"
+                android:includeFontPadding="false"
+                android:paddingBottom="10dp"
+                android:text="D-3"
+                android:textColor="#75BB02"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/plan_date"
+                style="@style/Font.Pretendard.Medium.14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2022.01.23 오후 5시"
+                android:textColor="@color/gray_04"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/plan_count" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/plan_studio"
+                style="@style/Font.Pretendard.Semibold.14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="바디프렌즈 스튜디오"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/plan_date" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/plan_guide"
+                style="@style/Font.Pretendard.Semibold.14"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginTop="4dp"
+                android:drawableStart="@drawable/ic_mypage_star"
+                android:gravity="center_vertical"
+                android:text="@string/mypage_book_info_guide"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/plan_studio" />
+
+            <include
+                android:id="@+id/plan_book"
+                layout="@layout/layout_mypage_book_ing"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/plan_guide" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/group_booked"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="plan_date, plan_count, plan_studio, plan_guide, plan_book" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/book_register"
+                style="@style/Font.Pretendard.Medium.14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="촬영 일정 등록하기"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/book_plan"
+                style="@style/Font.Pretendard.Medium.10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="등록된 바디프로필 일정 없음"
+                android:textColor="@color/gray_04"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/book_register" />
+
+            <include
+                android:id="@+id/book_start"
+                layout="@layout/layout_mypage_book_new"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/book_plan" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/group_book_new"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="book_register, book_plan, book_start" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

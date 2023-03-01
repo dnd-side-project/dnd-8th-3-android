@@ -8,4 +8,15 @@
     <string name="nav_community">커뮤니티</string>
     <string name="nav_mypage">마이페이지</string>
 
+    <string name="mypage_post">게시물</string>
+    <string name="mypage_scrap">스크랩</string>
+    <string name="mypage_content_disable">오픈 예정</string>
+    <string name="mypage_content_history_bf">이전 바디프로필 모아보기</string>
+    <string name="mypage_content_history_post">내 질문 모아보기</string>
+    <string name="mypage_content_profile_edit">프로필 관리</string>
+    <string name="mypage_content_notice">공지사항</string>
+    <string name="mypage_content_version_info">버전 정보</string>
+    <string name="mypage_book_info_history">기록</string>
+    <string name="mypage_book_info_guide">이번에는 제대로 준비해서 찍어보자!</string>
+
 </resources>
