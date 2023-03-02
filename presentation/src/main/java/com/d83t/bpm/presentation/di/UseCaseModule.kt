@@ -3,11 +3,13 @@ package com.d83t.bpm.presentation.di
 import com.d83t.bpm.domain.repository.ScheduleRepository
 import com.d83t.bpm.domain.repository.SignUpRepository
 import com.d83t.bpm.domain.repository.SplashRepository
+import com.d83t.bpm.domain.repository.StudioDetailRepository
 import com.d83t.bpm.domain.usecase.schedule.GetScheduleUseCase
 import com.d83t.bpm.domain.usecase.schedule.SaveScheduleUseCase
 import com.d83t.bpm.domain.usecase.sign_up.SignUpUseCase
 import com.d83t.bpm.domain.usecase.splash.GetKakaoUserIdUseCase
 import com.d83t.bpm.domain.usecase.splash.SetKakaoUserIdUseCase
+import com.d83t.bpm.domain.usecase.studio_detail.StudioDetailUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,5 +48,11 @@ object UseCaseModule {
     @ViewModelScoped
     fun provideGetScheduleUseCase(scheduleRepository: ScheduleRepository): GetScheduleUseCase {
         return GetScheduleUseCase(scheduleRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideStudioDetailUseCase(studioDetailRepository: StudioDetailRepository): StudioDetailUseCase {
+        return StudioDetailUseCase(studioDetailRepository)
     }
 }

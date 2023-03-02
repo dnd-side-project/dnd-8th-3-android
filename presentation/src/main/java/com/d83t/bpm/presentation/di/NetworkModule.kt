@@ -48,7 +48,7 @@ object NetworkModule {
                 if (shouldBeAuthorized) {
                     requestBuilder.addHeader(
                         name = "Authorization",
-                        value = "Token eyJhbGciOiJIUzI1NiJ9.eyJuaWNrbmFtZSI6Ilwi64ycMuOFoOOFh-yYrFwiIiwiaWF0IjoxNjc3NzQ2ODI3LCJleHAiOjE2ODA3NDY4Mjd9.vhEoFgsiW2HRpags3dVcFVifog3wXj5EdYEJ5wAjNhQ" // forTest
+                        value = "Token eyJhbGciOiJIUzI1NiJ9.eyJuaWNrbmFtZSI6InJvb3QiLCJpYXQiOjE2Nzc3NjgxMTUsImV4cCI6MTY4MDc2ODExNX0._INkoO0kz7Yiwb8WsgQ_q5ySmFRe17hxYxICl9wRnjM" // forTest
                     )
 
                 } else {
