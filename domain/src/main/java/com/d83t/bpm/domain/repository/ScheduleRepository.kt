@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface ScheduleRepository {
 
+    suspend fun fetchSchedule(): Flow<ResponseState<Schedule>>
+
     suspend fun sendSchedule(
         studioName: String,
         date: String,

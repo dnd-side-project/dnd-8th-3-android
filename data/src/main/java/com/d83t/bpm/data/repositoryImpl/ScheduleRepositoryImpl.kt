@@ -19,6 +19,19 @@ class ScheduleRepositoryImpl @Inject constructor(
     private val mainApi: MainApi
 ) : ScheduleRepository {
 
+    override suspend fun fetchSchedule(): Flow<ResponseState<Schedule>> {
+        return flow {
+            BPMResponseHandler().handle {
+                mainApi.fetchSchedule()
+            }.onEach { result ->
+                when (result) {
+                    is BPMResponse.Success -> emit(ResponseState.Success(result.data.toDataModel()))
+                    is BPMResponse.Error -> emit(ResponseState.Error(result.error.toDataModel()))
+                }
+            }.collect()
+        }
+    }
+
     override suspend fun sendSchedule(
         studioName: String,
         date: String,

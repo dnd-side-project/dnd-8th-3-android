@@ -2,6 +2,7 @@ package com.d83t.bpm.presentation.ui.schedule
 
 import androidx.lifecycle.viewModelScope
 import com.d83t.bpm.domain.model.ResponseState
+import com.d83t.bpm.domain.usecase.schedule.GetScheduleUseCase
 import com.d83t.bpm.domain.usecase.schedule.SaveScheduleUseCase
 import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.di.IoDispatcher
@@ -15,6 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
+    private val getScheduleUseCase: GetScheduleUseCase,
     private val saveScheduleUseCase: SaveScheduleUseCase,
     @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
@@ -33,9 +35,28 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
+    init {
+        getSchedule()
+    }
+
     fun onClickSave() {
         viewModelScope.launch(mainDispatcher) {
             _event.emit(ScheduleViewEvent.Save)
+        }
+    }
+
+    private fun getSchedule() {
+        viewModelScope.launch(mainDispatcher) {
+            _state.emit(ScheduleState.Loading)
+        }
+
+        viewModelScope.launch(ioDispatcher + exceptionHandler) {
+            getScheduleUseCase().onEach { state ->
+                when(state) {
+                    is ResponseState.Success -> _state.emit(ScheduleState.GetSuccess(state.data))
+                    is ResponseState.Error -> _state.emit(ScheduleState.Error)
+                }
+            }.launchIn(viewModelScope)
         }
     }
 

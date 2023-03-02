@@ -42,19 +42,20 @@ object NetworkModule {
 
             client.addInterceptor(Interceptor { chain ->
                 val request = chain.request()
-                val shouldAddHeader = request.header(name = "shouldBeAuthorized") != "false"
+                val shouldBeAuthorized = request.header(name = "shouldBeAuthorized") != "false"
                 val requestBuilder = request.newBuilder()
 
-                if (shouldAddHeader) {
+                if (shouldBeAuthorized) {
                     requestBuilder.addHeader(
                         name = "Authorization",
-                        value = "eyJhbGciOiJIUzI1NiJ9.eyJuaWNrbmFtZSI6Ilwi6rCA7J6QXCIiLCJpYXQiOjE2Nzc3MTk1MzcsImV4cCI6MTY4MDcxOTUzN30.JjRmy9N74uPKkamJxnt7txwwNbr54NWf6GZ0prGfvqg" // forTest
+                        value = "Token eyJhbGciOiJIUzI1NiJ9.eyJuaWNrbmFtZSI6Ilwi64ycMuOFoOOFh-yYrFwiIiwiaWF0IjoxNjc3NzQ2ODI3LCJleHAiOjE2ODA3NDY4Mjd9.vhEoFgsiW2HRpags3dVcFVifog3wXj5EdYEJ5wAjNhQ" // forTest
                     )
+
                 } else {
                     requestBuilder.removeHeader(name = "shouldBeAuthorized")
                 }
 
-                chain.proceed(request = requestBuilder.build())
+                return@Interceptor chain.proceed(request = requestBuilder.build())
             })
 
         } else {

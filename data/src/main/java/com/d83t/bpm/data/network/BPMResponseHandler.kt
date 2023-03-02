@@ -7,22 +7,19 @@ import retrofit2.Response
 import java.lang.Exception
 
 class BPMResponseHandler {
-    suspend fun <T> handle(request: suspend () -> Response<T>): Flow<BPMResponse<T>> {
+    suspend fun <T> handle(call: suspend () -> Response<T>): Flow<BPMResponse<T>> {
         return flow {
-            val response = request.invoke()
-            if (response.isSuccessful) {
-                val data = response.body()
-                if (data != null) {
-                    emit(BPMResponse.Success(data))
-                } else {
-                    emit(BPMResponse.Error(ErrorResponse(message = "Unknown ErrorOccurred.")))
-                }
+            val response = call.invoke()
+            if (response.isSuccessful && response.body() != null) {
+                emit(BPMResponse.Success(response.body()!!))
             } else {
-                try {
-                    emit(BPMResponse.Error(Gson().fromJson(response.errorBody()?.string(), ErrorResponse::class.java)))
-                } catch (e: Exception) {
-                    emit(BPMResponse.Error(ErrorResponse(message = "Unknown ErrorOccurred.")))
+                val errorBody = response.errorBody()?.string()
+                val message = if (errorBody.isNullOrEmpty()) {
+                    response.message()
+                } else {
+                    errorBody
                 }
+                emit(BPMResponse.Error(ErrorResponse(code = response.code().toString(), message = message ?: "Unknown Error")))
             }
         }
     }
