@@ -3,6 +3,10 @@
 
     <data>
 
+        <variable
+            name="vm"
+            type="com.d83t.bpm.presentation.ui.main.home.HomeViewModel" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

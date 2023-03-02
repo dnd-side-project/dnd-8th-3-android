@@ -18,8 +18,9 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideMainRepository(
+        mainApi: MainApi
     ): MainRepository {
-        return MainRepositoryImpl()
+        return MainRepositoryImpl(mainApi)
     }
 
     @Singleton
