@@ -52,7 +52,7 @@ class ScheduleViewModel @Inject constructor(
 
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
             getScheduleUseCase().onEach { state ->
-                when(state) {
+                when (state) {
                     is ResponseState.Success -> _state.emit(ScheduleState.GetSuccess(state.data))
                     is ResponseState.Error -> _state.emit(ScheduleState.Error)
                 }
@@ -88,15 +88,7 @@ class ScheduleViewModel @Inject constructor(
     private fun modifyTimeToFormat(
         time: String
     ): String {
-        val stringBuilder = StringBuilder()
         val timeInList = time.dropLast(5).split(":")
-
-        stringBuilder
-            .append(if (time.contains("오후")) timeInList[0].toInt() + 12 else timeInList[0])
-            .append(":")
-            .append(timeInList[1])
-            .append(":00")
-
-        return stringBuilder.toString()
+        return "${if (time.contains("오후")) timeInList[0].toInt() + 12 else timeInList[0]}:${timeInList[1]}:00"
     }
 }

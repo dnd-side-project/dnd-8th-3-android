@@ -131,7 +131,9 @@ class ScheduleActivity : BaseComponentActivity() {
         studioLabelTextState.value = schedule.studioName
         dateLabelTextState.value = schedule.date
         val timeInList = schedule.time.split(":")
-        timeLabelTextState.value = if (timeInList[0].toInt() > 12) "${if (timeInList[0].toInt() - 12 < 10) "0" else ""}${timeInList[0].toInt() - 12}:${timeInList[1]} (오후)" else "${timeInList[0]}:${timeInList[1]} (오전)"
+        timeLabelTextState.value =
+            if (timeInList[0].toInt() > 12) "${if (timeInList[0].toInt() - 12 < 10) "0" else ""}${timeInList[0].toInt() - 12}:${timeInList[1]} (오후)"
+            else "${timeInList[0]}:${timeInList[1]} (오전)"
         val dateInList = schedule.date.split("-").map { it.toInt() }
         selectedDateState.value = LocalDate.of(dateInList[0], dateInList[1], dateInList[2])
         memoLabelTextState.value = schedule.memo
