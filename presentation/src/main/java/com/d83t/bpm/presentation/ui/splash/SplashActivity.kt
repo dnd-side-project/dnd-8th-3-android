@@ -31,6 +31,7 @@ import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.ui.main.MainActivity
+import com.d83t.bpm.presentation.ui.sign_up.SignUpActivity
 import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import com.d83t.bpm.presentation.util.showDebugToast
 import com.d83t.bpm.presentation.util.showToast
@@ -73,21 +74,27 @@ class SplashActivity : BaseComponentActivity() {
                     SplashState.Init -> {
                         MainScope().launch {
                             delay(1000L)
-                            viewModel.getStoredId()
+                            viewModel.getStoredUserInfo()
                         }
+                    }
+                    is SplashState.ValidationCheck -> {
+                        viewModel.sendKakaoIdVerification(state.id)
                     }
                     is SplashState.SignUp -> {
-                        if (state.id == "null" || state.id.isNullOrEmpty()) {
-                            startButtonVisibilityState.value = true
-                        } else {
-                            viewModel.setFinish()
-                        }
+                        goToSignUp(state.id)
                     }
-                    SplashState.SignIn -> {
-                        viewModel.setFinish()
+                    SplashState.NoUserInfo -> {
+                        startButtonVisibilityState.value = true
+                    }
+                    is SplashState.SaveToken -> {
+                        // TODO : 캡슐화에 대한 생각이 추가되어야 할 듯
+                        state.token?.let { viewModel.saveUserToken(it) }
                     }
                     SplashState.Finish -> {
                         goToMainActivity()
+                    }
+                    is SplashState.Error -> {
+                        this@SplashActivity.showToast("로그인 중 오류가 발생하였습니다. 다시 시도해주세요")
                     }
                 }
             }
@@ -104,13 +111,20 @@ class SplashActivity : BaseComponentActivity() {
                     showToast("로그인에 실패하였습니다. 다시 시도해 주세요.")
                 } else if (loginInfo != null) {
                     // 로그인 성공
-                    viewModel.setLoginId(loginInfo.idToken ?: "")
-                    showDebugToast("login succeed. user token : ${loginInfo.idToken}")
+                    kakaoLoginInstance.me { user, error ->
+                        user?.id?.let { viewModel.setKakaoUserId(it) }
+                        showDebugToast("login succeed. user token : ${user?.id}")
+                    }
                 }
             }
         } else {
             showToast("로그인에 실패하였습니다. 다시 시도해 주세요.")
         }
+    }
+
+    private fun goToSignUp(kakaoUserId: Long?) {
+        startActivity(SignUpActivity.newIntent(this))
+        finish()
     }
 
     private fun goToMainActivity() {

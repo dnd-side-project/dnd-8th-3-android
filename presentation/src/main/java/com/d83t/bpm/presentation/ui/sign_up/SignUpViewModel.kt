@@ -1,6 +1,7 @@
 package com.d83t.bpm.presentation.ui.sign_up
 
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.d83t.bpm.domain.model.ResponseState
 import com.d83t.bpm.domain.usecase.sign_up.SignUpUseCase
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase,
     @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
     private val _event = MutableSharedFlow<SignUpViewEvent>()
     val event: SharedFlow<SignUpViewEvent>
