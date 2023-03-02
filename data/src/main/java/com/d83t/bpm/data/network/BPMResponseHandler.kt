@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Response
+import java.lang.Exception
 
 class BPMResponseHandler {
     suspend fun <T> handle(request: suspend () -> Response<T>): Flow<BPMResponse<T>> {
@@ -17,8 +18,10 @@ class BPMResponseHandler {
                     emit(BPMResponse.Error(ErrorResponse(message = "Unknown ErrorOccurred.")))
                 }
             } else {
-                if (response.errorBody() != null) {
-                    emit(BPMResponse.Error(Gson().fromJson(response.errorBody()!!.string(), ErrorResponse::class.java)))
+                try {
+                    emit(BPMResponse.Error(Gson().fromJson(response.errorBody()?.string(), ErrorResponse::class.java)))
+                } catch (e: Exception) {
+                    emit(BPMResponse.Error(ErrorResponse(message = "Unknown ErrorOccurred.")))
                 }
             }
         }

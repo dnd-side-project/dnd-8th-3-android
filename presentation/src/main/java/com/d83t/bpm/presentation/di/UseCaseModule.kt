@@ -6,7 +6,7 @@ import com.d83t.bpm.domain.repository.SplashRepository
 import com.d83t.bpm.domain.usecase.splash.GetKakaoUserIdUseCase
 import com.d83t.bpm.domain.usecase.splash.SetKakaoUserIdUseCase
 import com.d83t.bpm.domain.usecase.schedule.SaveScheduleUseCase
-import com.d83t.bpm.domain.usecase.splash.sign_up.SignUpUseCase
+import com.d83t.bpm.domain.usecase.sign_up.SignUpUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

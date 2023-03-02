@@ -3,7 +3,7 @@ package com.d83t.bpm.presentation.ui.sign_up
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.viewModelScope
 import com.d83t.bpm.domain.model.ResponseState
-import com.d83t.bpm.domain.usecase.splash.sign_up.SignUpUseCase
+import com.d83t.bpm.domain.usecase.sign_up.SignUpUseCase
 import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.di.IoDispatcher
 import com.d83t.bpm.presentation.di.MainDispatcher

@@ -89,15 +89,7 @@ class ScheduleActivity : BaseComponentActivity() {
                 viewModel.state.collectAsStateWithLifecycle().value.also { state ->
                     when(state) {
                         is ScheduleState.Init -> Unit
-                        is ScheduleState.Loading -> {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(color = Color(0x50000000))
-                            ) {
-                                LoadingScreen(modifier = Modifier.align(Center))
-                            }
-                        }
+                        is ScheduleState.Loading -> LoadingScreen()
                         is ScheduleState.SaveSuccess -> Unit
                         is ScheduleState.Error -> Unit
                     }
@@ -113,7 +105,7 @@ class ScheduleActivity : BaseComponentActivity() {
                     ScheduleViewEvent.Save -> {
                         viewModel.saveSchedule(
                             studioName = studioNameState.value,
-                            date = selectedDateState.value.toString().replace("-", "."),
+                            date = selectedDateState.value.toString(),
                             time = timeTextState.value,
                             memo = memoTextState.value
                         )
