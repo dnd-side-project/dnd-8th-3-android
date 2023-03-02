@@ -1,13 +1,13 @@
-package com.d83t.bpm.domain.usecase.splash.making_reservation
+package com.d83t.bpm.domain.usecase.schedule
 
 import com.d83t.bpm.domain.model.ResponseState
 import com.d83t.bpm.domain.model.Schedule
-import com.d83t.bpm.domain.repository.MakingReservationRepository
+import com.d83t.bpm.domain.repository.ScheduleRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SaveScheduleUseCase @Inject constructor(
-    private val makingReservationRepository: MakingReservationRepository
+    private val scheduleRepository: ScheduleRepository
 ) {
 
     suspend operator fun invoke(
@@ -16,7 +16,7 @@ class SaveScheduleUseCase @Inject constructor(
         time: String,
         memo: String
     ): Flow<ResponseState<Schedule>> {
-        return makingReservationRepository.sendSchedule(
+        return scheduleRepository.sendSchedule(
             studioName = studioName,
             date = date,
             time = time,

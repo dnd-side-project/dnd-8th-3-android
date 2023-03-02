@@ -1,11 +1,11 @@
 package com.d83t.bpm.presentation.di
 
-import com.d83t.bpm.domain.repository.MakingReservationRepository
+import com.d83t.bpm.domain.repository.ScheduleRepository
 import com.d83t.bpm.domain.repository.SignUpRepository
 import com.d83t.bpm.domain.repository.SplashRepository
 import com.d83t.bpm.domain.usecase.splash.GetKakaoUserIdUseCase
 import com.d83t.bpm.domain.usecase.splash.SetKakaoUserIdUseCase
-import com.d83t.bpm.domain.usecase.splash.making_reservation.SaveScheduleUseCase
+import com.d83t.bpm.domain.usecase.schedule.SaveScheduleUseCase
 import com.d83t.bpm.domain.usecase.splash.sign_up.SignUpUseCase
 import dagger.Module
 import dagger.Provides
@@ -37,7 +37,7 @@ object UseCaseModule {
 
     @Provides
     @ViewModelScoped
-    fun provideSaveScheduleUseCase(makingReservationRepository: MakingReservationRepository): SaveScheduleUseCase {
-        return SaveScheduleUseCase(makingReservationRepository)
+    fun provideSaveScheduleUseCase(scheduleRepository: ScheduleRepository): SaveScheduleUseCase {
+        return SaveScheduleUseCase(scheduleRepository)
     }
 }
