@@ -31,9 +31,10 @@ object RepositoryModule {
     @Singleton
     @Provides
     fun provideSplashRepository(
-        dataStoreManager: DataStoreManager
+        dataStoreManager: DataStoreManager,
+        mainApi: MainApi
     ): SplashRepository {
-        return SplashRepositoryImpl(dataStoreManager)
+        return SplashRepositoryImpl(dataStoreManager, mainApi)
     }
 
     @Singleton

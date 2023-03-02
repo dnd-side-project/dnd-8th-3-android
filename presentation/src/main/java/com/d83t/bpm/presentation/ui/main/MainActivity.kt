@@ -2,6 +2,7 @@ package com.d83t.bpm.presentation.ui.main
 
 import android.content.Context
 import android.content.Intent
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.fragment.app.commitNow
 import com.d83t.bpm.presentation.R
@@ -20,6 +21,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
 
     override val viewModel: MainViewModel by viewModels()
 
+    private val onBackPressedCallBack = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            finishAffinity()
+        }
+    }
+
     override fun initLayout() {
         bind {
             vm = viewModel
@@ -27,6 +34,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         }
 
         setUpNavigation()
+
+        onBackPressedDispatcher.addCallback(onBackPressedCallBack)
     }
 
     override fun setupCollect() {
