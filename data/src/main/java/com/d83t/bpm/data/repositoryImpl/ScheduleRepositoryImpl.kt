@@ -8,16 +8,16 @@ import com.d83t.bpm.data.network.ErrorResponse.Companion.toDataModel
 import com.d83t.bpm.data.network.MainApi
 import com.d83t.bpm.domain.model.ResponseState
 import com.d83t.bpm.domain.model.Schedule
-import com.d83t.bpm.domain.repository.MakingReservationRepository
+import com.d83t.bpm.domain.repository.ScheduleRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
-class MakingReservationRepositoryImpl @Inject constructor(
+class ScheduleRepositoryImpl @Inject constructor(
     private val mainApi: MainApi
-) : MakingReservationRepository {
+) : ScheduleRepository {
 
     override suspend fun sendSchedule(
         studioName: String,

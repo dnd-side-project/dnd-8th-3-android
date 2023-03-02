@@ -1,4 +1,4 @@
-package com.d83t.bpm.presentation.ui.making_reservation
+package com.d83t.bpm.presentation.ui.schedule
 
 import android.content.Context
 import android.content.Intent
@@ -60,8 +60,8 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 
 @AndroidEntryPoint
-class MakingReservationActivity : BaseComponentActivity() {
-    override val viewModel: MakingReservationViewModel by viewModels()
+class ScheduleActivity : BaseComponentActivity() {
+    override val viewModel: ScheduleViewModel by viewModels()
 
     private val studioNameState = mutableStateOf("")
     private val selectedDateState = mutableStateOf<LocalDate?>(null)
@@ -77,7 +77,7 @@ class MakingReservationActivity : BaseComponentActivity() {
     override fun initUi() {
         setContent {
             BPMTheme {
-                MakingReservationActivityContent(
+                ScheduleActivityContent(
                     selectedDateState = selectedDateState,
                     timeTextState = timeTextState,
                     memoTextState = memoTextState,
@@ -88,8 +88,8 @@ class MakingReservationActivity : BaseComponentActivity() {
 
                 viewModel.state.collectAsStateWithLifecycle().value.also { state ->
                     when(state) {
-                        is MakingReservationState.Init -> Unit
-                        is MakingReservationState.Loading -> {
+                        is ScheduleState.Init -> Unit
+                        is ScheduleState.Loading -> {
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -98,8 +98,8 @@ class MakingReservationActivity : BaseComponentActivity() {
                                 LoadingScreen(modifier = Modifier.align(Center))
                             }
                         }
-                        is MakingReservationState.SaveSuccess -> Unit
-                        is MakingReservationState.Error -> Unit
+                        is ScheduleState.SaveSuccess -> Unit
+                        is ScheduleState.Error -> Unit
                     }
                 }
             }
@@ -110,7 +110,7 @@ class MakingReservationActivity : BaseComponentActivity() {
         repeatCallDefaultOnStarted {
             viewModel.event.collect { event ->
                 when (event) {
-                    MakingReservationViewEvent.Save -> {
+                    ScheduleViewEvent.Save -> {
                         viewModel.saveSchedule(
                             studioName = studioNameState.value,
                             date = selectedDateState.value.toString().replace("-", "."),
@@ -126,7 +126,7 @@ class MakingReservationActivity : BaseComponentActivity() {
     companion object {
 
         fun newIntent(context: Context): Intent {
-            return Intent(context, MakingReservationActivity::class.java)
+            return Intent(context, ScheduleActivity::class.java)
         }
 
     }
@@ -134,7 +134,7 @@ class MakingReservationActivity : BaseComponentActivity() {
 
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
-private inline fun MakingReservationActivityContent(
+private inline fun ScheduleActivityContent(
     selectedDateState: MutableState<LocalDate?>,
     timeTextState: MutableState<String>,
     memoTextState: MutableState<String>,
@@ -166,7 +166,7 @@ private inline fun MakingReservationActivityContent(
         Column {
             ScreenHeader(header = "일정 확정하기")
 
-            MakingReservationItemLayout(
+            ScheduleItemLayout(
                 isEssential = false,
                 label = "어디에서 촬영하시나요?",
                 title = "스튜디오 이름",
@@ -213,7 +213,7 @@ private inline fun MakingReservationActivityContent(
 
             Divider(color = GrayColor8)
 
-            MakingReservationItemLayout(
+            ScheduleItemLayout(
                 isEssential = true,
                 label = "예약한 촬영 날짜를 입력해주세요",
                 title = if (selectedDateState.value != null) selectedDateState.value.toString().replace("-", ".") else "날짜",
@@ -416,7 +416,7 @@ private inline fun MakingReservationActivityContent(
 
             Divider(color = GrayColor8)
 
-            MakingReservationItemLayout(
+            ScheduleItemLayout(
                 isEssential = false,
                 label = "자세한 시간을 입력해주세요",
                 title = timeTextState.value,
@@ -577,7 +577,7 @@ private inline fun MakingReservationActivityContent(
 
             Divider(color = GrayColor8)
 
-            MakingReservationItemLayout(
+            ScheduleItemLayout(
                 isEssential = false,
                 label = "어떤 촬영 일정인지 메모를 남겨주세요",
                 title = "메모",
@@ -645,7 +645,7 @@ private inline fun MakingReservationActivityContent(
 }
 
 @Composable
-private fun MakingReservationItemLayout(
+private fun ScheduleItemLayout(
     isEssential: Boolean,
     label: String,
     title: String,

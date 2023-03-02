@@ -4,7 +4,7 @@ import com.d83t.bpm.domain.model.ResponseState
 import com.d83t.bpm.domain.model.Schedule
 import kotlinx.coroutines.flow.Flow
 
-interface MakingReservationRepository {
+interface ScheduleRepository {
 
     suspend fun sendSchedule(
         studioName: String,

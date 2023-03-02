@@ -1,8 +1,8 @@
-package com.d83t.bpm.presentation.ui.making_reservation
+package com.d83t.bpm.presentation.ui.schedule
 
 import androidx.lifecycle.viewModelScope
 import com.d83t.bpm.domain.model.ResponseState
-import com.d83t.bpm.domain.usecase.splash.making_reservation.SaveScheduleUseCase
+import com.d83t.bpm.domain.usecase.schedule.SaveScheduleUseCase
 import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.di.IoDispatcher
 import com.d83t.bpm.presentation.di.MainDispatcher
@@ -14,17 +14,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MakingReservationViewModel @Inject constructor(
+class ScheduleViewModel @Inject constructor(
     private val saveScheduleUseCase: SaveScheduleUseCase,
     @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel() {
-    private val _event = MutableSharedFlow<MakingReservationViewEvent>()
-    val event: SharedFlow<MakingReservationViewEvent>
+    private val _event = MutableSharedFlow<ScheduleViewEvent>()
+    val event: SharedFlow<ScheduleViewEvent>
         get() = _event
 
-    private val _state = MutableStateFlow<MakingReservationState>(MakingReservationState.Init)
-    val state: StateFlow<MakingReservationState>
+    private val _state = MutableStateFlow<ScheduleState>(ScheduleState.Init)
+    val state: StateFlow<ScheduleState>
         get() = _state
 
     private val exceptionHandler: CoroutineExceptionHandler by lazy {
@@ -35,7 +35,7 @@ class MakingReservationViewModel @Inject constructor(
 
     fun onClickSave() {
         viewModelScope.launch(mainDispatcher) {
-            _event.emit(MakingReservationViewEvent.Save)
+            _event.emit(ScheduleViewEvent.Save)
         }
     }
 
@@ -46,7 +46,7 @@ class MakingReservationViewModel @Inject constructor(
         memo: String
     ) {
         viewModelScope.launch(mainDispatcher) {
-            _state.emit(MakingReservationState.Loading)
+            _state.emit(ScheduleState.Loading)
         }
 
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
@@ -57,8 +57,8 @@ class MakingReservationViewModel @Inject constructor(
                 memo = memo
             ).onEach { state ->
                 when(state) {
-                    is ResponseState.Success -> _state.emit(MakingReservationState.SaveSuccess(state.data))
-                    is ResponseState.Error -> _state.emit(MakingReservationState.Error)
+                    is ResponseState.Success -> _state.emit(ScheduleState.SaveSuccess(state.data))
+                    is ResponseState.Error -> _state.emit(ScheduleState.Error)
                 }
             }
         }
