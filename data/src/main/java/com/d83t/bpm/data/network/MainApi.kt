@@ -18,6 +18,9 @@ interface MainApi {
         @Part file: MultipartBody.Part,
     ): Response<SignUpResponse>
 
+    @GET("api/users/schedule")
+    suspend fun fetchSchedule(): Response<ScheduleResponse>
+
     @POST("api/users/schedule")
     suspend fun sendSchedule(
         @Body schedule: ScheduleRequest
