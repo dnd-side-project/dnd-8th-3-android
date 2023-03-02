@@ -103,7 +103,10 @@ class ScheduleActivity : BaseComponentActivity() {
                         hideLoadingScreen()
                         initSchedule(state.schedule)
                     }
-                    is ScheduleState.SaveSuccess -> editModeState.value = false
+                    is ScheduleState.SaveSuccess -> {
+                        hideLoadingScreen()
+                        editModeState.value = false
+                    }
                     is ScheduleState.Error -> Unit
                 }
             }
