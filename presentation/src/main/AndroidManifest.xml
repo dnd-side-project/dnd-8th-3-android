@@ -54,7 +54,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Bpm.NoActionBar" />
         <activity
-            android:name=".ui.making_reservation.MakingReservationActivity"
+            android:name=".ui.schedule.ScheduleActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Bpm.NoActionBar"
