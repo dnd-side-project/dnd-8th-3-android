@@ -87,7 +87,7 @@ class ScheduleActivity : BaseComponentActivity() {
                 )
 
                 viewModel.state.collectAsStateWithLifecycle().value.also { state ->
-                    when(state) {
+                    when (state) {
                         is ScheduleState.Init -> Unit
                         is ScheduleState.Loading -> LoadingScreen()
                         is ScheduleState.SaveSuccess -> Unit
@@ -171,7 +171,7 @@ private inline fun ScheduleActivityContent(
                         .border(
                             width = 1.dp,
                             shape = RoundedCornerShape(10.dp),
-                            color = GrayColor6
+                            color = GrayColor2
                         )
                 ) {
                     Row(
@@ -191,7 +191,7 @@ private inline fun ScheduleActivityContent(
                             fontWeight = Medium,
                             fontSize = 14.sp,
                             letterSpacing = 0.sp,
-                            color = GrayColor5
+                            color = GrayColor4
                         )
 
                         Icon(
@@ -569,10 +569,12 @@ private inline fun ScheduleActivityContent(
 
             Divider(color = GrayColor8)
 
+            val memoLabelTextState = remember { mutableStateOf("메모") }
+
             ScheduleItemLayout(
                 isEssential = false,
                 label = "어떤 촬영 일정인지 메모를 남겨주세요",
-                title = "메모",
+                title = memoLabelTextState.value,
                 expandedHeight = 205.dp
             ) {
                 Box(
@@ -581,7 +583,7 @@ private inline fun ScheduleActivityContent(
                         .border(
                             width = 1.dp,
                             shape = RoundedCornerShape(6.dp),
-                            color = GrayColor6
+                            color = if (memoTextState.value.isNotEmpty()) GrayColor1 else GrayColor6
                         )
                         .fillMaxWidth()
                         .height(110.dp)
@@ -601,7 +603,10 @@ private inline fun ScheduleActivityContent(
                                     color = GrayColor6
                                 )
                             },
-                            onValueChange = { memoTextState.value = it },
+                            onValueChange = {
+                                memoTextState.value = it
+                                memoLabelTextState.value = it
+                            },
                             textStyle = TextStyle(
                                 fontWeight = Normal,
                                 fontSize = 13.sp,
@@ -691,10 +696,11 @@ private fun ScheduleItemLayout(
 
                     Icon(
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(22.dp)
                             .rotate(if (expandState.value) 180f else 0f),
                         painter = painterResource(id = R.drawable.ic_arrow_expand_0),
-                        contentDescription = "expandItemIcon"
+                        contentDescription = "expandItemIcon",
+                        tint = if (expandState.value) GrayColor2 else GrayColor5
                     )
                 }
 
