@@ -510,6 +510,7 @@ fun ReviewKeywordChip(
 @Composable
 fun ReviewListHeader(
     modifier: Modifier = Modifier,
+    reviewCount: Int,
     showImageReviewOnlyState: MutableState<Boolean>,
     showReviewOrderByLikeState: MutableState<Boolean>
 ) {
@@ -523,7 +524,7 @@ fun ReviewListHeader(
             verticalAlignment = CenterVertically
         ) {
             Text(
-                text = "업체 리뷰 120",
+                text = "업체 리뷰 $reviewCount",
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp,
                 letterSpacing = 0.sp

@@ -4,6 +4,7 @@ import com.d83t.bpm.data.model.request.ScheduleRequest
 import com.d83t.bpm.data.model.request.UserVerificationRequest
 import com.d83t.bpm.data.model.response.ScheduleResponse
 import com.d83t.bpm.data.model.response.SignUpResponse
+import com.d83t.bpm.data.model.response.StudioResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -12,6 +13,7 @@ import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 
 interface MainApi {
     @Headers("shouldBeAuthorized: false")
@@ -37,4 +39,9 @@ interface MainApi {
     suspend fun sendKakaoUserIdVerification(
         @Body kakaoUserIdReq: UserVerificationRequest
     ): Response<SignUpResponse>
+
+    @GET("api/studio/{studioId}")
+    suspend fun fetchStudioDetail(
+        @Path("studioId") studioId: Int
+    ): Response<StudioResponse>
 }

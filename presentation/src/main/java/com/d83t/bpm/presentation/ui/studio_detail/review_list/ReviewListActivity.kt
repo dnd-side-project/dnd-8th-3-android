@@ -50,6 +50,7 @@ private fun ReviewListActivityContent() {
 
         item {
             ReviewListHeader(
+                reviewCount = 0, // TODO : Will Be Changed
                 showImageReviewOnlyState = showImageReviewOnlyState,
                 showReviewOrderByLikeState = showReviewOrderByLikeState
             )

@@ -1,6 +1,7 @@
 package com.d83t.bpm.presentation.ui.studio_detail
 
-import androidx.activity.compose.setContent
+import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
@@ -8,7 +9,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.BottomEnd
@@ -39,18 +42,21 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.d83t.bpm.domain.model.Studio
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
-import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
+import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPoint
@@ -58,42 +64,62 @@ import net.daum.mf.map.api.MapView
 
 @AndroidEntryPoint
 class StudioDetailActivity : BaseComponentActivity() {
-    override val viewModel: BaseViewModel
-        get() = TODO("Not yet implemented")
+    override val viewModel: StudioDetailViewModel by viewModels()
 
+    private var studioId: Int = 0
     private val studioLikeState by lazy { mutableStateOf(false) }
+    private val studioState = mutableStateOf<Studio?>(null)
 
-    override fun initUi() {
-        setContent {
-            BPMTheme {
-                StudioDetailActivityContent(
-                    studioLikeState = studioLikeState,
-                    onClickCallButton = {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        studioId = intent.getIntExtra("studioId", 1)
 
-                    },
-                    onClickInfoEditSuggestion = {
+        initComposeUi {
+            StudioDetailActivityContent(
+                studioState = studioState,
+                studioLikeState = studioLikeState,
+                onClickCallButton = {
 
-                    },
-                    onClickMap = {
+                },
+                onClickInfoEditSuggestion = {
 
-                    },
-                    onClickCopyAddress = {
+                },
+                onClickMap = {
 
-                    },
-                    onClickShowCourse = {
+                },
+                onClickCopyAddress = {
 
-                    }
-                )
-            }
+                },
+                onClickShowCourse = {
+
+                }
+            )
         }
     }
 
-    override fun setupCollect() = Unit
+    override fun initUi() = Unit
+
+    override fun setupCollect() {
+        repeatCallDefaultOnStarted {
+            viewModel.state.collect { state ->
+                when (state) {
+                    is StudioDetailState.Init -> viewModel.getStudioDetail(studioId = studioId)
+                    is StudioDetailState.Loading -> showLoadingScreen()
+                    is StudioDetailState.Success -> {
+                        hideLoadingScreen()
+                        studioState.value = state.studio
+                    }
+                    is StudioDetailState.Error -> Unit
+                }
+            }
+        }
+    }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 private inline fun StudioDetailActivityContent(
+    studioState: MutableState<Studio?>,
     studioLikeState: MutableState<Boolean>,
     crossinline onClickCallButton: () -> Unit,
     crossinline onClickInfoEditSuggestion: () -> Unit,
@@ -104,8 +130,9 @@ private inline fun StudioDetailActivityContent(
     val scrollState = rememberScrollState()
     val tabState = remember { mutableStateOf(0) }
     val scope = rememberCoroutineScope()
+    val horizontalPagerState = rememberPagerState()
     val showExpandedKeywordColumn = remember { mutableStateOf(false) }
-    val keywordColumnHeightState = animateDpAsState(targetValue = if (showExpandedKeywordColumn.value) 474.dp else 138.dp)
+    val keywordColumnHeightState = animateDpAsState(targetValue = if (showExpandedKeywordColumn.value) 234.dp else 138.dp)
     val expandIconRotateState = animateFloatAsState(targetValue = if (showExpandedKeywordColumn.value) 180f else 0f)
     val showImageReviewOnlyState = remember { mutableStateOf(false) }
     val showReviewOrderByLikeState = remember { mutableStateOf(true) }
@@ -134,13 +161,14 @@ private inline fun StudioDetailActivityContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(0.85f),
-                        count = 1
-                    ) {
-                        Image(
+                        count = studioState.value?.filesPath?.size ?: 0,
+                        state = horizontalPagerState
+                    ) { index ->
+                        GlideImage(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .aspectRatio(0.85f),
-                            painter = painterResource(id = R.drawable.dummy_studio),
+                            model = studioState.value?.filesPath?.get(index) ?: "",
                             contentDescription = "studioImage",
                             contentScale = Crop
                         )
@@ -160,7 +188,7 @@ private inline fun StudioDetailActivityContent(
                     ) {
                         Text(
                             modifier = Modifier.align(Center),
-                            text = "1/1",
+                            text = "${studioState.value?.filesPath?.size}/",
                             fontWeight = Normal,
                             fontSize = 12.sp,
                             letterSpacing = 2.sp
@@ -178,7 +206,7 @@ private inline fun StudioDetailActivityContent(
                     Column {
                         Row(verticalAlignment = CenterVertically) {
                             Text(
-                                text = "서울",
+                                text = studioState.value?.firstTag ?: "",
                                 fontWeight = Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp
@@ -190,7 +218,7 @@ private inline fun StudioDetailActivityContent(
                             )
 
                             Text(
-                                text = "서초구",
+                                text = studioState.value?.secondTag ?: "",
                                 fontWeight = Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp
@@ -200,7 +228,7 @@ private inline fun StudioDetailActivityContent(
                         BPMSpacer(height = 8.dp)
 
                         Text(
-                            text = "스튜디오 이름",
+                            text = studioState.value?.name ?: "",
                             fontWeight = SemiBold,
                             fontSize = 19.sp,
                             letterSpacing = 0.sp
@@ -209,7 +237,7 @@ private inline fun StudioDetailActivityContent(
                         BPMSpacer(height = 6.dp)
 
                         Text(
-                            text = "스튜디오에 대한 간단한 한줄 설명을 붙여주세요.",
+                            text = studioState.value?.content ?: "",
                             fontSize = 13.sp,
                             fontWeight = Normal,
                             letterSpacing = 0.sp,
@@ -237,7 +265,7 @@ private inline fun StudioDetailActivityContent(
                                 BPMSpacer(width = 8.dp)
 
                                 Text(
-                                    text = "4.0",
+                                    text = "${studioState.value?.rating ?: 0}",
                                     fontSize = 14.sp,
                                     fontWeight = Normal,
                                     letterSpacing = 0.sp,
@@ -246,7 +274,7 @@ private inline fun StudioDetailActivityContent(
                             }
 
                             Text(
-                                text = "후기 504개",
+                                text = "후기 ${studioState.value?.reviewCount ?: 0}개",
                                 fontWeight = Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp,
@@ -316,7 +344,7 @@ private inline fun StudioDetailActivityContent(
 
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Text(
-                        text = "주소에 대한 정보를 적습니다.",
+                        text = studioState.value?.address ?: "",
                         fontWeight = Medium,
                         fontSize = 16.sp,
                         letterSpacing = 0.sp
@@ -325,7 +353,7 @@ private inline fun StudioDetailActivityContent(
                     BPMSpacer(height = 8.dp)
 
                     Text(
-                        text = "상세 주소에 대한 설명을 적는 곳입니다.",
+                        text = "입구가 작아요. 아이스크림 가게 옆 쪽문으로 들어오세요!",
                         fontWeight = Normal,
                         fontSize = 12.sp,
                         letterSpacing = 0.sp,
@@ -334,45 +362,49 @@ private inline fun StudioDetailActivityContent(
 
                     BPMSpacer(height = 12.dp)
 
-                    Box {
-                        AndroidView(
-                            modifier = Modifier
-                                .clip(shape = RoundedCornerShape(12.dp))
-                                .fillMaxWidth()
-                                .height(180.dp),
-                            factory = { context ->
-                                MapView(context).apply {
-                                    setMapCenterPoint(
-                                        MapPoint.mapPointWithGeoCoord(
-                                            35.8589,
-                                            128.4988
-                                        ), false
-                                    )
-                                }
-                            }
-                        )
-
-                        Column(
-                            modifier = Modifier
-                                .height(90.dp)
-                                .align(TopCenter),
-                            verticalArrangement = Arrangement.Bottom
-                        ) {
-                            Image(
+                    if (studioState.value?.latitude != null &&
+                        studioState.value?.longitude != null
+                    ) {
+                        Box {
+                            AndroidView(
                                 modifier = Modifier
-                                    .size(36.dp)
-                                    .align(CenterHorizontally),
-                                painter = painterResource(id = R.drawable.ic_marker),
-                                contentDescription = "mapMarkerIcon"
+                                    .clip(shape = RoundedCornerShape(12.dp))
+                                    .fillMaxWidth()
+                                    .height(180.dp),
+                                factory = { context ->
+                                    MapView(context).apply {
+                                        setMapCenterPoint(
+                                            MapPoint.mapPointWithGeoCoord(
+                                                studioState.value?.latitude ?: 37.5663,
+                                                studioState.value?.longitude ?: 126.9779
+                                            ), false
+                                        )
+                                    }
+                                }
+                            )
+
+                            Column(
+                                modifier = Modifier
+                                    .height(90.dp)
+                                    .align(TopCenter),
+                                verticalArrangement = Arrangement.Bottom
+                            ) {
+                                Image(
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .align(CenterHorizontally),
+                                    painter = painterResource(id = R.drawable.ic_marker),
+                                    contentDescription = "mapMarkerIcon"
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(180.dp)
+                                    .clickableWithoutRipple { onClickMap() }
                             )
                         }
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(180.dp)
-                                .clickableWithoutRipple { onClickMap() }
-                        )
                     }
 
                     BPMSpacer(height = 12.dp)
@@ -426,7 +458,7 @@ private inline fun StudioDetailActivityContent(
                     )
 
                     Text(
-                        text = "마지막 업데이트 : 0000 00 00",
+                        text = "마지막 업데이트 : ${studioState.value?.updatedAt?.dropLast(10)?.replace("-", ".") ?: ""}",
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp,
@@ -445,28 +477,28 @@ private inline fun StudioDetailActivityContent(
                 ) {
                     ConvenienceInfo(
                         type = "전화번호",
-                        detail = "전화번호에 대한 설명을 적는 곳입니다."
+                        detail = studioState.value?.phone ?: ""
                     )
 
                     BPMSpacer(height = 12.dp)
 
                     ConvenienceInfo(
                         type = "SNS",
-                        detail = "SNS에 대한 설명을 적는 곳입니다."
+                        detail = studioState.value?.sns ?: ""
                     )
 
                     BPMSpacer(height = 12.dp)
 
                     ConvenienceInfo(
                         type = "영업시간",
-                        detail = "영업시간에 대한 설명을 적는 곳입니다."
+                        detail = studioState.value?.openHours ?: ""
                     )
 
                     BPMSpacer(height = 12.dp)
 
                     ConvenienceInfo(
                         type = "가격정보",
-                        detail = "가격정보에 대한 설명을 적는 곳입니다."
+                        detail = studioState.value?.price ?: ""
                     )
                 }
 
@@ -512,16 +544,46 @@ private inline fun StudioDetailActivityContent(
                             .padding(horizontal = 16.dp)
                             .height(keywordColumnHeightState.value)
                     ) {
-                        repeat(10) { number ->
-                            BestKeyword(
-                                number = number + 1,
-                                keyword = "친절해요",
-                                count = 28,
-                                backgroundColor = GrayColor2,
-                                textColor = Color.White
-                            )
+                        repeat(5) { number ->
+                            when (number + 1) {
+                                1 -> BestKeyword(
+                                    number = number + 1,
+                                    keyword = "친절해요",
+                                    count = 13,
+                                    backgroundColor = Color.Black,
+                                    textColor = Color.White
+                                )
+                                2 -> BestKeyword(
+                                    number = number + 1,
+                                    keyword = "제공하는 컨셉이 다양해요",
+                                    count = 9,
+                                    backgroundColor = GrayColor3,
+                                    textColor = Color.White
+                                )
+                                3 -> BestKeyword(
+                                    number = number + 1,
+                                    keyword = "요청 사항을 잘 들어주세요",
+                                    count = 6,
+                                    backgroundColor = GrayColor7,
+                                    textColor = GrayColor0
+                                )
+                                4 -> BestKeyword(
+                                    number = number + 1,
+                                    keyword = "주차하기 편해요",
+                                    count = 7 - number + 1,
+                                    backgroundColor = Color.Black,
+                                    textColor = Color.White
+                                )
+                                5 -> BestKeyword(
+                                    number = number + 1,
+                                    keyword = "시설이 깔끔해요",
+                                    count = 7 - number + 1,
+                                    backgroundColor = Color.Black,
+                                    textColor = Color.White
+                                )
+                            }
 
-                            if (number != 9) {
+                            if (number != 4) {
                                 BPMSpacer(height = 6.dp)
                             }
                         }
@@ -556,6 +618,7 @@ private inline fun StudioDetailActivityContent(
             Column {
                 ReviewListHeader(
                     modifier = Modifier.onGloballyPositioned { coordinates -> reviewHeaderPositionState.value = coordinates.positionInWindow().y },
+                    reviewCount = studioState.value?.reviewCount ?: 0,
                     showImageReviewOnlyState = showImageReviewOnlyState,
                     showReviewOrderByLikeState = showReviewOrderByLikeState
                 )
@@ -607,7 +670,7 @@ private inline fun StudioDetailActivityContent(
         }
 
         Column {
-            ScreenHeader("스튜디오 이름")
+            ScreenHeader(studioState.value?.name ?: "")
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 StudioDetailTab(
@@ -615,10 +678,7 @@ private inline fun StudioDetailActivityContent(
                     text = "상품설명",
                     tabIndex = 0,
                     tabState = tabState,
-                    onClick = {
-                        tabState.value = 0
-                        scope.launch { scrollState.animateScrollTo(0) }
-                    }
+                    onClick = { scope.launch { scrollState.animateScrollTo(0) } }
                 )
 
                 StudioDetailTab(
@@ -626,10 +686,7 @@ private inline fun StudioDetailActivityContent(
                     text = "리뷰",
                     tabIndex = 1,
                     tabState = tabState,
-                    onClick = {
-                        tabState.value = 1
-                        scope.launch { scrollState.animateScrollTo(studioDetailInfoHeightState.value) }
-                    }
+                    onClick = { scope.launch { scrollState.animateScrollTo(studioDetailInfoHeightState.value) } }
                 )
             }
         }
@@ -656,12 +713,7 @@ private inline fun StudioDetailActivityContent(
                         .height(36.dp)
                         .background(color = Color.White)
                         .align(BottomEnd)
-                        .clickable {
-                            scope.launch {
-                                tabState.value = 1
-                                scrollState.animateScrollTo(studioDetailInfoHeightState.value)
-                            }
-                        },
+                        .clickable { scope.launch { scrollState.animateScrollTo(studioDetailInfoHeightState.value) } },
                 ) {
                     Row(
                         modifier = Modifier.align(Center),
@@ -797,18 +849,5 @@ private fun BestKeyword(
             letterSpacing = 0.sp,
             color = textColor
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun Preview() {
-    StudioDetailActivityContent(
-        studioLikeState = remember { mutableStateOf(false) },
-        onClickCallButton = { /*TODO*/ },
-        onClickInfoEditSuggestion = { /*TODO*/ },
-        onClickMap = { /*TODO*/ },
-        onClickCopyAddress = { /*TODO*/ }) {
-
     }
 }
