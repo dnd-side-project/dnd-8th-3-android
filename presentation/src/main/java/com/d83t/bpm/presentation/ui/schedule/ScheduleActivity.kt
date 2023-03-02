@@ -1,7 +1,9 @@
-package com.d83t.bpm.presentation.ui.making_reservation
+package com.d83t.bpm.presentation.ui.schedule
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.*
@@ -36,66 +38,129 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import com.d83t.bpm.domain.model.Schedule
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
-import com.d83t.bpm.presentation.base.BaseViewModel
-import com.d83t.bpm.presentation.compose.BPMSpacer
-import com.d83t.bpm.presentation.compose.RoundedCornerButton
-import com.d83t.bpm.presentation.compose.ScreenHeader
-import com.d83t.bpm.presentation.compose.TextFieldColorProvider
+import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.addFocusCleaner
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
+import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
+import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-class MakingReservationActivity : BaseComponentActivity() {
-    override val viewModel: BaseViewModel
-        get() = TODO("Not yet implemented")
+@AndroidEntryPoint
+class ScheduleActivity : BaseComponentActivity() {
+    override val viewModel: ScheduleViewModel by viewModels()
 
+    private val editModeState = mutableStateOf(false)
+    private val studioLabelTextState = mutableStateOf("스튜디오 이름")
     private val selectedDateState = mutableStateOf<LocalDate?>(null)
-    private val timeTextState = mutableStateOf("시간")
+    private val dateLabelTextState = mutableStateOf("날짜")
+    private val timeLabelTextState = mutableStateOf("시간")
+    private val memoLabelTextState = mutableStateOf("메모")
     private val memoTextState = mutableStateOf("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        initComposeUi {
+            ScheduleActivityContent(
+                editModeState = editModeState,
+                studioLabelTextState = studioLabelTextState,
+                dateLabelTextState = dateLabelTextState,
+                selectedDateState = selectedDateState,
+                timeLabelTextState = timeLabelTextState,
+                memoLabelTextState = memoLabelTextState,
+                memoTextState = memoTextState,
+                onClickSearchStudio = { },
+                onClickSetTime = { timeText -> timeLabelTextState.value = timeText },
+                onClickSave = { viewModel.onClickSave() }
+            )
+        }
     }
 
-    override fun initUi() {
-        setContent {
-            BPMTheme {
-                MakingReservationActivityContent(
-                    selectedDateState = selectedDateState,
-                    timeTextState = timeTextState,
-                    memoTextState = memoTextState,
-                    onClickSearchStudio = {
+    override fun initUi() = Unit
 
-                    },
-                    onClickSetTime = { timeText -> timeTextState.value = timeText },
-                    onClickSave = { }
-                )
+    override fun setupCollect() {
+        repeatCallDefaultOnStarted {
+            viewModel.state.collect { state ->
+                when (state) {
+                    is ScheduleState.Init -> Unit
+                    is ScheduleState.Loading -> showLoadingScreen()
+                    is ScheduleState.GetSuccess -> {
+                        hideLoadingScreen()
+                        initSchedule(state.schedule)
+                    }
+                    is ScheduleState.SaveSuccess -> {
+                        hideLoadingScreen()
+                        editModeState.value = false
+                    }
+                    is ScheduleState.Error -> Unit
+                }
+            }
+        }
+
+        repeatCallDefaultOnStarted {
+            viewModel.event.collect { event ->
+                when (event) {
+                    ScheduleViewEvent.Save -> {
+                        viewModel.saveSchedule(
+                            studioName = studioLabelTextState.value,
+                            date = selectedDateState.value.toString(),
+                            time = timeLabelTextState.value,
+                            memo = memoTextState.value
+                        )
+                    }
+                }
             }
         }
     }
 
-    override fun setupCollect() = Unit
+    private fun initSchedule(
+        schedule: Schedule
+    ) {
+        studioLabelTextState.value = schedule.studioName
+        dateLabelTextState.value = schedule.date
+        val timeInList = schedule.time.split(":")
+        timeLabelTextState.value =
+            if (timeInList[0].toInt() > 12) "${if (timeInList[0].toInt() - 12 < 10) "0" else ""}${timeInList[0].toInt() - 12}:${timeInList[1]} (오후)"
+            else "${timeInList[0]}:${timeInList[1]} (오전)"
+        val dateInList = schedule.date.split("-").map { it.toInt() }
+        selectedDateState.value = LocalDate.of(dateInList[0], dateInList[1], dateInList[2])
+        memoLabelTextState.value = schedule.memo
+        memoTextState.value = schedule.memo
+    }
+
+    companion object {
+
+        fun newIntent(context: Context): Intent {
+            return Intent(context, ScheduleActivity::class.java)
+        }
+
+    }
 }
 
 @OptIn(ExperimentalSnapperApi::class)
 @Composable
-private inline fun MakingReservationActivityContent(
+private inline fun ScheduleActivityContent(
+    editModeState: MutableState<Boolean>,
+    studioLabelTextState: MutableState<String>,
+    dateLabelTextState: MutableState<String>,
     selectedDateState: MutableState<LocalDate?>,
-    timeTextState: MutableState<String>,
+    timeLabelTextState: MutableState<String>,
+    memoLabelTextState: MutableState<String>,
     memoTextState: MutableState<String>,
     crossinline onClickSearchStudio: () -> Unit,
     crossinline onClickSetTime: (String) -> Unit,
@@ -123,12 +188,27 @@ private inline fun MakingReservationActivityContent(
         verticalArrangement = SpaceBetween
     ) {
         Column {
-            ScreenHeader(header = "일정 확정하기")
+            ScreenHeader(
+                header = if (editModeState.value) "일정 확정하기" else "일정",
+                actionBlock = {
+                    if (!editModeState.value) {
+                        Text(
+                            modifier = Modifier.clickableWithoutRipple { editModeState.value = true },
+                            text = "수정",
+                            fontWeight = Medium,
+                            fontSize = 14.sp,
+                            letterSpacing = 0.sp,
+                            color = GrayColor5
+                        )
+                    }
+                }
+            )
 
-            MakingReservationItemLayout(
+            ScheduleItemLayout(
+                editModeState = editModeState,
                 isEssential = false,
                 label = "어디에서 촬영하시나요?",
-                title = "스튜디오 이름",
+                title = studioLabelTextState.value,
                 expandedHeight = 135.dp
             ) {
                 Box(
@@ -138,12 +218,15 @@ private inline fun MakingReservationActivityContent(
                         .border(
                             width = 1.dp,
                             shape = RoundedCornerShape(10.dp),
-                            color = GrayColor6
+                            color = GrayColor2
                         )
                 ) {
                     Row(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
+                            .padding(
+                                start = 16.dp,
+                                end = 8.dp
+                            )
                             .fillMaxWidth()
                             .align(Center)
                             .clickableWithoutRipple { onClickSearchStudio() },
@@ -155,7 +238,7 @@ private inline fun MakingReservationActivityContent(
                             fontWeight = Medium,
                             fontSize = 14.sp,
                             letterSpacing = 0.sp,
-                            color = GrayColor5
+                            color = GrayColor4
                         )
 
                         Icon(
@@ -169,10 +252,11 @@ private inline fun MakingReservationActivityContent(
 
             Divider(color = GrayColor8)
 
-            MakingReservationItemLayout(
+            ScheduleItemLayout(
+                editModeState = editModeState,
                 isEssential = true,
                 label = "예약한 촬영 날짜를 입력해주세요",
-                title = if (selectedDateState.value != null) selectedDateState.value.toString().replace("-", ".") else "날짜",
+                title = dateLabelTextState.value,
                 expandedHeight = 439.dp
             ) {
                 val currentDate = LocalDate.now()
@@ -351,6 +435,7 @@ private inline fun MakingReservationActivityContent(
                                         if (thisDay != null &&
                                             thisDay.toEpochDay() >= currentDate.toEpochDay()
                                         ) selectedDateState.value = thisDay
+                                        dateLabelTextState.value = thisDay.toString()
                                     },
                             ) {
                                 Text(
@@ -372,10 +457,11 @@ private inline fun MakingReservationActivityContent(
 
             Divider(color = GrayColor8)
 
-            MakingReservationItemLayout(
+            ScheduleItemLayout(
+                editModeState = editModeState,
                 isEssential = false,
                 label = "자세한 시간을 입력해주세요",
-                title = timeTextState.value,
+                title = timeLabelTextState.value,
                 expandedHeight = 290.dp
             ) {
                 val hoursLazyListState = rememberLazyListState()
@@ -533,10 +619,11 @@ private inline fun MakingReservationActivityContent(
 
             Divider(color = GrayColor8)
 
-            MakingReservationItemLayout(
+            ScheduleItemLayout(
+                editModeState = editModeState,
                 isEssential = false,
                 label = "어떤 촬영 일정인지 메모를 남겨주세요",
-                title = "메모",
+                title = memoLabelTextState.value,
                 expandedHeight = 205.dp
             ) {
                 Box(
@@ -545,7 +632,7 @@ private inline fun MakingReservationActivityContent(
                         .border(
                             width = 1.dp,
                             shape = RoundedCornerShape(6.dp),
-                            color = GrayColor6
+                            color = if (memoTextState.value.isNotEmpty()) GrayColor1 else GrayColor6
                         )
                         .fillMaxWidth()
                         .height(110.dp)
@@ -565,7 +652,10 @@ private inline fun MakingReservationActivityContent(
                                     color = GrayColor6
                                 )
                             },
-                            onValueChange = { memoTextState.value = it },
+                            onValueChange = {
+                                memoTextState.value = it
+                                memoLabelTextState.value = it
+                            },
                             textStyle = TextStyle(
                                 fontWeight = Normal,
                                 fontSize = 13.sp,
@@ -584,16 +674,18 @@ private inline fun MakingReservationActivityContent(
         Column {
             BPMSpacer(height = 20.dp)
 
-            RoundedCornerButton(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth()
-                    .height(48.dp),
-                text = "저장하기",
-                textColor = GrayColor7,
-                buttonColor = GrayColor9,
-                onClick = { onClickSave() }
-            )
+            if (editModeState.value) {
+                RoundedCornerButton(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    text = "저장하기",
+                    textColor = if (selectedDateState.value != null) Color.Black else GrayColor7,
+                    buttonColor = if (selectedDateState.value != null) MainGreenColor else GrayColor9,
+                    onClick = { if (selectedDateState.value != null) onClickSave() }
+                )
+            }
 
             BPMSpacer(height = 20.dp)
         }
@@ -601,7 +693,8 @@ private inline fun MakingReservationActivityContent(
 }
 
 @Composable
-private fun MakingReservationItemLayout(
+private fun ScheduleItemLayout(
+    editModeState: MutableState<Boolean>,
     isEssential: Boolean,
     label: String,
     title: String,
@@ -611,6 +704,10 @@ private fun MakingReservationItemLayout(
     val expandState = remember { mutableStateOf(false) }
     val columnHeightState = animateDpAsState(targetValue = if (expandState.value) expandedHeight else 77.dp)
     val focusManager = LocalFocusManager.current
+
+    if (!editModeState.value) {
+        focusManager.clearFocus()
+    }
 
     Column(
         modifier = Modifier
@@ -623,8 +720,10 @@ private fun MakingReservationItemLayout(
                 .fillMaxWidth()
                 .height(76.dp)
                 .clickableWithoutRipple {
-                    expandState.value = !expandState.value
-                    focusManager.clearFocus()
+                    if (editModeState.value) {
+                        expandState.value = !expandState.value
+                        focusManager.clearFocus()
+                    }
                 }
         ) {
             Column(modifier = Modifier.align(Center)) {
@@ -653,16 +752,21 @@ private fun MakingReservationItemLayout(
                         }
                     }
 
-                    Icon(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .rotate(if (expandState.value) 180f else 0f),
-                        painter = painterResource(id = R.drawable.ic_arrow_expand_0),
-                        contentDescription = "expandItemIcon"
-                    )
+                    Box(modifier = Modifier.size(22.dp)) {
+                        if (editModeState.value) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(22.dp)
+                                    .rotate(if (expandState.value) 180f else 0f),
+                                painter = painterResource(id = R.drawable.ic_arrow_expand_0),
+                                contentDescription = "expandItemIcon",
+                                tint = if (expandState.value) GrayColor2 else GrayColor5
+                            )
+                        }
+                    }
                 }
 
-                Row {
+                Row(modifier = Modifier.padding(end = 36.dp)) {
                     Text(
                         modifier = Modifier
                             .height(24.dp)
@@ -671,7 +775,8 @@ private fun MakingReservationItemLayout(
                         textAlign = TextAlign.Center,
                         fontWeight = Medium,
                         fontSize = 17.sp,
-                        letterSpacing = 0.sp
+                        letterSpacing = 0.sp,
+                        overflow = TextOverflow.Ellipsis
                     )
 
                     if (isEssential) {

@@ -19,6 +19,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Alignment.Companion.TopStart
@@ -43,7 +44,10 @@ import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 
 @Composable
-fun ScreenHeader(header: String) {
+fun ScreenHeader(
+    header: String,
+    actionBlock: @Composable (() -> Unit)? = null
+) {
     val context = LocalContext.current as ComponentActivity
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -69,6 +73,16 @@ fun ScreenHeader(header: String) {
                 fontSize = 18.sp,
                 letterSpacing = 0.sp
             )
+
+            if (actionBlock != null) {
+                Box(
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                        .align(CenterEnd)
+                ) {
+                    actionBlock()
+                }
+            }
         }
 
         Divider(
@@ -590,11 +604,16 @@ fun ReviewListHeader(
 }
 
 @Composable
-fun LoadingScreen(
-    modifier: Modifier = Modifier
-) {
-    CircularProgressIndicator(
-        modifier = modifier,
-        color = MainGreenColor
-    )
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0x50000000))
+            .clickableWithoutRipple { }
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.align(Center),
+            color = MainGreenColor
+        )
+    }
 }

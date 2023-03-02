@@ -90,22 +90,10 @@ class SignUpActivity : BaseComponentActivity() {
 
                 viewModel.state.collectAsStateWithLifecycle().value.also { state ->
                     when (state) {
-                        is SignUpState.Init -> {
-
-                        }
-                        is SignUpState.Loading -> {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(color = Color(0x50000000))
-                            ) {
-                                LoadingScreen(modifier = Modifier.align(Center))
-                            }
-                        }
+                        is SignUpState.Init -> Unit
+                        is SignUpState.Loading -> LoadingScreen()
                         is SignUpState.SignUpSuccess -> goToMainActivity()
-                        is SignUpState.Error -> {
-
-                        }
+                        is SignUpState.Error -> Unit
                     }
                 }
             }

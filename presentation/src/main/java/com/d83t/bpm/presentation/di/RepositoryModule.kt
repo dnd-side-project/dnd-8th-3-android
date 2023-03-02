@@ -3,9 +3,11 @@ package com.d83t.bpm.presentation.di
 import com.d83t.bpm.data.datastore.DataStoreManager
 import com.d83t.bpm.data.network.MainApi
 import com.d83t.bpm.data.repositoryImpl.MainRepositoryImpl
+import com.d83t.bpm.data.repositoryImpl.ScheduleRepositoryImpl
 import com.d83t.bpm.data.repositoryImpl.SignUpRepositoryImpl
 import com.d83t.bpm.data.repositoryImpl.SplashRepositoryImpl
 import com.d83t.bpm.domain.repository.MainRepository
+import com.d83t.bpm.domain.repository.ScheduleRepository
 import com.d83t.bpm.domain.repository.SignUpRepository
 import com.d83t.bpm.domain.repository.SplashRepository
 import dagger.Module
@@ -40,5 +42,13 @@ object RepositoryModule {
         mainApi: MainApi
     ): SignUpRepository {
         return SignUpRepositoryImpl(mainApi)
+    }
+
+    @Singleton
+    @Provides
+    fun provideScheduleRepository(
+        mainApi: MainApi
+    ): ScheduleRepository {
+        return ScheduleRepositoryImpl(mainApi)
     }
 }

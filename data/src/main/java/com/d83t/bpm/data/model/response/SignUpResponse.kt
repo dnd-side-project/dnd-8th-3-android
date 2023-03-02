@@ -1,4 +1,4 @@
-package com.d83t.bpm.data.model
+package com.d83t.bpm.data.model.response
 
 import com.d83t.bpm.data.base.BaseResponse
 import com.d83t.bpm.data.mapper.DataMapper

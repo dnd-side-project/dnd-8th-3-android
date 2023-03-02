@@ -1,6 +1,6 @@
 package com.d83t.bpm.data.repositoryImpl
 
-import com.d83t.bpm.data.model.SignUpResponse.Companion.toDataModel
+import com.d83t.bpm.data.model.response.SignUpResponse.Companion.toDataModel
 import com.d83t.bpm.data.network.BPMResponse
 import com.d83t.bpm.data.network.BPMResponseHandler
 import com.d83t.bpm.data.network.ErrorResponse.Companion.toDataModel

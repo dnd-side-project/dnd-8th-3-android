@@ -1,21 +1,18 @@
 package com.d83t.bpm.presentation.di
 
 import com.d83t.bpm.data.network.MainApi
-import com.d83t.bpm.presentation.App
 import com.d83t.bpm.presentation.BuildConfig
-import com.facebook.flipper.android.AndroidFlipperClient
-import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor
-import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -42,6 +39,25 @@ object NetworkModule {
             client.addNetworkInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.HEADERS
             })
+
+            client.addInterceptor(Interceptor { chain ->
+                val request = chain.request()
+                val shouldBeAuthorized = request.header(name = "shouldBeAuthorized") != "false"
+                val requestBuilder = request.newBuilder()
+
+                if (shouldBeAuthorized) {
+                    requestBuilder.addHeader(
+                        name = "Authorization",
+                        value = "Token eyJhbGciOiJIUzI1NiJ9.eyJuaWNrbmFtZSI6Ilwi64ycMuOFoOOFh-yYrFwiIiwiaWF0IjoxNjc3NzQ2ODI3LCJleHAiOjE2ODA3NDY4Mjd9.vhEoFgsiW2HRpags3dVcFVifog3wXj5EdYEJ5wAjNhQ" // forTest
+                    )
+
+                } else {
+                    requestBuilder.removeHeader(name = "shouldBeAuthorized")
+                }
+
+                return@Interceptor chain.proceed(request = requestBuilder.build())
+            })
+
         } else {
             client.addNetworkInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.NONE
