@@ -590,11 +590,16 @@ fun ReviewListHeader(
 }
 
 @Composable
-fun LoadingScreen(
-    modifier: Modifier = Modifier
-) {
-    CircularProgressIndicator(
-        modifier = modifier,
-        color = MainGreenColor
-    )
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0x50000000))
+            .clickableWithoutRipple {  }
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.align(Center),
+            color = MainGreenColor
+        )
+    }
 }

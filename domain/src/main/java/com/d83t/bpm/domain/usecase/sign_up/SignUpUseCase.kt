@@ -1,4 +1,4 @@
-package com.d83t.bpm.domain.usecase.splash.sign_up
+package com.d83t.bpm.domain.usecase.sign_up
 
 import com.d83t.bpm.domain.model.ResponseState
 import com.d83t.bpm.domain.model.UserInfo
