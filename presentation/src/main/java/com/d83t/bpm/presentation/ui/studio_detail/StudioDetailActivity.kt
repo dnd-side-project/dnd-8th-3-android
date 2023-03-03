@@ -112,8 +112,8 @@ class StudioDetailActivity : BaseComponentActivity() {
                     is StudioDetailState.Init -> {
                         viewModel.getStudioDetail(studioId = studioId)
                         viewModel.getReviewList(studioId = studioId)
+                        showLoadingScreen()
                     }
-                    is StudioDetailState.Loading -> showLoadingScreen()
                     is StudioDetailState.StudioDetailSuccess -> {
                         hideLoadingScreen()
                         studioState.value = state.studio

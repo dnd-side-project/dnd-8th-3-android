@@ -38,10 +38,6 @@ class StudioDetailViewModel @Inject constructor(
     fun getStudioDetail(
         studioId: Int
     ) {
-        viewModelScope.launch(mainDispatcher) {
-            _state.emit(StudioDetailState.Loading)
-        }
-
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
             studioDetailUseCase(studioId = studioId).onEach { state ->
                 when (state) {
