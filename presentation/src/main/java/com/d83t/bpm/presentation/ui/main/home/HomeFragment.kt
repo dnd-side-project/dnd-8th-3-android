@@ -1,11 +1,15 @@
 package com.d83t.bpm.presentation.ui.main.home
 
+import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseFragment
 import com.d83t.bpm.presentation.databinding.FragmentHomeBinding
 import com.d83t.bpm.presentation.ui.main.home.recommend.HomeRecommendFragment
+import com.d83t.bpm.presentation.ui.schedule.ScheduleActivity
 import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import com.d83t.bpm.presentation.util.showToast
 import com.google.android.material.tabs.TabLayout
@@ -14,6 +18,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
+
+    private lateinit var scheduleResultLauncher: ActivityResultLauncher<Intent>
 
     override val viewModel: HomeViewModel by viewModels()
 
@@ -30,6 +36,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             vm = viewModel
             lifecycleOwner = viewLifecycleOwner
         }
+
+        scheduleResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                viewModel.refreshUserSchedule()
+            }
 
         setUpPager()
     }
@@ -56,9 +67,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                     HomeViewEvent.ClickSearch -> {
                         requireContext().showToast("검색페이지 이동")
                     }
+                    HomeViewEvent.ClickSchedule -> {
+                        goToSchedule()
+                    }
                 }
             }
         }
+    }
+
+    private fun goToSchedule() {
+        scheduleResultLauncher.launch(ScheduleActivity.newIntent(requireContext()))
     }
 
     private fun setUpPager() {

@@ -66,4 +66,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun clickSchedule(){
+        viewModelScope.launch {
+            _event.emit(HomeViewEvent.ClickSchedule)
+        }
+    }
+
+    fun refreshUserSchedule(){
+        viewModelScope.launch {
+            _state.emit(HomeState.Init)
+        }
+    }
+
 }
