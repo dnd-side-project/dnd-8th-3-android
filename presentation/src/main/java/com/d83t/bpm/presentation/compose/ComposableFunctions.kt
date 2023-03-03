@@ -47,6 +47,7 @@ import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.ui.studio_detail.review_detail.ReviewDetailActivity
 import com.d83t.bpm.presentation.ui.studio_detail.writing_review.WritingReviewActivity
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
+import com.d83t.bpm.presentation.util.dateOnly
 
 @Composable
 fun ScreenHeader(
@@ -339,7 +340,7 @@ fun ReviewComposable(
                 }
 
                 Text(
-                    text = createdAt?.dropLast(10)?.replace("-", ".") ?: "",
+                    text = createdAt?.dateOnly() ?: "",
                     fontWeight = Medium,
                     fontSize = 12.sp,
                     letterSpacing = 0.5.sp
@@ -406,7 +407,7 @@ fun ReviewComposable(
             BPMSpacer(height = 25.dp)
 
             LikeButton(
-                liked = review.liked ?: false,
+                liked = liked ?: false,
                 likeState = likeState,
                 likeCount = likeCount ?: 0,
                 onClick = { }
@@ -427,7 +428,6 @@ inline fun LikeButton(
     likeCount: Int,
     crossinline onClick: () -> Unit
 ) {
-    val defaultLiked = liked
 
     Box(
         modifier = Modifier
@@ -469,13 +469,13 @@ inline fun LikeButton(
             BPMSpacer(width = 4.dp)
 
             Text(
-                text = if (defaultLiked &&
+                text = if (liked &&
                     likeState.value
                 ) "$likeCount"
-                else if (defaultLiked &&
+                else if (liked &&
                     !likeState.value
                 ) "${likeCount - 1}"
-                else if (!defaultLiked &&
+                else if (!liked &&
                     !likeState.value
                 ) "$likeCount"
                 else "${likeCount + 1}",

@@ -2,12 +2,15 @@ package com.d83t.bpm.presentation.ui.studio_detail.review_detail
 
 import android.content.Context
 import android.content.Intent
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.*
+import android.os.Bundle
+import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -28,36 +31,72 @@ import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.d83t.bpm.domain.model.Review
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
-import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.compose.BPMSpacer
 import com.d83t.bpm.presentation.compose.LikeButton
 import com.d83t.bpm.presentation.compose.ReviewKeywordChip
 import com.d83t.bpm.presentation.compose.ScreenHeader
 import com.d83t.bpm.presentation.compose.theme.*
+import com.d83t.bpm.presentation.util.dateOnly
+import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ReviewDetailActivity : BaseComponentActivity() {
-    override val viewModel: BaseViewModel
-        get() = TODO("Not yet implemented")
+    override val viewModel: ReviewDetailViewModel by viewModels()
 
-    override fun initUi() {
-        setContent {
-            BPMTheme {
-//                ReviewDetailActivityContent(
-//                    onClickLike = {
-//
-//                    }
-//                )
+    private var studioId: Int = 0
+    private var reviewId: Int = 0
+    private val reviewState = mutableStateOf<Review?>(null)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        studioId = intent.getIntExtra("studioId", 0)
+        reviewId = intent.getIntExtra("reviewId", 0)
+
+        initComposeUi {
+            reviewState.value?.let {
+                ReviewDetailActivityContent(
+                    review = it,
+                    onClickLike = {}
+                )
+            } ?: run {
+
             }
         }
     }
 
-    override fun setupCollect() = Unit
+    override fun initUi() = Unit
+
+    override fun setupCollect() {
+        repeatCallDefaultOnStarted {
+            viewModel.state.collect { state ->
+                when (state) {
+                    is ReviewDetailState.Init -> {
+                        showLoadingScreen()
+                        viewModel.getReviewDetail(
+                            studioId = studioId,
+                            reviewId = reviewId
+                        )
+                    }
+                    is ReviewDetailState.Success -> {
+                        hideLoadingScreen()
+                        reviewState.value = state.review
+                    }
+                    is ReviewDetailState.Error -> Unit
+                }
+            }
+        }
+
+    }
 
     companion object {
 
@@ -68,7 +107,7 @@ class ReviewDetailActivity : BaseComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 private inline fun ReviewDetailActivityContent(
     review: Review,
@@ -76,6 +115,7 @@ private inline fun ReviewDetailActivityContent(
 ) {
     val scrollState = rememberScrollState()
     val likeState = remember { mutableStateOf(false) }
+    val horizontalPagerState = rememberPagerState()
 
     with(review) {
         Column(
@@ -103,18 +143,18 @@ private inline fun ReviewDetailActivityContent(
                             modifier = Modifier.align(CenterVertically),
                             verticalAlignment = CenterVertically
                         ) {
-                            Image(
+                            GlideImage(
                                 modifier = Modifier
                                     .clip(shape = CircleShape)
                                     .size(24.dp),
-                                painter = painterResource(id = R.drawable.default_profile_image),
+                                model = author?.profilePath ?: "",
                                 contentDescription = "profileImage"
                             )
 
                             BPMSpacer(width = 8.dp)
 
                             Text(
-                                text = "닉네임",
+                                text = author?.nickname ?: "",
                                 fontWeight = SemiBold,
                                 fontSize = 14.sp,
                                 letterSpacing = 0.sp
@@ -123,7 +163,7 @@ private inline fun ReviewDetailActivityContent(
 
                         Row(modifier = Modifier.align(CenterVertically)) {
                             Text(
-                                text = "2022.11.10",
+                                text = createdAt?.dateOnly() ?: "",
                                 fontWeight = SemiBold,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp,
@@ -145,64 +185,69 @@ private inline fun ReviewDetailActivityContent(
 
                 Divider(color = GrayColor9)
 
-                BPMSpacer(height = 10.dp)
+                if (recommends?.size!! > 0) {
+                    BPMSpacer(height = 10.dp)
 
-                FlowRow(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
-                    mainAxisSpacing = 4.dp,
-                    crossAxisSpacing = 6.dp
-                ) {
-                    listOf("깔끔해요!", "친절해요!").forEach { keyword ->
-                        ReviewKeywordChip(text = keyword)
+                    FlowRow(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxWidth(),
+                        mainAxisSpacing = 4.dp,
+                        crossAxisSpacing = 6.dp
+                    ) {
+                        recommends?.forEach { keyword ->
+                            ReviewKeywordChip(text = keyword)
+                        }
                     }
+
+                    BPMSpacer(height = 10.dp)
+
+                    Divider(color = GrayColor9)
                 }
 
-                BPMSpacer(height = 10.dp)
-
-                Divider(color = GrayColor9)
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(0.85f)
-                ) {
-                    HorizontalPager(
+                if (filesPath?.size!! > 0) {
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(0.85f),
-                        count = 1
+                            .aspectRatio(0.85f)
                     ) {
-                        Image(
+                        HorizontalPager(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .aspectRatio(0.85f),
-                            painter = painterResource(id = R.drawable.dummy_studio),
-                            contentDescription = "studioImage",
-                            contentScale = Crop
-                        )
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .padding(
-                                start = 16.dp,
-                                bottom = 16.dp
+                            state = horizontalPagerState,
+                            count = filesPath?.size ?: 0
+                        ) { index ->
+                            GlideImage(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(0.85f),
+                                model = filesPath?.get(index),
+                                contentDescription = "studioImage",
+                                contentScale = Crop
                             )
-                            .clip(RoundedCornerShape(40.dp))
-                            .width(42.dp)
-                            .height(25.dp)
-                            .background(color = FilteredWhiteColor)
-                            .align(Alignment.BottomStart)
-                    ) {
-                        Text(
-                            modifier = Modifier.align(Center),
-                            text = "1/1",
-                            fontWeight = Normal,
-                            fontSize = 12.sp,
-                            letterSpacing = 2.sp
-                        )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .padding(
+                                    start = 16.dp,
+                                    bottom = 16.dp
+                                )
+                                .clip(RoundedCornerShape(40.dp))
+                                .width(42.dp)
+                                .height(25.dp)
+                                .background(color = FilteredWhiteColor)
+                                .align(Alignment.BottomStart)
+                        ) {
+                            Text(
+                                modifier = Modifier.align(Center),
+                                text = "${review.filesPath?.size}/${horizontalPagerState.currentPage}",
+                                fontWeight = Normal,
+                                fontSize = 12.sp,
+                                letterSpacing = 2.sp
+                            )
+                        }
                     }
                 }
 
@@ -224,7 +269,7 @@ private inline fun ReviewDetailActivityContent(
                     BPMSpacer(height = 10.dp)
 
                     Text(
-                        text = "한 줄 짜리 리뷰입니다.",
+                        text = content ?: "",
                         fontWeight = Normal,
                         fontSize = 13.sp,
                         letterSpacing = 0.sp,
@@ -234,9 +279,9 @@ private inline fun ReviewDetailActivityContent(
                     BPMSpacer(height = 20.dp)
 
                     LikeButton(
-                        liked = liked ?: false,
+                        liked = review.liked ?: false,
                         likeState = likeState,
-                        likeCount = 0, // TODO : Will be changed
+                        likeCount = likeCount ?: 0,
                         onClick = { onClickLike() }
                     )
                 }

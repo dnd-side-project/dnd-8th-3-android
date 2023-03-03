@@ -58,6 +58,7 @@ import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.ui.studio_detail.writing_review.WritingReviewActivity
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
+import com.d83t.bpm.presentation.util.dateOnly
 import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -111,16 +112,16 @@ class StudioDetailActivity : BaseComponentActivity() {
             viewModel.state.collect { state ->
                 when (state) {
                     is StudioDetailState.Init -> {
+                        showLoadingScreen()
                         viewModel.getStudioDetail(studioId = studioId)
                         viewModel.getReviewList(studioId = studioId)
-                        showLoadingScreen()
                     }
                     is StudioDetailState.StudioDetailSuccess -> {
                         hideLoadingScreen()
                         studioState.value = state.studio
                     }
                     is StudioDetailState.ReviewListSuccess -> reviewListState.value = state.reviewList
-                    is StudioDetailState.Error -> Unit
+                    is StudioDetailState.Error -> hideLoadingScreen()
                 }
             }
         }
@@ -160,6 +161,8 @@ private inline fun StudioDetailActivityContent(
     val reviewHeaderPositionState = remember { mutableStateOf(0f) }
 
     tabState.value = if (remember { derivedStateOf { scrollState.value >= studioDetailInfoHeightState.value } }.value) 1 else 0
+
+    // TODO : with(studio) {}. State 를 넘기지 않고, initComposeBlock 에서 분기처리하여야 함.
 
     Box(modifier = Modifier.background(color = Color.White)) {
         Column(
@@ -208,7 +211,7 @@ private inline fun StudioDetailActivityContent(
                     ) {
                         Text(
                             modifier = Modifier.align(Center),
-                            text = "${studioState.value?.filesPath?.size}/",
+                            text = "${studioState.value?.filesPath?.size}/${horizontalPagerState.currentPage}",
                             fontWeight = Normal,
                             fontSize = 12.sp,
                             letterSpacing = 2.sp
@@ -478,7 +481,7 @@ private inline fun StudioDetailActivityContent(
                     )
 
                     Text(
-                        text = "마지막 업데이트 : ${studioState.value?.updatedAt?.dropLast(10)?.replace("-", ".") ?: ""}",
+                        text = "마지막 업데이트 : ${studioState.value?.updatedAt?.dateOnly() ?: ""}",
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp,
