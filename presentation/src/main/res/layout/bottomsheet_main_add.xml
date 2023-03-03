@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/bind">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.d83t.bpm.presentation.ui.main.add.MainAddViewModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="40dp">
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="56dp"
+            android:layout_height="4dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/gray_05"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/content_eyebody"
+            layout="@layout/layout_mypage_content_disable"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:onItemClick="@{vm.clickDisable}"
+            bind:content="@{@string/main_add_eyebody}" />
+
+        <include
+            android:id="@+id/content_share"
+            layout="@layout/layout_mypage_content_disable"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/content_eyebody"
+            app:onItemClick="@{vm.clickDisable}"
+            bind:content="@{@string/mypage_content_history_bf}" />
+
+        <include
+            android:id="@+id/content_ask"
+            layout="@layout/layout_mypage_content_disable"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/content_share"
+            app:onItemClick="@{vm.clickDisable}"
+            bind:content="@{@string/mypage_content_history_bf}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

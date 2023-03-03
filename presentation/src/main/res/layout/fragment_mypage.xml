@@ -195,6 +195,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/book_info"
+                    app:onItemClick="@{vm.clickDisable}"
                     bind:content="@{@string/mypage_content_history_bf}" />
 
                 <include
@@ -205,6 +206,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/content_history_bf"
+                    app:onItemClick="@{vm.clickDisable}"
                     bind:content="@{@string/mypage_content_history_post}" />
 
                 <View
@@ -237,6 +239,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/content_profile_edit"
+                    app:onItemClick="@{vm.clickDisable}"
                     bind:content="@{@string/mypage_content_notice}" />
 
                 <include
@@ -247,6 +250,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/content_notice"
+                    app:onItemClick="@{vm.clickDisable}"
                     bind:content="@{@string/mypage_content_version_info}" />
 
                 <View

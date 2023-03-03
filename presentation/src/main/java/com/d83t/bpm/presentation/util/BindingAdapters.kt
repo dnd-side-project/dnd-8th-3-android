@@ -33,7 +33,6 @@ fun View.bindVisibleOrGone(text: String?) {
     }
 }
 
-
 @BindingAdapter("bind:list_item")
 fun RecyclerView.bindListItems(list: List<Any>?) {
     if (adapter != null) {
@@ -44,6 +43,7 @@ fun RecyclerView.bindListItems(list: List<Any>?) {
 @BindingAdapter("bind:review_chips")
 fun ChipGroup.bindChips(reviewList: List<String>?) {
     if (reviewList.isNullOrEmpty()) return else {
+        isClickable = false
         reviewList.forEach {
             addView(
                 Chip(context).apply {

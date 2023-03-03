@@ -260,6 +260,7 @@
                         style="@style/Widget.Design.TabLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
                         android:layout_marginEnd="100dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -283,8 +284,8 @@
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/pager"
                         android:layout_width="match_parent"
-                        android:layout_height="1000dp"
-                        android:minHeight="1000dp"
+                        android:layout_height="1200dp"
+                        android:minHeight="1200dp"
                         android:nestedScrollingEnabled="false"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

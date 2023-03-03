@@ -14,9 +14,6 @@ class HomeRecommendImageItemDecoration : ItemDecoration() {
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
-
-        outRect.bottom = 4.dp
-        outRect.top = 4.dp
         outRect.left = 4.dp
         outRect.right = 4.dp
     }

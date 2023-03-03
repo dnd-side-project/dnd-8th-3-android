@@ -1,4 +1,4 @@
-package com.d83t.bpm.presentation.ui.main.mypage
+package com.d83t.bpm.presentation.ui.main.add
 
 import androidx.lifecycle.viewModelScope
 import com.d83t.bpm.presentation.base.BaseViewModel
@@ -9,15 +9,16 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MyPageViewModel @Inject constructor() : BaseViewModel() {
+class MainAddViewModel @Inject constructor() : BaseViewModel() {
 
-    private val _event = MutableSharedFlow<MyPageViewEvent>()
-    val event: SharedFlow<MyPageViewEvent>
+    private val _event = MutableSharedFlow<MainAddViewEvent>()
+    val event: SharedFlow<MainAddViewEvent>
         get() = _event
 
     fun clickDisable() {
         viewModelScope.launch {
-            _event.emit(MyPageViewEvent.Click)
+            _event.emit(MainAddViewEvent.Click)
         }
     }
+
 }
