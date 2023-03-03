@@ -11,10 +11,17 @@ class HomeRecommendViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: Studio, listener: (Int?) -> Unit) {
-        binding.item = item
-        binding.root.setOnClickListener {
-            listener.invoke(item.id)
+        with(binding) {
+            this.item = item
+
+            list.adapter = HomeRecommendImageAdapter()
+//            list.addItemDecoration(HomeRecommendImageItemDecoration())
+
+            root.setOnClickListener {
+                listener.invoke(item.id)
+            }
         }
+
     }
 
     companion object {

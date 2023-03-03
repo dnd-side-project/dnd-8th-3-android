@@ -7,8 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 class HomePagerAdapter(
     fragmentActivity: FragmentActivity,
     private val fragmentList: List<Fragment>
-) :
-    FragmentStateAdapter(fragmentActivity) {
+) : FragmentStateAdapter(fragmentActivity) {
     override fun createFragment(position: Int): Fragment {
         return fragmentList[position]
     }

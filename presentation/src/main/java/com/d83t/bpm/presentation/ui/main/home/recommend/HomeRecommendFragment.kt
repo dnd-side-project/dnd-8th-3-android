@@ -1,10 +1,12 @@
 package com.d83t.bpm.presentation.ui.main.home.recommend
 
+import android.content.Intent
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.d83t.bpm.presentation.base.BaseFragment
 import com.d83t.bpm.presentation.databinding.FragmentHomeRecommendBinding
 import com.d83t.bpm.presentation.ui.main.home.recommend.list.HomeRecommendAdapter
+import com.d83t.bpm.presentation.ui.studio_detail.StudioDetailActivity
 import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import com.d83t.bpm.presentation.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -15,14 +17,12 @@ class HomeRecommendFragment :
 
     override val viewModel: HomeRecommendViewModel by viewModels()
 
-    private val recommendAdapter: HomeRecommendAdapter by lazy {
-        HomeRecommendAdapter { goToStudioDetail(it) }
-    }
-
     override fun initLayout() {
         bind {
-            list.adapter = recommendAdapter
+            vm = viewModel
+            lifecycleOwner = viewLifecycleOwner
 
+            list.adapter = HomeRecommendAdapter { viewModel.clickStudioDetail(it) }
         }
     }
 
@@ -41,11 +41,24 @@ class HomeRecommendFragment :
                 }
             }
         }
+
+        repeatCallDefaultOnStarted {
+            viewModel.event.collect { event ->
+                when (event) {
+                    is HomeRecommendViewEvent.ClickDetail -> {
+                        goToStudioDetail(event.studioId)
+                    }
+                }
+            }
+        }
     }
 
     private fun goToStudioDetail(studioId: Int?) {
         studioId?.let {
-
+            // TODO : 스튜디오 상세로 이동
+            startActivity(Intent(context, StudioDetailActivity::class.java).apply {
+                putExtra("studioId", it)
+            })
         }
     }
 

@@ -71,6 +71,7 @@ interface MainApi {
         @Part("content") content: String
     ): Response<ReviewResponse>
 
+    @Headers("shouldBeAuthorized: true")
     @GET("api/studio/list")
     suspend fun getStudioList(
         @Query("limit") limit: Int,

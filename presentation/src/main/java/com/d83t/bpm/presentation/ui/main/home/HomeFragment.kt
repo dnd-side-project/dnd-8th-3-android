@@ -30,6 +30,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             vm = viewModel
             lifecycleOwner = viewLifecycleOwner
         }
+
+        setUpPager()
     }
 
     override fun setupCollect() {
@@ -37,8 +39,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             viewModel.state.collect { state ->
                 when (state) {
                     HomeState.Init -> {
-//                        viewModel.getStudioList()
-                        setUpPager()
+                        // TODO : 예약현황 가져오기
                     }
                     HomeState.StudioList -> Unit
                     HomeState.Error -> {
@@ -53,8 +54,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private fun setUpPager() {
         binding.pager.adapter = HomePagerAdapter(requireActivity(), fragmentList)
 
-        TabLayoutMediator(binding.tab, binding.pager, false, true)
-        { tab: TabLayout.Tab?, position: Int ->
+        TabLayoutMediator(binding.tab, binding.pager, false, true) { tab: TabLayout.Tab?, position: Int ->
             val resId: Int = when (position) {
                 0 -> R.string.tab_hot
                 1 -> R.string.tab_review
