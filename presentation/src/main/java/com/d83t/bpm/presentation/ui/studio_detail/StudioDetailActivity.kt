@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.d83t.bpm.domain.model.Review
 import com.d83t.bpm.domain.model.Studio
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
@@ -69,6 +70,7 @@ class StudioDetailActivity : BaseComponentActivity() {
     private var studioId: Int = 0
     private val studioLikeState by lazy { mutableStateOf(false) }
     private val studioState = mutableStateOf<Studio?>(null)
+    private val reviewListState = mutableStateOf<List<Review>>(listOf())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +80,7 @@ class StudioDetailActivity : BaseComponentActivity() {
             StudioDetailActivityContent(
                 studioState = studioState,
                 studioLikeState = studioLikeState,
+                reviewList = reviewListState,
                 onClickCallButton = {
 
                 },
@@ -92,6 +95,9 @@ class StudioDetailActivity : BaseComponentActivity() {
                 },
                 onClickShowCourse = {
 
+                },
+                onClickWriteReview = {
+
                 }
             )
         }
@@ -103,12 +109,16 @@ class StudioDetailActivity : BaseComponentActivity() {
         repeatCallDefaultOnStarted {
             viewModel.state.collect { state ->
                 when (state) {
-                    is StudioDetailState.Init -> viewModel.getStudioDetail(studioId = studioId)
+                    is StudioDetailState.Init -> {
+                        viewModel.getStudioDetail(studioId = studioId)
+                        viewModel.getReviewList(studioId = studioId)
+                    }
                     is StudioDetailState.Loading -> showLoadingScreen()
-                    is StudioDetailState.Success -> {
+                    is StudioDetailState.StudioDetailSuccess -> {
                         hideLoadingScreen()
                         studioState.value = state.studio
                     }
+                    is StudioDetailState.ReviewListSuccess -> reviewListState.value = state.reviewList
                     is StudioDetailState.Error -> Unit
                 }
             }
@@ -121,11 +131,13 @@ class StudioDetailActivity : BaseComponentActivity() {
 private inline fun StudioDetailActivityContent(
     studioState: MutableState<Studio?>,
     studioLikeState: MutableState<Boolean>,
+    reviewList: MutableState<List<Review>>,
     crossinline onClickCallButton: () -> Unit,
     crossinline onClickInfoEditSuggestion: () -> Unit,
     crossinline onClickMap: () -> Unit,
     crossinline onClickCopyAddress: () -> Unit,
-    crossinline onClickShowCourse: () -> Unit
+    crossinline onClickShowCourse: () -> Unit,
+    crossinline onClickWriteReview: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val tabState = remember { mutableStateOf(0) }
@@ -571,15 +583,15 @@ private inline fun StudioDetailActivityContent(
                                     number = number + 1,
                                     keyword = "주차하기 편해요",
                                     count = 7 - number + 1,
-                                    backgroundColor = Color.Black,
-                                    textColor = Color.White
+                                    backgroundColor = Color.White,
+                                    textColor = Color.Black
                                 )
                                 5 -> BestKeyword(
                                     number = number + 1,
                                     keyword = "시설이 깔끔해요",
                                     count = 7 - number + 1,
-                                    backgroundColor = Color.Black,
-                                    textColor = Color.White
+                                    backgroundColor = Color.White,
+                                    textColor = Color.Black
                                 )
                             }
 
@@ -620,50 +632,96 @@ private inline fun StudioDetailActivityContent(
                     modifier = Modifier.onGloballyPositioned { coordinates -> reviewHeaderPositionState.value = coordinates.positionInWindow().y },
                     reviewCount = studioState.value?.reviewCount ?: 0,
                     showImageReviewOnlyState = showImageReviewOnlyState,
-                    showReviewOrderByLikeState = showReviewOrderByLikeState
+                    showReviewOrderByLikeState = showReviewOrderByLikeState,
+                    onClickWriteReview = { onClickWriteReview() }
                 )
 
                 Box {
-                    Column {
-                        listOf(true, false, true, true, false).forEach { review ->
-                            ReviewComposable(
-                                modifier = Modifier.padding(horizontal = 16.dp),
-                                isLiked = review
-                            )
-                        } // dummy
-                    }
+                    if (reviewList.value.isNotEmpty()) {
+                        Column {
+                            reviewList.value.forEach { review ->
+                                ReviewComposable(
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                    review = review
+                                )
+                            }
+                        }
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(250.dp)
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    listOf(
-                                        Color(0X53FFFFFF),
-                                        Color(0X73FFFFFF),
-                                        Color(0XA2FFFFFF),
-                                        Color(0XD9FFFFFF),
-                                        Color(0XF2FFFFFF),
+                        if (reviewList.value.size > 5) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(250.dp)
+                                    .background(
+                                        brush = Brush.verticalGradient(
+                                            listOf(
+                                                Color(0X53FFFFFF),
+                                                Color(0X73FFFFFF),
+                                                Color(0XA2FFFFFF),
+                                                Color(0XD9FFFFFF),
+                                                Color(0XF2FFFFFF),
+                                            )
+                                        )
                                     )
+                                    .align(BottomCenter)
+                            ) {
+                                RoundedCornerButton(
+                                    modifier = Modifier
+                                        .padding(
+                                            vertical = 12.dp,
+                                            horizontal = 16.dp
+                                        )
+                                        .fillMaxWidth()
+                                        .height(48.dp)
+                                        .align(BottomCenter),
+                                    text = "더보기",
+                                    textColor = Color.White,
+                                    buttonColor = Color.Black,
+                                    onClick = {}
                                 )
-                            )
-                            .align(BottomCenter)
-                    ) {
-                        RoundedCornerButton(
-                            modifier = Modifier
-                                .padding(
-                                    vertical = 12.dp,
-                                    horizontal = 16.dp
+                            }
+                        }
+                    } else {
+                        Box(modifier = Modifier.size(360.dp)) {
+                            Column(
+                                modifier = Modifier.align(Center),
+                                horizontalAlignment = CenterHorizontally
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.shoulder_man),
+                                    contentDescription = "shoulderManImage"
                                 )
-                                .fillMaxWidth()
-                                .height(48.dp)
-                                .align(BottomCenter),
-                            text = "더보기",
-                            textColor = Color.White,
-                            buttonColor = Color.Black,
-                            onClick = {}
-                        )
+
+                                BPMSpacer(height = 10.dp)
+
+                                Text(
+                                    text = "아직 등록된 리뷰가 없어요\n첫 번째 리뷰를 남겨주세요",
+                                    fontWeight = Medium,
+                                    fontSize = 12.sp,
+                                    letterSpacing = 0.sp,
+                                    color = GrayColor5
+                                )
+
+                                BPMSpacer(height = 18.dp)
+
+                                Box(
+                                    modifier = Modifier
+                                        .clip(shape = RoundedCornerShape(50.dp))
+                                        .width(130.dp)
+                                        .height(40.dp)
+                                        .background(color = MainGreenColor)
+                                        .clickable { onClickWriteReview() }
+                                ) {
+                                    Text(
+                                        modifier = Modifier.align(Center),
+                                        text = "리뷰 등록하기",
+                                        fontWeight = SemiBold,
+                                        fontSize = 12.sp,
+                                        letterSpacing = 0.sp
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }

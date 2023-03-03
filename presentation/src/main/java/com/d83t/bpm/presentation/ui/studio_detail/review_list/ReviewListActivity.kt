@@ -52,15 +52,10 @@ private fun ReviewListActivityContent() {
             ReviewListHeader(
                 reviewCount = 0, // TODO : Will Be Changed
                 showImageReviewOnlyState = showImageReviewOnlyState,
-                showReviewOrderByLikeState = showReviewOrderByLikeState
+                showReviewOrderByLikeState = showReviewOrderByLikeState,
+                onClickWriteReview = { }
             )
         }
 
-        items(listOf(true, false, false, false, true, true, false)) { review ->
-            ReviewComposable(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                isLiked = review
-            )
-        }
     }
 }

@@ -5,8 +5,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Schedule(
-    val studioName: String,
-    val date: String,
-    val time: String,
-    val memo: String
+    val studioName: String?,
+    val date: String?,
+    val time: String?,
+    val memo: String?
 ) : BaseModel

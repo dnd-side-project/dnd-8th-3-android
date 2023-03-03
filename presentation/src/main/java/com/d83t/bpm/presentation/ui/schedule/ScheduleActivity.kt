@@ -107,7 +107,7 @@ class ScheduleActivity : BaseComponentActivity() {
                         hideLoadingScreen()
                         editModeState.value = false
                     }
-                    is ScheduleState.Error -> Unit
+                    is ScheduleState.Error -> hideLoadingScreen()
                 }
             }
         }
@@ -131,16 +131,16 @@ class ScheduleActivity : BaseComponentActivity() {
     private fun initSchedule(
         schedule: Schedule
     ) {
-        studioLabelTextState.value = schedule.studioName
-        dateLabelTextState.value = schedule.date
-        val timeInList = schedule.time.split(":")
+        studioLabelTextState.value = schedule.studioName ?: ""
+        dateLabelTextState.value = schedule.date ?: ""
+        val timeInList = schedule.time?.split(":")
         timeLabelTextState.value =
-            if (timeInList[0].toInt() > 12) "${if (timeInList[0].toInt() - 12 < 10) "0" else ""}${timeInList[0].toInt() - 12}:${timeInList[1]} (오후)"
+            if (timeInList?.get(0)?.toInt()!! > 12) "${if (timeInList[0].toInt() - 12 < 10) "0" else ""}${timeInList[0].toInt() - 12}:${timeInList[1]} (오후)"
             else "${timeInList[0]}:${timeInList[1]} (오전)"
-        val dateInList = schedule.date.split("-").map { it.toInt() }
-        selectedDateState.value = LocalDate.of(dateInList[0], dateInList[1], dateInList[2])
-        memoLabelTextState.value = schedule.memo
-        memoTextState.value = schedule.memo
+        val dateInList = schedule.date?.split("-")?.map { it.toInt() }
+        selectedDateState.value = LocalDate.of(dateInList?.get(0)!!, dateInList[1], dateInList[2])
+        memoLabelTextState.value = schedule.memo ?: ""
+        memoTextState.value = schedule.memo ?: ""
     }
 
     companion object {
