@@ -4,11 +4,16 @@
 
     <data>
 
+        <variable
+            name="onSearchClick"
+            type="kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt;" />
+
     </data>
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="@{() -> onSearchClick.invoke()}"
         app:cardBackgroundColor="@color/gray_02"
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp">

@@ -39,12 +39,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             viewModel.state.collect { state ->
                 when (state) {
                     HomeState.Init -> {
-                        // TODO : 예약현황 가져오기
+                        viewModel.getUserSchedule()
                     }
-                    HomeState.StudioList -> Unit
+                    HomeState.UserSchedule -> Unit
                     HomeState.Error -> {
                         // TODO : Error Handling
-                        requireContext().showToast("예약 정보를 가져오는 중 에러가 발생했습니다.")
+//                        requireContext().showToast("예약 정보를 가져오는 중 에러가 발생했습니다.")
+                    }
+                }
+            }
+        }
+
+        repeatCallDefaultOnStarted {
+            viewModel.event.collect { event ->
+                when (event) {
+                    HomeViewEvent.ClickSearch -> {
+                        requireContext().showToast("검색페이지 이동")
                     }
                 }
             }
@@ -54,7 +64,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private fun setUpPager() {
         binding.pager.adapter = HomePagerAdapter(requireActivity(), fragmentList)
 
-        TabLayoutMediator(binding.tab, binding.pager, false, true) { tab: TabLayout.Tab?, position: Int ->
+        TabLayoutMediator(
+            binding.tab,
+            binding.pager,
+            false,
+            true
+        ) { tab: TabLayout.Tab?, position: Int ->
             val resId: Int = when (position) {
                 0 -> R.string.tab_hot
                 1 -> R.string.tab_review

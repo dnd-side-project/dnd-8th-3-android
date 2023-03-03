@@ -7,18 +7,10 @@ import com.d83t.bpm.data.model.response.ScheduleResponse
 import com.d83t.bpm.data.model.response.SignUpResponse
 import com.d83t.bpm.data.model.response.StudioListResponse
 import com.d83t.bpm.data.model.response.StudioResponse
-import com.d83t.bpm.domain.model.StudioList
+import com.d83t.bpm.data.model.response.UserScheduleResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.Multipart
-import retrofit2.http.POST
-import retrofit2.http.Part
-import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface MainApi {
     @Headers("shouldBeAuthorized: false")
@@ -76,6 +68,9 @@ interface MainApi {
         @Query("limit") limit: Int,
         @Query("offset") offset: Int,
     ): Response<StudioListResponse>
+
+    @GET("api/users/schedule")
+    suspend fun getUserSchedule(): Response<UserScheduleResponse>
 
     @GET("api/studio")
     suspend fun searchStudio(
