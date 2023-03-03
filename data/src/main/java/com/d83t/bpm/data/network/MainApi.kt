@@ -77,4 +77,9 @@ interface MainApi {
         @Query("limit") limit: Int,
         @Query("offset") offset: Int,
     ): Response<StudioListResponse>
+
+    @GET("api/studio")
+    suspend fun searchStudio(
+        @Query("q") query: String
+    ): Response<StudioListResponse>
 }

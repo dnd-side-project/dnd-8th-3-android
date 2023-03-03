@@ -5,6 +5,7 @@ import com.d83t.bpm.domain.usecase.review.GetReviewDetailUseCase
 import com.d83t.bpm.domain.usecase.review.GetReviewListUseCase
 import com.d83t.bpm.domain.usecase.schedule.GetScheduleUseCase
 import com.d83t.bpm.domain.usecase.schedule.SaveScheduleUseCase
+import com.d83t.bpm.domain.usecase.search_studio.SearchStudioUseCase
 import com.d83t.bpm.domain.usecase.sign_up.SignUpUseCase
 import com.d83t.bpm.domain.usecase.splash.GetKakaoUserIdUseCase
 import com.d83t.bpm.domain.usecase.splash.SetKakaoUserIdUseCase
@@ -72,5 +73,11 @@ object UseCaseModule {
     @ViewModelScoped
     fun provideWriteReviewUseCase(writeReviewRepository: WriteReviewRepository): WriteReviewUseCase {
         return WriteReviewUseCase(writeReviewRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideSearchStudioUseCase(searchStudioRepository: SearchStudioRepository): SearchStudioUseCase {
+        return SearchStudioUseCase(searchStudioRepository)
     }
 }
