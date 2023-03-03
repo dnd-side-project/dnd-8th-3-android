@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.d83t.bpm.domain.model.Studio
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
@@ -195,6 +197,7 @@ class WritingReviewActivity : BaseComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun WritingReviewActivityContent(
     studio: Studio,
@@ -246,11 +249,11 @@ private fun WritingReviewActivityContent(
                     .fillMaxWidth()
                     .height(74.dp)
             ) {
-                Image(
+                GlideImage(
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(12.dp))
                         .size(74.dp),
-                    painter = painterResource(id = R.drawable.dummy_studio),
+                    model = studio.filesPath?.get(0) ?: "",
                     contentDescription = "studioProfileImage",
                     contentScale = ContentScale.FillBounds
                 )
@@ -281,15 +284,28 @@ private fun WritingReviewActivityContent(
                     }
 
                     Row(verticalAlignment = CenterVertically) {
-                        repeat(5) {
-                            Icon(
-                                modifier = Modifier.size(12.dp),
-                                painter = painterResource(id = R.drawable.ic_star_small_empty),
-                                contentDescription = "starIcon",
-                                tint = GrayColor6
-                            )
+                        if (studio.rating != null) {
+                            for (i in 1..5) {
+                                Image(
+                                    modifier = Modifier.size(15.dp),
+                                    painter = painterResource(
+                                        id = if (i.toDouble() <= studio.rating!!) R.drawable.ic_star_small_filled
+                                        else if (i.toDouble() > studio.rating!! && studio.rating!! > i - 1) R.drawable.ic_star_small_half
+                                        else R.drawable.ic_star_small_empty
+                                    ),
+                                    contentDescription = "starIcon"
+                                )
+                            }
+                        } else {
+                            repeat(5) { index ->
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_star_small_empty),
+                                    contentDescription = "starIcon",
+                                    tint = GrayColor6
+                                )
 
-                            BPMSpacer(width = 2.dp)
+                                BPMSpacer(width = 2.dp)
+                            }
                         }
 
                         BPMSpacer(width = 6.dp)
