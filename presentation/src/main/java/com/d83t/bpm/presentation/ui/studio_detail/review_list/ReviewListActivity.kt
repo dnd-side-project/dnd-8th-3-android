@@ -1,5 +1,7 @@
 package com.d83t.bpm.presentation.ui.studio_detail.review_list
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
@@ -54,6 +56,13 @@ class ReviewListActivity : BaseComponentActivity() {
             }
         }
     }
+
+    companion object {
+        fun newIntent(context: Context): Intent {
+            return Intent(context, ReviewListActivity::class.java)
+        }
+
+    }
 }
 
 @Composable
@@ -77,7 +86,6 @@ private fun ReviewListActivityContent(
                 reviewCount = reviewListState.value.size,
                 showImageReviewOnlyState = showImageReviewOnlyState,
                 showReviewOrderByLikeState = showReviewOrderByLikeState,
-                onClickWriteReview = { }
             )
         }
 

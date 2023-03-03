@@ -42,7 +42,10 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.d83t.bpm.domain.model.Review
 import com.d83t.bpm.presentation.R
+import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.compose.theme.*
+import com.d83t.bpm.presentation.ui.studio_detail.review_detail.ReviewDetailActivity
+import com.d83t.bpm.presentation.ui.studio_detail.writing_review.WritingReviewActivity
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 
 @Composable
@@ -296,9 +299,21 @@ fun ReviewComposable(
     modifier: Modifier = Modifier,
     review: Review
 ) {
+    val context = LocalContext.current as BaseComponentActivity
+
     with(review) {
         val likeState = remember { mutableStateOf(liked ?: false) }
-        Column(modifier = modifier.fillMaxWidth()) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .clickableWithoutRipple {
+                    context.startActivity(
+                        ReviewDetailActivity
+                            .newIntent(context)
+                            .putExtra("reviewId", id)
+                    )
+                }
+        ) {
             BPMSpacer(height = 16.dp)
 
             Row(
@@ -391,7 +406,9 @@ fun ReviewComposable(
             BPMSpacer(height = 25.dp)
 
             LikeButton(
+                liked = review.liked ?: false,
                 likeState = likeState,
+                likeCount = likeCount ?: 0,
                 onClick = { }
             )
         }
@@ -405,9 +422,13 @@ fun ReviewComposable(
 
 @Composable
 inline fun LikeButton(
+    liked: Boolean,
     likeState: MutableState<Boolean>,
+    likeCount: Int,
     crossinline onClick: () -> Unit
 ) {
+    val defaultLiked = liked
+
     Box(
         modifier = Modifier
             .clip(shape = RoundedCornerShape(12.dp))
@@ -448,7 +469,16 @@ inline fun LikeButton(
             BPMSpacer(width = 4.dp)
 
             Text(
-                text = "12",
+                text = if (defaultLiked &&
+                    likeState.value
+                ) "$likeCount"
+                else if (defaultLiked &&
+                    !likeState.value
+                ) "${likeCount - 1}"
+                else if (!defaultLiked &&
+                    !likeState.value
+                ) "$likeCount"
+                else "${likeCount + 1}",
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp,
                 letterSpacing = 0.sp,
@@ -513,13 +543,14 @@ fun ReviewKeywordChip(
 }
 
 @Composable
-inline fun ReviewListHeader(
+fun ReviewListHeader(
     modifier: Modifier = Modifier,
     reviewCount: Int,
     showImageReviewOnlyState: MutableState<Boolean>,
     showReviewOrderByLikeState: MutableState<Boolean>,
-    crossinline onClickWriteReview:() -> Unit
 ) {
+    val context = LocalContext.current as BaseComponentActivity
+
     Column {
         Row(
             modifier = modifier
@@ -537,7 +568,7 @@ inline fun ReviewListHeader(
             )
 
             Text(
-                modifier = Modifier.clickableWithoutRipple { onClickWriteReview() },
+                modifier = Modifier.clickableWithoutRipple { context.startActivity(WritingReviewActivity.newIntent(context = context)) },
                 text = "리뷰 작성하기",
                 fontWeight = Medium,
                 fontSize = 14.sp,

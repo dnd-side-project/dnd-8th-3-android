@@ -1,5 +1,7 @@
 package com.d83t.bpm.presentation.ui.studio_detail.writing_review
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
@@ -144,6 +146,14 @@ class WritingReviewActivity : BaseComponentActivity() {
             imageStateList.clear()
             delay(50)
         }.invokeOnCompletion { imageStateList.addAll(temp) }
+    }
+
+    companion object {
+
+        fun newIntent(context: Context): Intent {
+            return Intent(context, WritingReviewActivity::class.java)
+        }
+
     }
 }
 

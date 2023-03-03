@@ -1,5 +1,7 @@
 package com.d83t.bpm.presentation.ui.studio_detail
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.compose.animation.core.animateDpAsState
@@ -32,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale.Companion.Crop
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
@@ -53,6 +56,7 @@ import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
+import com.d83t.bpm.presentation.ui.studio_detail.writing_review.WritingReviewActivity
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -95,9 +99,6 @@ class StudioDetailActivity : BaseComponentActivity() {
                 },
                 onClickShowCourse = {
 
-                },
-                onClickWriteReview = {
-
                 }
             )
         }
@@ -124,6 +125,13 @@ class StudioDetailActivity : BaseComponentActivity() {
             }
         }
     }
+
+    companion object {
+        fun newIntent(context: Context): Intent {
+            return Intent(context, StudioDetailActivity::class.java)
+        }
+
+    }
 }
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
@@ -136,12 +144,12 @@ private inline fun StudioDetailActivityContent(
     crossinline onClickInfoEditSuggestion: () -> Unit,
     crossinline onClickMap: () -> Unit,
     crossinline onClickCopyAddress: () -> Unit,
-    crossinline onClickShowCourse: () -> Unit,
-    crossinline onClickWriteReview: () -> Unit
+    crossinline onClickShowCourse: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val tabState = remember { mutableStateOf(0) }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current as BaseComponentActivity
     val horizontalPagerState = rememberPagerState()
     val showExpandedKeywordColumn = remember { mutableStateOf(false) }
     val keywordColumnHeightState = animateDpAsState(targetValue = if (showExpandedKeywordColumn.value) 234.dp else 138.dp)
@@ -632,8 +640,7 @@ private inline fun StudioDetailActivityContent(
                     modifier = Modifier.onGloballyPositioned { coordinates -> reviewHeaderPositionState.value = coordinates.positionInWindow().y },
                     reviewCount = studioState.value?.reviewCount ?: 0,
                     showImageReviewOnlyState = showImageReviewOnlyState,
-                    showReviewOrderByLikeState = showReviewOrderByLikeState,
-                    onClickWriteReview = { onClickWriteReview() }
+                    showReviewOrderByLikeState = showReviewOrderByLikeState
                 )
 
                 Box {
@@ -710,7 +717,7 @@ private inline fun StudioDetailActivityContent(
                                         .width(130.dp)
                                         .height(40.dp)
                                         .background(color = MainGreenColor)
-                                        .clickable { onClickWriteReview() }
+                                        .clickable { context.startActivity(WritingReviewActivity.newIntent(context = context)) }
                                 ) {
                                     Text(
                                         modifier = Modifier.align(Center),
