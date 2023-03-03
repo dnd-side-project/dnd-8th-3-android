@@ -1,12 +1,14 @@
 package com.d83t.bpm.data.repositoryImpl
 
 import com.d83t.bpm.data.model.response.StudioListResponse.Companion.toDataModel
+import com.d83t.bpm.data.model.response.UserScheduleResponse.Companion.toDataModel
 import com.d83t.bpm.data.network.BPMResponse
 import com.d83t.bpm.data.network.BPMResponseHandler
 import com.d83t.bpm.data.network.ErrorResponse.Companion.toDataModel
 import com.d83t.bpm.data.network.MainApi
 import com.d83t.bpm.domain.model.ResponseState
 import com.d83t.bpm.domain.model.StudioList
+import com.d83t.bpm.domain.model.UserSchedule
 import com.d83t.bpm.domain.repository.MainRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +24,19 @@ class MainRepositoryImpl @Inject constructor(
         return flow {
             BPMResponseHandler().handle {
                 mainApi.getStudioList(limit, offset)
+            }.onEach { result ->
+                when (result) {
+                    is BPMResponse.Success -> emit(ResponseState.Success(result.data.toDataModel()))
+                    is BPMResponse.Error -> emit(ResponseState.Error(result.error.toDataModel()))
+                }
+            }.collect()
+        }
+    }
+
+    override suspend fun getUserSchedule(): Flow<ResponseState<UserSchedule>> {
+        return flow {
+            BPMResponseHandler().handle {
+                mainApi.getUserSchedule()
             }.onEach { result ->
                 when (result) {
                     is BPMResponse.Success -> emit(ResponseState.Success(result.data.toDataModel()))

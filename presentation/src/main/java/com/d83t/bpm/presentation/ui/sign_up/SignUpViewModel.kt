@@ -1,5 +1,6 @@
 package com.d83t.bpm.presentation.ui.sign_up
 
+import android.os.Bundle
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -10,11 +11,16 @@ import com.d83t.bpm.presentation.di.IoDispatcher
 import com.d83t.bpm.presentation.di.MainDispatcher
 import com.d83t.bpm.presentation.util.convertBitmapToWebpFile
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
@@ -35,6 +41,17 @@ class SignUpViewModel @Inject constructor(
         CoroutineExceptionHandler { coroutineContext, throwable ->
 
         }
+    }
+
+    private fun getBundle(): Bundle? {
+        return savedStateHandle.get<Bundle>(SignUpActivity.KEY_BUNDLE)
+    }
+
+    val kakaoUserInfo: Pair<Long, String> by lazy {
+        Pair(
+            getBundle()?.getLong(SignUpActivity.KEY_KAKAO_USER_ID) ?: 0L,
+            getBundle()?.getString(SignUpActivity.KEY_KAKAO_NICK_NAME) ?: ""
+        )
     }
 
     fun onClickSignUp() {

@@ -51,7 +51,7 @@ class SelectStudioViewModel @Inject constructor(
                 query = query
             ).onEach { state ->
                 when(state) {
-                    is ResponseState.Success -> _state.emit(SelectStudioState.Success(state.data))
+                    is ResponseState.Success -> _state.emit(SelectStudioState.Success(state.data.studios ?: emptyList()))
                     is ResponseState.Error -> _state.emit(SelectStudioState.Error)
                 }
             }.launchIn(viewModelScope)

@@ -1,16 +1,20 @@
-package com.d83t.bpm.presentation.ui.main.mypage
+package com.d83t.bpm.presentation.ui.main.add
 
 import androidx.fragment.app.viewModels
-import com.d83t.bpm.presentation.base.BaseFragment
-import com.d83t.bpm.presentation.databinding.FragmentMypageBinding
+import com.d83t.bpm.presentation.R
+import com.d83t.bpm.presentation.base.BaseBottomSheetFragment
+import com.d83t.bpm.presentation.databinding.BottomsheetMainAddBinding
 import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import com.d83t.bpm.presentation.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MyPageFragment : BaseFragment<FragmentMypageBinding>(FragmentMypageBinding::inflate) {
+class MainAddBottomSheet :
+    BaseBottomSheetFragment<BottomsheetMainAddBinding>(BottomsheetMainAddBinding::inflate) {
 
-    override val viewModel: MyPageViewModel by viewModels()
+    override fun getTheme(): Int = R.style.DdoreumBottomSheetDialog
+
+    override val viewModel: MainAddViewModel by viewModels()
 
     override fun initLayout() {
         bind {
@@ -23,7 +27,7 @@ class MyPageFragment : BaseFragment<FragmentMypageBinding>(FragmentMypageBinding
         repeatCallDefaultOnStarted {
             viewModel.event.collect { event ->
                 when (event) {
-                    MyPageViewEvent.Click -> {
+                    MainAddViewEvent.Click -> {
                         requireContext().showToast("오픈 예정입니다!")
                     }
                 }
@@ -33,8 +37,8 @@ class MyPageFragment : BaseFragment<FragmentMypageBinding>(FragmentMypageBinding
 
     companion object {
 
-        fun newInstance(): MyPageFragment {
-            return MyPageFragment()
+        fun newInstance(): MainAddBottomSheet {
+            return MainAddBottomSheet()
         }
     }
 }

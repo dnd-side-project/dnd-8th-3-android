@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/bind"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -44,13 +46,15 @@
                         layout="@layout/layout_home_search"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:onSearchClick="@{vm.clickSearch}" />
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/header_book"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:onClick="@{() -> vm.clickSchedule()}"
                         android:foreground="?android:attr/selectableItemBackground"
                         app:cardBackgroundColor="@color/gray_02"
                         app:cardCornerRadius="12dp"
@@ -73,22 +77,24 @@
                                 android:fontFamily="@font/pyeongchang_bold"
                                 android:includeFontPadding="false"
                                 android:paddingBottom="21dp"
-                                android:text="D-3"
                                 android:textColor="@color/white"
                                 android:textSize="28dp"
                                 android:textStyle="bold"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
+                                app:layout_constraintTop_toTopOf="parent"
+                                bind:home_user_schedule_dday="@{vm.userScheduleInfo.date}"
+                                tools:text="D-3" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/plan_studio"
                                 style="@style/Font.Pretendard.Medium.14"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="바디프렌즈 스튜디오"
+                                android:text="@{vm.userScheduleInfo.studioName}"
                                 android:textColor="@color/gray_09"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/plan_count" />
+                                app:layout_constraintTop_toBottomOf="@id/plan_count"
+                                tools:text="바디프렌즈 스튜디오" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/plan_date"
@@ -97,17 +103,19 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="6dp"
                                 android:paddingBottom="17dp"
-                                android:text="2022.01.23 오후 5시"
                                 android:textColor="@color/white"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@id/plan_studio" />
+                                app:layout_constraintTop_toBottomOf="@id/plan_studio"
+                                bind:home_user_schedule_date="@{vm.userScheduleInfo.date}"
+                                bind:home_user_schedule_time="@{vm.userScheduleInfo.time}"
+                                tools:text="2022.01.23 오후 5시" />
 
                             <androidx.constraintlayout.widget.Group
                                 android:id="@+id/group_booked"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:visibility="gone"
-                                app:constraint_referenced_ids="plan_date, plan_count, plan_studio, plan_guide" />
+                                app:constraint_referenced_ids="plan_date, plan_count, plan_studio, plan_guide"
+                                bind:visibility="@{vm.userScheduleInfo.studioName}" />
 
                             <androidx.cardview.widget.CardView
                                 android:id="@+id/plan_guide"
@@ -208,8 +216,8 @@
                                 android:id="@+id/group_book_new"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-
-                                app:constraint_referenced_ids="book_register, book_plan, book_guide, book_arrow" />
+                                app:constraint_referenced_ids="book_register, book_plan, book_guide, book_arrow"
+                                bind:visibility="@{vm.userScheduleInfo.studioName.empty}" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.cardview.widget.CardView>
@@ -253,6 +261,8 @@
                         style="@style/Widget.Design.TabLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="100dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -261,11 +271,30 @@
                         app:tabMode="fixed"
                         app:tabRippleColor="@android:color/transparent" />
 
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/icon_search"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="16dp"
+                        android:onClick="@{() -> vm.clickSearch()}"
+                        android:src="@drawable/ic_search"
+                        app:layout_constraintBottom_toBottomOf="@id/tab"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tab" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:background="@color/gray_10"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tab"/>
+
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/pager"
                         android:layout_width="match_parent"
-                        android:layout_height="1000dp"
-                        android:minHeight="700dp"
+                        android:layout_height="1200dp"
+                        android:minHeight="1200dp"
                         android:nestedScrollingEnabled="false"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

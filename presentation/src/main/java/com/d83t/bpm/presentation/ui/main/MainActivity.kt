@@ -8,6 +8,7 @@ import androidx.fragment.app.commitNow
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseActivity
 import com.d83t.bpm.presentation.databinding.ActivityMainBinding
+import com.d83t.bpm.presentation.ui.main.add.MainAddBottomSheet
 import com.d83t.bpm.presentation.ui.main.community.CommunityFragment
 import com.d83t.bpm.presentation.ui.main.home.HomeFragment
 import com.d83t.bpm.presentation.ui.main.mypage.MyPageFragment
@@ -55,7 +56,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             viewModel.event.collect { event ->
                 when (event) {
                     MainViewEvent.Add -> {
-                        showToast("Add Clicked")
+                        showAddBottomSheet()
                     }
                 }
             }
@@ -74,6 +75,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
                 return@setOnItemSelectedListener true
             }
         }
+    }
+
+    private fun showAddBottomSheet(){
+        MainAddBottomSheet().show(supportFragmentManager, MainAddBottomSheet::class.simpleName)
     }
 
     private fun changeFragment(fragmentId: Int? = null) {

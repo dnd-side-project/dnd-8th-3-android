@@ -15,13 +15,11 @@ class HomeRecommendViewHolder(
             this.item = item
 
             list.adapter = HomeRecommendImageAdapter()
-//            list.addItemDecoration(HomeRecommendImageItemDecoration())
 
             root.setOnClickListener {
                 listener.invoke(item.id)
             }
         }
-
     }
 
     companion object {

@@ -78,10 +78,10 @@ class SplashActivity : BaseComponentActivity() {
                         }
                     }
                     is SplashState.ValidationCheck -> {
-                        viewModel.sendKakaoIdVerification(state.id)
+                        viewModel.sendKakaoIdVerification(state.id, state.kakaoNickName)
                     }
                     is SplashState.SignUp -> {
-                        goToSignUp(state.id)
+                        goToSignUp(state.id, state.kakaoNickName)
                     }
                     SplashState.NoUserInfo -> {
                         startButtonVisibilityState.value = true
@@ -112,7 +112,8 @@ class SplashActivity : BaseComponentActivity() {
                 } else if (loginInfo != null) {
                     // 로그인 성공
                     kakaoLoginInstance.me { user, error ->
-                        user?.id?.let { viewModel.setKakaoUserId(it) }
+                        viewModel.setKakaoUserId(user?.id ?: 0L, user?.kakaoAccount?.profile?.nickname ?: "")
+//                        user?.id?.let { viewModel.setKakaoUserId(it) }
                         showDebugToast("login succeed. user token : ${user?.id}")
                     }
                 }
@@ -122,8 +123,13 @@ class SplashActivity : BaseComponentActivity() {
         }
     }
 
-    private fun goToSignUp(kakaoUserId: Long?) {
-        startActivity(SignUpActivity.newIntent(this))
+    private fun goToSignUp(
+        kakaoUserId: Long?,
+        kakaoNickName: String
+    ) {
+        startActivity(
+            SignUpActivity.newIntent(this, kakaoUserId, kakaoNickName)
+        )
         finish()
     }
 

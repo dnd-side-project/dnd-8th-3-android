@@ -172,6 +172,9 @@ dependencies {
     // 카카오 로그인
     implementation "com.kakao.sdk:v2-user:2.12.1"
 
+    // joda datetime
+    implementation "joda-time:joda-time:2.10.13"
+
     // Flipper
     debugImplementation 'com.facebook.flipper:flipper:0.182.0'
     debugImplementation 'com.facebook.soloader:soloader:0.10.4'

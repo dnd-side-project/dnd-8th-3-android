@@ -74,11 +74,11 @@ class SplashViewModel @Inject constructor(
 
     // 2. 카카오 SDK에서 가져온 유저ID set
     // state - Init, SignIn
-    fun setKakaoUserId(kakaoUserId: Long) {
+    fun setKakaoUserId(kakaoUserId: Long, kakaoNickName : String) {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
             setKakaoUserIdUseCase(kakaoUserId).onEach { kakaoUserId ->
                 withContext(mainDispatcher) {
-                    kakaoUserId?.let { _state.emit(SplashState.ValidationCheck(it)) }
+                    kakaoUserId?.let { _state.emit(SplashState.ValidationCheck(it, kakaoNickName)) }
                 }
             }.launchIn(viewModelScope)
         }
@@ -87,7 +87,7 @@ class SplashViewModel @Inject constructor(
     // 3. 서버에서 카카오 UserId로 Valid Check 완료 이후
     // 완료 이후 서버에서 받은 토큰 저장 이후 메인 화면으로 이동
     // state - ValidationCheck
-    fun sendKakaoIdVerification(kakaoUserId: Long) {
+    fun sendKakaoIdVerification(kakaoUserId: Long, kakaoNickName : String) {
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
             sendKakaoUserIdVerificationUseCase(kakaoUserId).onEach { state ->
                 withContext(mainDispatcher) {
@@ -97,7 +97,7 @@ class SplashViewModel @Inject constructor(
                             if (state.error.code == CODE_NOT_FOUND_USER_ID) {
                                 // TODO : 카카오 SDK에서 내려받은 객체 던지기
                                 // 좋은 방법 찾아보자..
-                                _state.emit(SplashState.SignUp(null))
+                                _state.emit(SplashState.SignUp(kakaoUserId, kakaoNickName))
                             } else {
                                 _state.emit(SplashState.Error(state.error))
                             }

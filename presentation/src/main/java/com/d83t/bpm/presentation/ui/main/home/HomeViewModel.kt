@@ -2,8 +2,8 @@ package com.d83t.bpm.presentation.ui.main.home
 
 import androidx.lifecycle.viewModelScope
 import com.d83t.bpm.domain.model.ResponseState
-import com.d83t.bpm.domain.model.Studio
-import com.d83t.bpm.domain.usecase.main.GetStudioListUseCase
+import com.d83t.bpm.domain.model.UserSchedule
+import com.d83t.bpm.domain.usecase.main.GetUserScheduleUseCase
 import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.di.IoDispatcher
 import com.d83t.bpm.presentation.di.MainDispatcher
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getStudioListUseCase: GetStudioListUseCase,
+    private val getUserScheduleUseCase: GetUserScheduleUseCase,
     @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel() {
@@ -34,11 +34,48 @@ class HomeViewModel @Inject constructor(
     val event: SharedFlow<HomeViewEvent>
         get() = _event
 
+    private val _userScheduleInfo = MutableStateFlow(UserSchedule())
+    val userScheduleInfo: StateFlow<UserSchedule>
+        get() = _userScheduleInfo
+
     private val exceptionHandler: CoroutineExceptionHandler by lazy {
         CoroutineExceptionHandler { coroutineContext, throwable ->
 
         }
     }
 
+    fun getUserSchedule() {
+        viewModelScope.launch(ioDispatcher + exceptionHandler) {
+            getUserScheduleUseCase().onEach { state ->
+                when (state) {
+                    is ResponseState.Success -> {
+                        _userScheduleInfo.emit(state.data)
+                        _state.emit(HomeState.UserSchedule)
+                    }
+                    is ResponseState.Error -> {
+                        _state.emit(HomeState.Error)
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
+    fun clickSearch(){
+        viewModelScope.launch {
+            _event.emit(HomeViewEvent.ClickSearch)
+        }
+    }
+
+    fun clickSchedule(){
+        viewModelScope.launch {
+            _event.emit(HomeViewEvent.ClickSchedule)
+        }
+    }
+
+    fun refreshUserSchedule(){
+        viewModelScope.launch {
+            _state.emit(HomeState.Init)
+        }
+    }
 
 }

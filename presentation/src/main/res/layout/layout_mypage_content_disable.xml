@@ -9,11 +9,17 @@
             name="content"
             type="String" />
 
+        <variable
+            name="onItemClick"
+            type="kotlin.jvm.functions.Function0&lt;kotlin.Unit&gt;" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:onClick="@{() -> onItemClick.invoke()}"
         android:paddingHorizontal="20dp">
 
         <androidx.appcompat.widget.AppCompatTextView

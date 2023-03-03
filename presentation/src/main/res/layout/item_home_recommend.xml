@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:foreground="?android:attr/selectableItemBackground"
-        android:paddingVertical="18dp">
+        android:paddingTop="18dp">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/title"
@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_home_recommend_rating"
                 android:drawablePadding="3dp"
-                android:text="@{item.rating.toString()}"
+                android:text="@{item.ratingText}"
                 android:textColor="@color/gray_05"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

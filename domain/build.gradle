@@ -73,4 +73,7 @@ dependencies {
     //timber log
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
+    // joda datetime
+    implementation "joda-time:joda-time:2.10.13"
+
 }

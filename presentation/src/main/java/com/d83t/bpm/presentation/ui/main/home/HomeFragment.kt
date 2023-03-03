@@ -1,11 +1,15 @@
 package com.d83t.bpm.presentation.ui.main.home
 
+import android.content.Intent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseFragment
 import com.d83t.bpm.presentation.databinding.FragmentHomeBinding
 import com.d83t.bpm.presentation.ui.main.home.recommend.HomeRecommendFragment
+import com.d83t.bpm.presentation.ui.schedule.ScheduleActivity
 import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import com.d83t.bpm.presentation.util.showToast
 import com.google.android.material.tabs.TabLayout
@@ -14,6 +18,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
+
+    private lateinit var scheduleResultLauncher: ActivityResultLauncher<Intent>
 
     override val viewModel: HomeViewModel by viewModels()
 
@@ -31,6 +37,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             lifecycleOwner = viewLifecycleOwner
         }
 
+        scheduleResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                viewModel.refreshUserSchedule()
+            }
+
         setUpPager()
     }
 
@@ -39,22 +50,44 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             viewModel.state.collect { state ->
                 when (state) {
                     HomeState.Init -> {
-                        // TODO : 예약현황 가져오기
+                        viewModel.getUserSchedule()
                     }
-                    HomeState.StudioList -> Unit
+                    HomeState.UserSchedule -> Unit
                     HomeState.Error -> {
                         // TODO : Error Handling
-                        requireContext().showToast("예약 정보를 가져오는 중 에러가 발생했습니다.")
+//                        requireContext().showToast("예약 정보를 가져오는 중 에러가 발생했습니다.")
+                    }
+                }
+            }
+        }
+
+        repeatCallDefaultOnStarted {
+            viewModel.event.collect { event ->
+                when (event) {
+                    HomeViewEvent.ClickSearch -> {
+                        requireContext().showToast("검색페이지 이동")
+                    }
+                    HomeViewEvent.ClickSchedule -> {
+                        goToSchedule()
                     }
                 }
             }
         }
     }
 
+    private fun goToSchedule() {
+        scheduleResultLauncher.launch(ScheduleActivity.newIntent(requireContext()))
+    }
+
     private fun setUpPager() {
         binding.pager.adapter = HomePagerAdapter(requireActivity(), fragmentList)
 
-        TabLayoutMediator(binding.tab, binding.pager, false, true) { tab: TabLayout.Tab?, position: Int ->
+        TabLayoutMediator(
+            binding.tab,
+            binding.pager,
+            false,
+            true
+        ) { tab: TabLayout.Tab?, position: Int ->
             val resId: Int = when (position) {
                 0 -> R.string.tab_hot
                 1 -> R.string.tab_review
