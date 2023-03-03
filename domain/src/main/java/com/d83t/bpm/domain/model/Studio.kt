@@ -2,6 +2,7 @@ package com.d83t.bpm.domain.model
 
 import com.d83t.bpm.domain.base.BaseModel
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -24,4 +25,11 @@ data class Studio(
     val scrapCount: Int?,
     val createdAt: String?,
     val updatedAt: String?
-) : BaseModel
+) : BaseModel {
+
+    @IgnoredOnParcel
+    val tagList = listOf<String>(
+        "친절해요", "소통이 빨라요", "깨끗해요"
+    )
+
+}

@@ -22,10 +22,10 @@
             android:name=".ui.splash.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.Bpm.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity
             android:name=".ui.sign_up.SignUpActivity"
@@ -36,7 +36,12 @@
             android:name=".ui.main.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Bpm.NoActionBar" />
+            android:theme="@style/Theme.Bpm.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.studio_detail.StudioDetailActivity"
             android:exported="false"
