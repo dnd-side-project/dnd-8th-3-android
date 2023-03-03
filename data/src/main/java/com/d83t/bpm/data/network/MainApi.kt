@@ -1,6 +1,5 @@
 package com.d83t.bpm.data.network
 
-import com.d83t.bpm.data.model.request.ReviewRequest
 import com.d83t.bpm.data.model.request.ScheduleRequest
 import com.d83t.bpm.data.model.request.UserVerificationRequest
 import com.d83t.bpm.data.model.response.ReviewResponse
@@ -56,7 +55,9 @@ interface MainApi {
     @POST("api/studio/{studioId}/review")
     suspend fun sendReview(
         @Path("studioId") studioId: Int,
-        @Part files: MultipartBody.Part,
-        @Part reviewRequest: ReviewRequest
+        @Part files: List<MultipartBody.Part>,
+        @Part("rating") rating: Double,
+        @Part("recommends") recommends: List<String>,
+        @Part("content") content: String
     ): Response<ReviewResponse>
 }

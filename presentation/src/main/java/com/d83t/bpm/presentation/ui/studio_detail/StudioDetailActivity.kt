@@ -56,8 +56,10 @@ import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
+import com.d83t.bpm.presentation.ui.studio_detail.review_list.ReviewListActivity
 import com.d83t.bpm.presentation.ui.studio_detail.writing_review.WritingReviewActivity
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
+import com.d83t.bpm.presentation.util.clip
 import com.d83t.bpm.presentation.util.dateOnly
 import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -72,36 +74,39 @@ import net.daum.mf.map.api.MapView
 class StudioDetailActivity : BaseComponentActivity() {
     override val viewModel: StudioDetailViewModel by viewModels()
 
-    private var studioId: Int = 0
     private val studioLikeState by lazy { mutableStateOf(false) }
     private val studioState = mutableStateOf<Studio?>(null)
     private val reviewListState = mutableStateOf<List<Review>>(listOf())
 
+    private var studioId = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         studioId = intent.getIntExtra("studioId", 1)
-
         initComposeUi {
-            StudioDetailActivityContent(
-                studioState = studioState,
-                studioLikeState = studioLikeState,
-                reviewList = reviewListState,
-                onClickCallButton = {
+            if (studioState.value != null) {
+                StudioDetailActivityContent(
+                    studio = studioState.value!!,
+                    studioLikeState = studioLikeState,
+                    reviewList = reviewListState,
+                    onClickCallButton = {
 
-                },
-                onClickInfoEditSuggestion = {
+                    },
+                    onClickInfoEditSuggestion = {
 
-                },
-                onClickMap = {
+                    },
+                    onClickMap = {
 
-                },
-                onClickCopyAddress = {
+                    },
+                    onClickCopyAddress = {
 
-                },
-                onClickShowCourse = {
+                    },
+                    onClickShowCourse = {
 
-                }
-            )
+                    }
+
+                )
+            }
         }
     }
 
@@ -138,14 +143,14 @@ class StudioDetailActivity : BaseComponentActivity() {
 @OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 private inline fun StudioDetailActivityContent(
-    studioState: MutableState<Studio?>,
+    studio: Studio,
     studioLikeState: MutableState<Boolean>,
     reviewList: MutableState<List<Review>>,
     crossinline onClickCallButton: () -> Unit,
     crossinline onClickInfoEditSuggestion: () -> Unit,
     crossinline onClickMap: () -> Unit,
     crossinline onClickCopyAddress: () -> Unit,
-    crossinline onClickShowCourse: () -> Unit
+    crossinline onClickShowCourse: () -> Unit,
 ) {
     val scrollState = rememberScrollState()
     val tabState = remember { mutableStateOf(0) }
@@ -184,14 +189,14 @@ private inline fun StudioDetailActivityContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(0.85f),
-                        count = studioState.value?.filesPath?.size ?: 0,
+                        count = studio.filesPath?.size ?: 0,
                         state = horizontalPagerState
                     ) { index ->
                         GlideImage(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .aspectRatio(0.85f),
-                            model = studioState.value?.filesPath?.get(index) ?: "",
+                            model = studio.filesPath?.get(index) ?: "",
                             contentDescription = "studioImage",
                             contentScale = Crop
                         )
@@ -211,7 +216,7 @@ private inline fun StudioDetailActivityContent(
                     ) {
                         Text(
                             modifier = Modifier.align(Center),
-                            text = "${studioState.value?.filesPath?.size}/${horizontalPagerState.currentPage}",
+                            text = "${studio.filesPath?.size}/${horizontalPagerState.currentPage + 1}",
                             fontWeight = Normal,
                             fontSize = 12.sp,
                             letterSpacing = 2.sp
@@ -229,7 +234,7 @@ private inline fun StudioDetailActivityContent(
                     Column {
                         Row(verticalAlignment = CenterVertically) {
                             Text(
-                                text = studioState.value?.firstTag ?: "",
+                                text = studio.firstTag ?: "",
                                 fontWeight = Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp
@@ -241,7 +246,7 @@ private inline fun StudioDetailActivityContent(
                             )
 
                             Text(
-                                text = studioState.value?.secondTag ?: "",
+                                text = studio.secondTag ?: "",
                                 fontWeight = Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp
@@ -251,7 +256,7 @@ private inline fun StudioDetailActivityContent(
                         BPMSpacer(height = 8.dp)
 
                         Text(
-                            text = studioState.value?.name ?: "",
+                            text = studio.name ?: "",
                             fontWeight = SemiBold,
                             fontSize = 19.sp,
                             letterSpacing = 0.sp
@@ -260,7 +265,7 @@ private inline fun StudioDetailActivityContent(
                         BPMSpacer(height = 6.dp)
 
                         Text(
-                            text = studioState.value?.content ?: "",
+                            text = studio.content ?: "",
                             fontSize = 13.sp,
                             fontWeight = Normal,
                             letterSpacing = 0.sp,
@@ -277,7 +282,7 @@ private inline fun StudioDetailActivityContent(
                             Row {
                                 repeat(5) {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.ic_star_small),
+                                        painter = painterResource(id = R.drawable.ic_star_small_empty),
                                         contentDescription = "starIcon",
                                         tint = GrayColor6
                                     )
@@ -288,7 +293,7 @@ private inline fun StudioDetailActivityContent(
                                 BPMSpacer(width = 8.dp)
 
                                 Text(
-                                    text = "${studioState.value?.rating ?: 0}",
+                                    text = "${studio.rating?.clip() ?: 0}",
                                     fontSize = 14.sp,
                                     fontWeight = Normal,
                                     letterSpacing = 0.sp,
@@ -297,7 +302,7 @@ private inline fun StudioDetailActivityContent(
                             }
 
                             Text(
-                                text = "후기 ${studioState.value?.reviewCount ?: 0}개",
+                                text = "후기 ${studio.reviewCount ?: 0}개",
                                 fontWeight = Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 0.sp,
@@ -367,7 +372,7 @@ private inline fun StudioDetailActivityContent(
 
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Text(
-                        text = studioState.value?.address ?: "",
+                        text = studio.address ?: "",
                         fontWeight = Medium,
                         fontSize = 16.sp,
                         letterSpacing = 0.sp
@@ -385,8 +390,8 @@ private inline fun StudioDetailActivityContent(
 
                     BPMSpacer(height = 12.dp)
 
-                    if (studioState.value?.latitude != null &&
-                        studioState.value?.longitude != null
+                    if (studio.latitude != null &&
+                        studio.longitude != null
                     ) {
                         Box {
                             AndroidView(
@@ -398,8 +403,8 @@ private inline fun StudioDetailActivityContent(
                                     MapView(context).apply {
                                         setMapCenterPoint(
                                             MapPoint.mapPointWithGeoCoord(
-                                                studioState.value?.latitude ?: 37.5663,
-                                                studioState.value?.longitude ?: 126.9779
+                                                studio.latitude ?: 37.5663,
+                                                studio.longitude ?: 126.9779
                                             ), false
                                         )
                                     }
@@ -481,7 +486,7 @@ private inline fun StudioDetailActivityContent(
                     )
 
                     Text(
-                        text = "마지막 업데이트 : ${studioState.value?.updatedAt?.dateOnly() ?: ""}",
+                        text = "마지막 업데이트 : ${studio.updatedAt?.dateOnly() ?: ""}",
                         fontWeight = Medium,
                         fontSize = 14.sp,
                         letterSpacing = 0.sp,
@@ -500,28 +505,28 @@ private inline fun StudioDetailActivityContent(
                 ) {
                     ConvenienceInfo(
                         type = "전화번호",
-                        detail = studioState.value?.phone ?: ""
+                        detail = studio.phone ?: ""
                     )
 
                     BPMSpacer(height = 12.dp)
 
                     ConvenienceInfo(
                         type = "SNS",
-                        detail = studioState.value?.sns ?: ""
+                        detail = studio.sns ?: ""
                     )
 
                     BPMSpacer(height = 12.dp)
 
                     ConvenienceInfo(
                         type = "영업시간",
-                        detail = studioState.value?.openHours ?: ""
+                        detail = studio.openHours ?: ""
                     )
 
                     BPMSpacer(height = 12.dp)
 
                     ConvenienceInfo(
                         type = "가격정보",
-                        detail = studioState.value?.price ?: ""
+                        detail = studio.price ?: ""
                     )
                 }
 
@@ -641,18 +646,19 @@ private inline fun StudioDetailActivityContent(
             Column {
                 ReviewListHeader(
                     modifier = Modifier.onGloballyPositioned { coordinates -> reviewHeaderPositionState.value = coordinates.positionInWindow().y },
-                    reviewCount = studioState.value?.reviewCount ?: 0,
+                    reviewCount = studio.reviewCount ?: 0,
                     showImageReviewOnlyState = showImageReviewOnlyState,
-                    showReviewOrderByLikeState = showReviewOrderByLikeState
+                    showReviewOrderByLikeState = showReviewOrderByLikeState,
+                    onClickWriteReview = { context.startActivity(WritingReviewActivity.newIntent(context).putExtra("studioId", studio?.id)) }
                 )
 
                 Box {
                     if (reviewList.value.isNotEmpty()) {
                         Column {
-                            reviewList.value.forEach { review ->
+                            repeat(5) { index ->
                                 ReviewComposable(
                                     modifier = Modifier.padding(horizontal = 16.dp),
-                                    review = review
+                                    review = reviewList.value[index]
                                 )
                             }
                         }
@@ -687,7 +693,7 @@ private inline fun StudioDetailActivityContent(
                                     text = "더보기",
                                     textColor = Color.White,
                                     buttonColor = Color.Black,
-                                    onClick = {}
+                                    onClick = { context.startActivity(ReviewListActivity.newIntent(context).putExtra("studioId", studio.id))}
                                 )
                             }
                         }
@@ -720,7 +726,7 @@ private inline fun StudioDetailActivityContent(
                                         .width(130.dp)
                                         .height(40.dp)
                                         .background(color = MainGreenColor)
-                                        .clickable { context.startActivity(WritingReviewActivity.newIntent(context = context)) }
+                                        .clickable { context.startActivity(WritingReviewActivity.newIntent(context = context).putExtra("studioId", studio.id)) }
                                 ) {
                                     Text(
                                         modifier = Modifier.align(Center),
@@ -738,7 +744,7 @@ private inline fun StudioDetailActivityContent(
         }
 
         Column {
-            ScreenHeader(studioState.value?.name ?: "")
+            ScreenHeader(studio.name ?: "")
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 StudioDetailTab(

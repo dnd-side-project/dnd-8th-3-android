@@ -3,7 +3,6 @@ package com.d83t.bpm.presentation.ui.studio_detail.writing_review
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -40,20 +39,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.font.FontWeight.Companion.Normal
 import androidx.compose.ui.text.font.FontWeight.Companion.SemiBold
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
+import com.d83t.bpm.domain.model.Studio
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
-import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.ui.register_studio.dummyKeywordChipList
-import com.d83t.bpm.presentation.util.addFocusCleaner
-import com.d83t.bpm.presentation.util.clickableWithoutRipple
-import com.d83t.bpm.presentation.util.convertUriToBitmap
+import com.d83t.bpm.presentation.ui.studio_detail.review_detail.ReviewDetailActivity
+import com.d83t.bpm.presentation.util.*
 import com.google.accompanist.flowlayout.FlowRow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -65,57 +62,67 @@ class WritingReviewActivity : BaseComponentActivity() {
 
     private lateinit var addImageLauncher: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var replaceImageLauncher: ActivityResultLauncher<PickVisualMediaRequest>
+
+    private var studioId: Int = 0
+
     private var imageStateList = SnapshotStateList<ImageBitmap>()
     private var replaceImageIndex = -1
+
+    private val studioState = mutableStateOf<Studio?>(null)
+    private val recommendsStateList = SnapshotStateList<String>()
+    private val ratingState = mutableStateOf(0.0)
     private val contentTextState = mutableStateOf("")
-    private val ratingState = mutableStateOf(0f)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        studioId = intent.getIntExtra("studioId", 0)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
+
         initComposeUi {
-            WritingReviewActivityContent(
-                imageStateList = imageStateList,
-                contentTextState = contentTextState,
-                ratingState = ratingState,
-                addImage = { addImageLauncher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
-                replaceImage = { index ->
-                    replaceImageIndex = index
-                    replaceImageLauncher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
-                },
-                removeImage = { index ->
-                    imageStateList.removeAt(index)
-                    refreshImageList()
-                },
-                onClickSendReview = {
-
-                }
-            )
-        }
-
-        addImageLauncher = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uris ->
-            uris?.let { _ ->
-                if (uris.size + imageStateList.size <= 5) {
-                    try {
-                        imageStateList.addAll(uris.map { uri ->
-                            convertUriToBitmap(
-                                contentResolver = contentResolver,
-                                uri = uri
-                            ).asImageBitmap()
-                        })
+            if (studioState.value != null) {
+                WritingReviewActivityContent(
+                    studio = studioState.value!!,
+                    imageStateList = imageStateList,
+                    ratingState = ratingState,
+                    recommendsStateList = recommendsStateList,
+                    contentTextState = contentTextState,
+                    addImage = { addImageLauncher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
+                    replaceImage = { index ->
+                        replaceImageIndex = index
+                        replaceImageLauncher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+                    },
+                    removeImage = { index ->
+                        imageStateList.removeAt(index)
                         refreshImageList()
-                    } catch (e: Exception) {
-                        // TODO : Handle Error
-                    }
-                } else {
-                    // TODO : Show Error Dialog
-                }
-            } ?: run {
-                // TODO : Handle Error
+                    },
+                    onClickWriteReview = { viewModel.onClickWriteReview() }
+                )
             }
         }
+
+        addImageLauncher =
+            registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uris ->
+                uris?.let { _ ->
+                    if (uris.size + imageStateList.size <= 5) {
+                        try {
+                            imageStateList.addAll(uris.map { uri ->
+                                convertUriToBitmap(
+                                    contentResolver = contentResolver,
+                                    uri = uri
+                                ).asImageBitmap()
+                            })
+                            refreshImageList()
+                        } catch (e: Exception) {
+                            // TODO : Handle Error
+                        }
+                    } else {
+                        // TODO : Show Error Dialog
+                    }
+                } ?: run {
+                    // TODO : Handle Error
+                }
+            }
 
         replaceImageLauncher = registerForActivityResult(PickVisualMedia()) { uri ->
             uri?.let { _ ->
@@ -137,7 +144,38 @@ class WritingReviewActivity : BaseComponentActivity() {
     override fun initUi() = Unit
 
     override fun setupCollect() {
+        repeatCallDefaultOnStarted {
+            viewModel.event.collect { event ->
+                when (event) {
+                    is WritingReviewViewEvent.Write -> viewModel.writeReview(
+                        studioId = studioId,
+                        images = imageStateList,
+                        rating = ratingState.value,
+                        recommends = recommendsStateList,
+                        content = contentTextState.value
+                    )
+                }
+            }
+        }
 
+        repeatCallDefaultOnStarted {
+            viewModel.state.collect { state ->
+                when (state) {
+                    is WritingReviewState.Init -> viewModel.getStudio(studioId = studioId)
+                    is WritingReviewState.Loading -> showLoadingScreen()
+                    is WritingReviewState.StudioSuccess -> {
+                        hideLoadingScreen()
+                        studioState.value = state.studio
+                    }
+                    is WritingReviewState.ReviewSuccess -> {
+                        hideLoadingScreen()
+                        startActivity(ReviewDetailActivity.newIntent(this@WritingReviewActivity).putExtra("reviewId", state.review.id))
+                        finish()
+                    }
+                    is WritingReviewState.Error -> Unit
+                }
+            }
+        }
     }
 
     private fun refreshImageList() {
@@ -159,13 +197,15 @@ class WritingReviewActivity : BaseComponentActivity() {
 
 @Composable
 private fun WritingReviewActivityContent(
+    studio: Studio,
     imageStateList: SnapshotStateList<ImageBitmap>,
+    ratingState: MutableState<Double>,
+    recommendsStateList: SnapshotStateList<String>,
     contentTextState: MutableState<String>,
-    ratingState: MutableState<Float>,
     addImage: () -> Unit,
     replaceImage: (Int) -> Unit,
     removeImage: (Int) -> Unit,
-    onClickSendReview: () -> Unit
+    onClickWriteReview: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     LaunchedEffect(scrollState.maxValue) {
@@ -223,7 +263,7 @@ private fun WritingReviewActivityContent(
                 ) {
                     Column {
                         Text(
-                            text = "스튜디오 이름",
+                            text = studio.name ?: "",
                             fontWeight = Medium,
                             fontSize = 14.sp,
                             letterSpacing = 0.sp
@@ -232,7 +272,7 @@ private fun WritingReviewActivityContent(
                         BPMSpacer(height = 6.dp)
 
                         Text(
-                            text = "스튜디오에 대한 간단한 한 줄 설명을 붙여주세요.",
+                            text = studio.content ?: "",
                             fontWeight = Normal,
                             fontSize = 11.sp,
                             letterSpacing = 0.sp,
@@ -244,7 +284,7 @@ private fun WritingReviewActivityContent(
                         repeat(5) {
                             Icon(
                                 modifier = Modifier.size(12.dp),
-                                painter = painterResource(id = R.drawable.ic_star_small),
+                                painter = painterResource(id = R.drawable.ic_star_small_empty),
                                 contentDescription = "starIcon",
                                 tint = GrayColor6
                             )
@@ -255,7 +295,7 @@ private fun WritingReviewActivityContent(
                         BPMSpacer(width = 6.dp)
 
                         Text(
-                            text = "4.0",
+                            text = "${studio.rating?.clip() ?: 0.0}",
                             fontWeight = Normal,
                             fontSize = 11.sp,
                             letterSpacing = 0.sp,
@@ -306,8 +346,8 @@ private fun WritingReviewActivityContent(
                     Image(
                         modifier = Modifier.size(36.dp),
                         painter = painterResource(
-                            id = if (i.toFloat() <= ratingState.value) R.drawable.ic_star_large_filled
-                            else if (i.toFloat() > ratingState.value && ratingState.value > i - 1) R.drawable.ic_star_large_half
+                            id = if (i.toDouble() <= ratingState.value) R.drawable.ic_star_large_filled
+                            else if (i.toDouble() > ratingState.value && ratingState.value > i - 1) R.drawable.ic_star_large_half
                             else R.drawable.ic_star_large_empty
                         ),
                         contentDescription = "starIcon"
@@ -318,12 +358,15 @@ private fun WritingReviewActivityContent(
             Row(
                 modifier = Modifier
                     .align(Center)
-                    .onGloballyPositioned { coordinates -> ratingDraggableAreaWidthState.value = coordinates.size.width }
+                    .onGloballyPositioned { coordinates ->
+                        ratingDraggableAreaWidthState.value = coordinates.size.width
+                    }
                     .pointerInput(Unit) {
                         detectDragGestures { change, _ ->
-                            ratingState.value = if (change.position.x >= ratingDraggableAreaWidthState.value) 5f
-                            else if (change.position.x <= 0) 0f
-                            else (change.position.x / ratingDraggableAreaWidthState.value) * 5
+                            ratingState.value =
+                                if (change.position.x >= ratingDraggableAreaWidthState.value) 5.0
+                                else (if (change.position.x <= 0) 0f
+                                else (change.position.x / ratingDraggableAreaWidthState.value) * 5).toDouble()
                         }
                     }
             ) {
@@ -332,7 +375,7 @@ private fun WritingReviewActivityContent(
                         modifier = Modifier
                             .width(18.dp)
                             .height(36.dp)
-                            .clickableWithoutRipple { ratingState.value = i * 0.5f }
+                            .clickableWithoutRipple { ratingState.value = i * 0.5 }
                     )
 
                     if (i % 2 == 0 && i != 10) {
@@ -382,7 +425,10 @@ private fun WritingReviewActivityContent(
             crossAxisSpacing = 10.dp
         ) {
             dummyKeywordChipList.forEach { dummyKeyword ->
-                KeywordChip(text = dummyKeyword)
+                KeywordChip(
+                    text = dummyKeyword,
+                    onClick = { recommendsStateList.add(dummyKeyword) }
+                )
             }
         }
 
@@ -467,7 +513,7 @@ private fun WritingReviewActivityContent(
             textColor = Color.Black,
             buttonColor = MainGreenColor,
             onClick = {
-                onClickSendReview()
+                onClickWriteReview()
             }
         )
 
@@ -531,9 +577,4 @@ private fun ImagePlaceHolder(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun Preview() {
 }

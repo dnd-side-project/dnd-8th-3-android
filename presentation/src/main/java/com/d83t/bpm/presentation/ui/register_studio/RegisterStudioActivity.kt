@@ -223,7 +223,10 @@ private fun RegisterStudioActivityContent(
             crossAxisSpacing = 12.dp
         ) {
             dummyKeywordChipList.forEach { dummyKeyword ->
-                KeywordChip(text = dummyKeyword)
+                KeywordChip(
+                    text = dummyKeyword,
+                    onClick = {}
+                )
             }
         }
 

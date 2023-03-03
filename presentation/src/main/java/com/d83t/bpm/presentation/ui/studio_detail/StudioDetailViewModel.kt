@@ -51,6 +51,10 @@ class StudioDetailViewModel @Inject constructor(
     fun getReviewList(
         studioId: Int
     ) {
+        viewModelScope.launch(mainDispatcher) {
+
+        }
+
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
             reviewListUseCase(studioId = studioId).onEach { state ->
                 when (state) {

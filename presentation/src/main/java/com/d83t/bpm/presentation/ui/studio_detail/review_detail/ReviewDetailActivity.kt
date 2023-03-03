@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
@@ -242,7 +243,7 @@ private inline fun ReviewDetailActivityContent(
                         ) {
                             Text(
                                 modifier = Modifier.align(Center),
-                                text = "${review.filesPath?.size}/${horizontalPagerState.currentPage}",
+                                text = "${review.filesPath?.size}/${horizontalPagerState.currentPage + 1}",
                                 fontWeight = Normal,
                                 fontSize = 12.sp,
                                 letterSpacing = 2.sp
@@ -255,14 +256,28 @@ private inline fun ReviewDetailActivityContent(
 
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     Row {
-                        repeat(5) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_star_small),
-                                contentDescription = "starIcon",
-                                tint = GrayColor6
-                            )
+                        if (rating != null) {
+                            for (i in 1..5) {
+                                Image(
+                                    modifier = Modifier.size(15.dp),
+                                    painter = painterResource(
+                                        id = if (i.toDouble() <= rating!!) R.drawable.ic_star_small_filled
+                                        else if (i.toDouble() > rating!! && rating!! > i - 1) R.drawable.ic_star_small_half
+                                        else R.drawable.ic_star_small_empty
+                                    ),
+                                    contentDescription = "starIcon"
+                                )
+                            }
+                        } else {
+                            repeat(5) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_star_small_empty),
+                                    contentDescription = "starIcon",
+                                    tint = GrayColor6
+                                )
 
-                            BPMSpacer(width = 2.dp)
+                                BPMSpacer(width = 2.dp)
+                            }
                         }
                     }
 

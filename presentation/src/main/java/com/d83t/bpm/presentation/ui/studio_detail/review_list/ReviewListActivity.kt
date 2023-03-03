@@ -15,12 +15,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.d83t.bpm.domain.model.Review
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.compose.ReviewComposable
 import com.d83t.bpm.presentation.compose.ReviewListHeader
 import com.d83t.bpm.presentation.compose.ScreenHeader
+import com.d83t.bpm.presentation.ui.studio_detail.writing_review.WritingReviewActivity
 import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,10 +35,13 @@ class ReviewListActivity : BaseComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        studioId = intent.getIntExtra("studioId", 1)
+        studioId = intent.getIntExtra("studioId", 0)
 
         initComposeUi {
-            ReviewListActivityContent(reviewListState = reviewListState)
+            ReviewListActivityContent(
+                studioId = studioId,
+                reviewListState = reviewListState
+            )
         }
     }
 
@@ -67,10 +72,13 @@ class ReviewListActivity : BaseComponentActivity() {
 
 @Composable
 private fun ReviewListActivityContent(
+    studioId: Int,
     reviewListState: MutableState<List<Review>>
 ) {
     val showImageReviewOnlyState = remember { mutableStateOf(false) }
     val showReviewOrderByLikeState = remember { mutableStateOf(false) }
+
+    val context = LocalContext.current as BaseComponentActivity
 
     LazyColumn(
         modifier = Modifier
@@ -86,6 +94,11 @@ private fun ReviewListActivityContent(
                 reviewCount = reviewListState.value.size,
                 showImageReviewOnlyState = showImageReviewOnlyState,
                 showReviewOrderByLikeState = showReviewOrderByLikeState,
+                onClickWriteReview = {
+                    context.startActivity(
+                        WritingReviewActivity.newIntent(context).putExtra("studioId", studioId)
+                    )
+                }
             )
         }
 

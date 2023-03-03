@@ -1,11 +1,14 @@
 package com.d83t.bpm.presentation.compose
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -45,7 +48,6 @@ import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.compose.theme.*
 import com.d83t.bpm.presentation.ui.studio_detail.review_detail.ReviewDetailActivity
-import com.d83t.bpm.presentation.ui.studio_detail.writing_review.WritingReviewActivity
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import com.d83t.bpm.presentation.util.dateOnly
 
@@ -350,42 +352,67 @@ fun ReviewComposable(
             BPMSpacer(height = 12.dp)
 
             Row {
-                repeat(5) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_star_small),
-                        contentDescription = "starIcon",
-                        tint = GrayColor6
-                    )
+                if (rating != null) {
+                    for (i in 1..5) {
+                        Image(
+                            modifier = Modifier.size(15.dp),
+                            painter = painterResource(
+                                id = if (i.toDouble() <= rating!!) R.drawable.ic_star_small_filled
+                                else if (i.toDouble() > rating!! && rating!! > i - 1) R.drawable.ic_star_small_half
+                                else R.drawable.ic_star_small_empty
+                            ),
+                            contentDescription = "starIcon"
+                        )
+                    }
+                } else {
+                    repeat(5) { index ->
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_star_small_empty),
+                            contentDescription = "starIcon",
+                            tint = GrayColor6
+                        )
 
-                    BPMSpacer(width = 2.dp)
+                        BPMSpacer(width = 2.dp)
+                    }
                 }
             }
 
             BPMSpacer(height = 14.dp)
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                recommends?.forEach { keyword ->
-                    KeywordChip(text = keyword)
+            if (recommends != null) {
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    items(recommends!!) { keyword ->
+                        KeywordChip(
+                            text = keyword,
+                            onClick = {}
+                        )
+                    }
                 }
             }
 
             BPMSpacer(height = 14.dp)
 
-            Row {
-                filesPath?.forEachIndexed { index, image ->
+            Row(modifier = Modifier.fillMaxWidth()) {
+                repeat(filesPath?.size!!) { index ->
                     GlideImage(
                         modifier = Modifier
                             .weight(1f)
                             .height(60.dp),
-                        model = image,
+                        model = filesPath!![index],
                         contentDescription = "reviewImage",
                         contentScale = ContentScale.Crop
                     )
 
-                    if (index != 4) {
+                    BPMSpacer(width = 4.dp)
+                }
+
+                repeat(5 - filesPath?.size!!) { index ->
+                    Box(modifier = Modifier.weight(1f))
+
+                    if (index == 5 - filesPath!!.size - 1) {
                         BPMSpacer(width = 4.dp)
                     }
                 }
@@ -405,6 +432,7 @@ fun ReviewComposable(
             )
 
             BPMSpacer(height = 25.dp)
+
 
             LikeButton(
                 liked = liked ?: false,
@@ -489,9 +517,10 @@ inline fun LikeButton(
 }
 
 @Composable
-fun KeywordChip(
+inline fun KeywordChip(
     text: String,
-    isChosen: Boolean = false
+    isChosen: Boolean = false,
+    crossinline onClick: () -> Unit
 ) {
     val selectState = remember { mutableStateOf(isChosen) }
 
@@ -503,7 +532,10 @@ fun KeywordChip(
                 horizontal = 12.dp,
                 vertical = 8.dp
             )
-            .clickableWithoutRipple { selectState.value = !selectState.value },
+            .clickableWithoutRipple {
+                selectState.value = !selectState.value
+                onClick()
+            },
         text = text,
         fontWeight = Medium,
         fontSize = 12.sp,
@@ -543,14 +575,13 @@ fun ReviewKeywordChip(
 }
 
 @Composable
-fun ReviewListHeader(
+inline fun ReviewListHeader(
     modifier: Modifier = Modifier,
     reviewCount: Int,
     showImageReviewOnlyState: MutableState<Boolean>,
     showReviewOrderByLikeState: MutableState<Boolean>,
+    crossinline onClickWriteReview: () -> Unit
 ) {
-    val context = LocalContext.current as BaseComponentActivity
-
     Column {
         Row(
             modifier = modifier
@@ -568,7 +599,7 @@ fun ReviewListHeader(
             )
 
             Text(
-                modifier = Modifier.clickableWithoutRipple { context.startActivity(WritingReviewActivity.newIntent(context = context)) },
+                modifier = Modifier.clickableWithoutRipple { onClickWriteReview() },
                 text = "리뷰 작성하기",
                 fontWeight = Medium,
                 fontSize = 14.sp,
@@ -587,7 +618,9 @@ fun ReviewListHeader(
             horizontalArrangement = SpaceBetween,
             verticalAlignment = CenterVertically
         ) {
-            Row(modifier = Modifier.clickableWithoutRipple { showImageReviewOnlyState.value = !showImageReviewOnlyState.value }) {
+            Row(modifier = Modifier.clickableWithoutRipple {
+                showImageReviewOnlyState.value = !showImageReviewOnlyState.value
+            }) {
                 Icon(
                     modifier = Modifier.align(CenterVertically),
                     painter = painterResource(id = R.drawable.ic_check_field),
@@ -607,7 +640,9 @@ fun ReviewListHeader(
 
             Row {
                 Text(
-                    modifier = Modifier.clickableWithoutRipple { showReviewOrderByLikeState.value = true },
+                    modifier = Modifier.clickableWithoutRipple {
+                        showReviewOrderByLikeState.value = true
+                    },
                     text = "좋아요순",
                     fontWeight = Medium,
                     fontSize = 14.sp,
@@ -628,7 +663,9 @@ fun ReviewListHeader(
                 BPMSpacer(width = 20.dp)
 
                 Text(
-                    modifier = Modifier.clickableWithoutRipple { showReviewOrderByLikeState.value = false },
+                    modifier = Modifier.clickableWithoutRipple {
+                        showReviewOrderByLikeState.value = false
+                    },
                     text = "최신순",
                     fontWeight = Medium,
                     fontSize = 14.sp,
