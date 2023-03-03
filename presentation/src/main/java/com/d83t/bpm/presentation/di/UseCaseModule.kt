@@ -8,6 +8,7 @@ import com.d83t.bpm.domain.usecase.schedule.SaveScheduleUseCase
 import com.d83t.bpm.domain.usecase.sign_up.SignUpUseCase
 import com.d83t.bpm.domain.usecase.splash.GetKakaoUserIdUseCase
 import com.d83t.bpm.domain.usecase.splash.SetKakaoUserIdUseCase
+import com.d83t.bpm.domain.usecase.splash.WriteReviewUseCase
 import com.d83t.bpm.domain.usecase.studio_detail.StudioDetailUseCase
 import dagger.Module
 import dagger.Provides
@@ -57,13 +58,19 @@ object UseCaseModule {
 
     @Provides
     @ViewModelScoped
-    fun provideGetReviewDetailUseCase(reviewRepository: ReviewRepository) : GetReviewDetailUseCase {
+    fun provideGetReviewDetailUseCase(reviewRepository: ReviewRepository): GetReviewDetailUseCase {
         return GetReviewDetailUseCase(reviewRepository)
     }
 
     @Provides
     @ViewModelScoped
-    fun provideGetReviewListUseCase(reviewRepository: ReviewRepository) : GetReviewListUseCase {
+    fun provideGetReviewListUseCase(reviewRepository: ReviewRepository): GetReviewListUseCase {
         return GetReviewListUseCase(reviewRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideWriteReviewUseCase(writeReviewRepository: WriteReviewRepository): WriteReviewUseCase {
+        return WriteReviewUseCase(writeReviewRepository)
     }
 }

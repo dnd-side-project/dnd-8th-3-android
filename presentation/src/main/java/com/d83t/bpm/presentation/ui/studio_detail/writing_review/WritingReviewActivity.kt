@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
+import androidx.activity.viewModels
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
@@ -60,8 +61,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class WritingReviewActivity : BaseComponentActivity() {
-    override val viewModel: BaseViewModel
-        get() = TODO("Not yet implemented")
+    override val viewModel: WritingReviewViewModel by viewModels()
 
     private lateinit var addImageLauncher: ActivityResultLauncher<PickVisualMediaRequest>
     private lateinit var replaceImageLauncher: ActivityResultLauncher<PickVisualMediaRequest>
@@ -74,6 +74,26 @@ class WritingReviewActivity : BaseComponentActivity() {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        initComposeUi {
+            WritingReviewActivityContent(
+                imageStateList = imageStateList,
+                contentTextState = contentTextState,
+                ratingState = ratingState,
+                addImage = { addImageLauncher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
+                replaceImage = { index ->
+                    replaceImageIndex = index
+                    replaceImageLauncher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+                },
+                removeImage = { index ->
+                    imageStateList.removeAt(index)
+                    refreshImageList()
+                },
+                onClickSendReview = {
+
+                }
+            )
+        }
 
         addImageLauncher = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uris ->
             uris?.let { _ ->
@@ -114,31 +134,11 @@ class WritingReviewActivity : BaseComponentActivity() {
         }
     }
 
-    override fun initUi() {
-        setContent {
-            BPMTheme {
-                WritingReviewActivityContent(
-                    imageStateList = imageStateList,
-                    contentTextState = contentTextState,
-                    ratingState = ratingState,
-                    addImage = { addImageLauncher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
-                    replaceImage = { index ->
-                        replaceImageIndex = index
-                        replaceImageLauncher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
-                    },
-                    removeImage = { index ->
-                        imageStateList.removeAt(index)
-                        refreshImageList()
-                    },
-                    onClickSendReview = {
+    override fun initUi() = Unit
 
-                    }
-                )
-            }
-        }
+    override fun setupCollect() {
+
     }
-
-    override fun setupCollect() = Unit
 
     private fun refreshImageList() {
         val temp = SnapshotStateList<ImageBitmap>().apply { addAll(imageStateList) }
