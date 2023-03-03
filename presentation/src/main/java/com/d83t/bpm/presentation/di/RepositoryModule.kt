@@ -54,4 +54,20 @@ object RepositoryModule {
     ): StudioDetailRepository {
         return StudioDetailRepositoryImpl(mainApi)
     }
+
+    @Singleton
+    @Provides
+    fun provideReviewRepository(
+        mainApi: MainApi
+    ): ReviewRepository {
+        return ReviewRepositoryImpl(mainApi)
+    }
+
+    @Singleton
+    @Provides
+    fun provideWriteReviewRepository(
+        mainApi: MainApi
+    ): WriteReviewRepository {
+        return WriteReviewRepositoryImpl(mainApi)
+    }
 }

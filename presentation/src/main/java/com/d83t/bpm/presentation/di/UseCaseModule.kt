@@ -1,14 +1,14 @@
 package com.d83t.bpm.presentation.di
 
-import com.d83t.bpm.domain.repository.ScheduleRepository
-import com.d83t.bpm.domain.repository.SignUpRepository
-import com.d83t.bpm.domain.repository.SplashRepository
-import com.d83t.bpm.domain.repository.StudioDetailRepository
+import com.d83t.bpm.domain.repository.*
+import com.d83t.bpm.domain.usecase.review.GetReviewDetailUseCase
+import com.d83t.bpm.domain.usecase.review.GetReviewListUseCase
 import com.d83t.bpm.domain.usecase.schedule.GetScheduleUseCase
 import com.d83t.bpm.domain.usecase.schedule.SaveScheduleUseCase
 import com.d83t.bpm.domain.usecase.sign_up.SignUpUseCase
 import com.d83t.bpm.domain.usecase.splash.GetKakaoUserIdUseCase
 import com.d83t.bpm.domain.usecase.splash.SetKakaoUserIdUseCase
+import com.d83t.bpm.domain.usecase.splash.WriteReviewUseCase
 import com.d83t.bpm.domain.usecase.studio_detail.StudioDetailUseCase
 import dagger.Module
 import dagger.Provides
@@ -54,5 +54,23 @@ object UseCaseModule {
     @ViewModelScoped
     fun provideStudioDetailUseCase(studioDetailRepository: StudioDetailRepository): StudioDetailUseCase {
         return StudioDetailUseCase(studioDetailRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetReviewDetailUseCase(reviewRepository: ReviewRepository): GetReviewDetailUseCase {
+        return GetReviewDetailUseCase(reviewRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetReviewListUseCase(reviewRepository: ReviewRepository): GetReviewListUseCase {
+        return GetReviewListUseCase(reviewRepository)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideWriteReviewUseCase(writeReviewRepository: WriteReviewRepository): WriteReviewUseCase {
+        return WriteReviewUseCase(writeReviewRepository)
     }
 }

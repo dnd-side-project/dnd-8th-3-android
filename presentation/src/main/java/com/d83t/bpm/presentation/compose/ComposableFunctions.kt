@@ -7,6 +7,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -39,9 +41,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.d83t.bpm.domain.model.Review
 import com.d83t.bpm.presentation.R
+import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.compose.theme.*
+import com.d83t.bpm.presentation.ui.studio_detail.review_detail.ReviewDetailActivity
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
+import com.d83t.bpm.presentation.util.dateOnly
 
 @Composable
 fun ScreenHeader(
@@ -288,121 +296,167 @@ fun BPMTextField(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ReviewComposable(
     modifier: Modifier = Modifier,
-    isLiked: Boolean
+    review: Review
 ) {
-    val likeState = remember { mutableStateOf(isLiked) }
+    val context = LocalContext.current as BaseComponentActivity
 
-    Column(modifier = modifier.fillMaxWidth()) {
-        BPMSpacer(height = 16.dp)
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = SpaceBetween,
-            verticalAlignment = CenterVertically
+    with(review) {
+        val likeState = remember { mutableStateOf(liked ?: false) }
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .clickableWithoutRipple {
+                    context.startActivity(
+                        ReviewDetailActivity
+                            .newIntent(context)
+                            .putExtra("reviewId", id)
+                    )
+                }
         ) {
-            Row(verticalAlignment = CenterVertically) {
-                Image(
-                    modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = R.drawable.default_profile_image),
-                    contentDescription = "profileImage"
-                )
+            BPMSpacer(height = 16.dp)
 
-                BPMSpacer(width = 8.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = SpaceBetween,
+                verticalAlignment = CenterVertically
+            ) {
+                Row(verticalAlignment = CenterVertically) {
+                    GlideImage(
+                        modifier = Modifier.size(24.dp),
+                        model = author?.profilePath ?: "",
+                        contentDescription = "profileImage"
+                    )
+
+                    BPMSpacer(width = 8.dp)
+
+                    Text(
+                        text = author?.nickname ?: "",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp,
+                        letterSpacing = 0.sp
+                    )
+                }
 
                 Text(
-                    text = "닉네임",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp,
-                    letterSpacing = 0.sp
+                    text = createdAt?.dateOnly() ?: "",
+                    fontWeight = Medium,
+                    fontSize = 12.sp,
+                    letterSpacing = 0.5.sp
                 )
             }
 
+            BPMSpacer(height = 12.dp)
+
+            Row {
+                if (rating != null) {
+                    for (i in 1..5) {
+                        Image(
+                            modifier = Modifier.size(15.dp),
+                            painter = painterResource(
+                                id = if (i.toDouble() <= rating!!) R.drawable.ic_star_small_filled
+                                else if (i.toDouble() > rating!! && rating!! > i - 1) R.drawable.ic_star_small_half
+                                else R.drawable.ic_star_small_empty
+                            ),
+                            contentDescription = "starIcon"
+                        )
+                    }
+                } else {
+                    repeat(5) { index ->
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_star_small_empty),
+                            contentDescription = "starIcon",
+                            tint = GrayColor6
+                        )
+
+                        BPMSpacer(width = 2.dp)
+                    }
+                }
+            }
+
+            BPMSpacer(height = 14.dp)
+
+            if (recommends != null) {
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    items(recommends!!) { keyword ->
+                        KeywordChip(
+                            text = keyword,
+                            onClick = {}
+                        )
+                    }
+                }
+            }
+
+            BPMSpacer(height = 14.dp)
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                repeat(filesPath?.size!!) { index ->
+                    GlideImage(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(60.dp),
+                        model = filesPath!![index],
+                        contentDescription = "reviewImage",
+                        contentScale = ContentScale.Crop
+                    )
+
+                    BPMSpacer(width = 4.dp)
+                }
+
+                repeat(5 - filesPath?.size!!) { index ->
+                    Box(modifier = Modifier.weight(1f))
+
+                    if (index == 5 - filesPath!!.size - 1) {
+                        BPMSpacer(width = 4.dp)
+                    }
+                }
+            }
+
+            BPMSpacer(height = 10.dp)
+
             Text(
-                text = "2023.02.15",
-                fontWeight = Medium,
-                fontSize = 12.sp,
-                letterSpacing = 0.5.sp
+                modifier = Modifier.fillMaxWidth(),
+                text = content ?: "",
+                fontWeight = Normal,
+                fontSize = 13.sp,
+                letterSpacing = 0.sp,
+                maxLines = 4,
+                lineHeight = 19.sp,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            BPMSpacer(height = 25.dp)
+
+
+            LikeButton(
+                liked = liked ?: false,
+                likeState = likeState,
+                likeCount = likeCount ?: 0,
+                onClick = { }
             )
         }
 
-        BPMSpacer(height = 12.dp)
+        BPMSpacer(height = 20.dp)
 
-        Row {
-            repeat(5) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_star_small),
-                    contentDescription = "starIcon",
-                    tint = GrayColor6
-                )
-
-                BPMSpacer(width = 2.dp)
-            }
-        }
-
-        BPMSpacer(height = 14.dp)
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            KeywordChip(text = "🤔 친절해요")
-            KeywordChip(text = "😍 소통이 빨라요")
-            KeywordChip(text = "+3")
-        }
-
-        BPMSpacer(height = 14.dp)
-
-        Row {
-            repeat(5) { index ->
-                Image(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(60.dp),
-                    painter = painterResource(id = R.drawable.dummy_studio),
-                    contentDescription = "reviewImage",
-                    contentScale = ContentScale.Crop
-                )
-
-                if (index != 4) {
-                    BPMSpacer(width = 4.dp)
-                }
-            }
-        }
-
-        BPMSpacer(height = 10.dp)
-
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = "One, two, three, four Baby, got me looking so crazy 빠져버리는 daydream got me feeling you 너도 말해줄래 누가 내게 뭐라든 남들과는 달라 넌 Maybe you could be the one 날 믿어봐 한 번 I'm not looking for just fun Maybe I could be the one Oh baby 예민하대 나 lately 너 없이는 나 매일매일이 yeah 재미없어 어쩌지 I just want you Call my phone right now I just wanna hear you're mine",
-            fontWeight = Normal,
-            fontSize = 13.sp,
-            letterSpacing = 0.sp,
-            maxLines = 4,
-            lineHeight = 19.sp,
-            overflow = TextOverflow.Ellipsis
-        )
-
-        BPMSpacer(height = 25.dp)
-
-        LikeButton(
-            likeState = likeState,
-            onClick = { }
-        )
+        Divider(color = GrayColor13)
     }
 
-    BPMSpacer(height = 20.dp)
-
-    Divider(color = GrayColor13)
 }
 
 @Composable
 inline fun LikeButton(
+    liked: Boolean,
     likeState: MutableState<Boolean>,
+    likeCount: Int,
     crossinline onClick: () -> Unit
 ) {
+
     Box(
         modifier = Modifier
             .clip(shape = RoundedCornerShape(12.dp))
@@ -443,7 +497,16 @@ inline fun LikeButton(
             BPMSpacer(width = 4.dp)
 
             Text(
-                text = "12",
+                text = if (liked &&
+                    likeState.value
+                ) "$likeCount"
+                else if (liked &&
+                    !likeState.value
+                ) "${likeCount - 1}"
+                else if (!liked &&
+                    !likeState.value
+                ) "$likeCount"
+                else "${likeCount + 1}",
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp,
                 letterSpacing = 0.sp,
@@ -454,9 +517,10 @@ inline fun LikeButton(
 }
 
 @Composable
-fun KeywordChip(
+inline fun KeywordChip(
     text: String,
-    isChosen: Boolean = false
+    isChosen: Boolean = false,
+    crossinline onClick: () -> Unit
 ) {
     val selectState = remember { mutableStateOf(isChosen) }
 
@@ -468,7 +532,10 @@ fun KeywordChip(
                 horizontal = 12.dp,
                 vertical = 8.dp
             )
-            .clickableWithoutRipple { selectState.value = !selectState.value },
+            .clickableWithoutRipple {
+                selectState.value = !selectState.value
+                onClick()
+            },
         text = text,
         fontWeight = Medium,
         fontSize = 12.sp,
@@ -508,11 +575,12 @@ fun ReviewKeywordChip(
 }
 
 @Composable
-fun ReviewListHeader(
+inline fun ReviewListHeader(
     modifier: Modifier = Modifier,
     reviewCount: Int,
     showImageReviewOnlyState: MutableState<Boolean>,
-    showReviewOrderByLikeState: MutableState<Boolean>
+    showReviewOrderByLikeState: MutableState<Boolean>,
+    crossinline onClickWriteReview: () -> Unit
 ) {
     Column {
         Row(
@@ -531,6 +599,7 @@ fun ReviewListHeader(
             )
 
             Text(
+                modifier = Modifier.clickableWithoutRipple { onClickWriteReview() },
                 text = "리뷰 작성하기",
                 fontWeight = Medium,
                 fontSize = 14.sp,
@@ -549,7 +618,9 @@ fun ReviewListHeader(
             horizontalArrangement = SpaceBetween,
             verticalAlignment = CenterVertically
         ) {
-            Row(modifier = Modifier.clickableWithoutRipple { showImageReviewOnlyState.value = !showImageReviewOnlyState.value }) {
+            Row(modifier = Modifier.clickableWithoutRipple {
+                showImageReviewOnlyState.value = !showImageReviewOnlyState.value
+            }) {
                 Icon(
                     modifier = Modifier.align(CenterVertically),
                     painter = painterResource(id = R.drawable.ic_check_field),
@@ -569,7 +640,9 @@ fun ReviewListHeader(
 
             Row {
                 Text(
-                    modifier = Modifier.clickableWithoutRipple { showReviewOrderByLikeState.value = true },
+                    modifier = Modifier.clickableWithoutRipple {
+                        showReviewOrderByLikeState.value = true
+                    },
                     text = "좋아요순",
                     fontWeight = Medium,
                     fontSize = 14.sp,
@@ -590,7 +663,9 @@ fun ReviewListHeader(
                 BPMSpacer(width = 20.dp)
 
                 Text(
-                    modifier = Modifier.clickableWithoutRipple { showReviewOrderByLikeState.value = false },
+                    modifier = Modifier.clickableWithoutRipple {
+                        showReviewOrderByLikeState.value = false
+                    },
                     text = "최신순",
                     fontWeight = Medium,
                     fontSize = 14.sp,

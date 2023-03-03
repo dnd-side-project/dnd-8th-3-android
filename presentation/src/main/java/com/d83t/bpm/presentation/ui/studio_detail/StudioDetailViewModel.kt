@@ -2,6 +2,7 @@ package com.d83t.bpm.presentation.ui.studio_detail
 
 import androidx.lifecycle.viewModelScope
 import com.d83t.bpm.domain.model.ResponseState
+import com.d83t.bpm.domain.usecase.review.GetReviewListUseCase
 import com.d83t.bpm.domain.usecase.studio_detail.StudioDetailUseCase
 import com.d83t.bpm.presentation.base.BaseViewModel
 import com.d83t.bpm.presentation.di.IoDispatcher
@@ -16,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StudioDetailViewModel @Inject constructor(
     private val studioDetailUseCase: StudioDetailUseCase,
+    private val reviewListUseCase: GetReviewListUseCase,
     @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel() {
@@ -36,14 +38,27 @@ class StudioDetailViewModel @Inject constructor(
     fun getStudioDetail(
         studioId: Int
     ) {
+        viewModelScope.launch(ioDispatcher + exceptionHandler) {
+            studioDetailUseCase(studioId = studioId).onEach { state ->
+                when (state) {
+                    is ResponseState.Success -> _state.emit(StudioDetailState.StudioDetailSuccess(state.data))
+                    is ResponseState.Error -> _state.emit(StudioDetailState.Error)
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
+    fun getReviewList(
+        studioId: Int
+    ) {
         viewModelScope.launch(mainDispatcher) {
-            _state.emit(StudioDetailState.Loading)
+
         }
 
         viewModelScope.launch(ioDispatcher + exceptionHandler) {
-            studioDetailUseCase(studioId = studioId).onEach { state ->
-                when(state) {
-                    is ResponseState.Success -> _state.emit(StudioDetailState.Success(state.data))
+            reviewListUseCase(studioId = studioId).onEach { state ->
+                when (state) {
+                    is ResponseState.Success -> _state.emit(StudioDetailState.ReviewListSuccess(state.data))
                     is ResponseState.Error -> _state.emit(StudioDetailState.Error)
                 }
             }.launchIn(viewModelScope)
