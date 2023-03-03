@@ -79,10 +79,9 @@ class SignUpActivity : BaseComponentActivity() {
     }
 
     override fun initUi() {
+        nicknameTextState.value = viewModel.kakaoUserInfo.second
         setContent {
             BPMTheme {
-                nicknameTextState.value = viewModel.kakaoUserInfo.second
-
                 SignUpActivityContent(
                     imageState = imageState,
                     nicknameTextState = nicknameTextState,
