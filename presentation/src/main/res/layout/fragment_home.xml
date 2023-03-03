@@ -282,6 +282,14 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@id/tab" />
 
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:background="@color/gray_10"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tab"/>
+
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/pager"
                         android:layout_width="match_parent"

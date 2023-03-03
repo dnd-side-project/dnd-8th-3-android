@@ -19,11 +19,11 @@ sealed interface SplashState : ComposeUiState {
 
     // 카카오 유저 정보 가져오기 성공
     // 이후 Validation Check 진행
-    data class ValidationCheck(val id: Long) : SplashState
+    data class ValidationCheck(val id: Long, val kakaoNickName : String) : SplashState
 
     // Validation 완료 (신규 유저)
     // SignUp 페이지 이동
-    data class SignUp(val id: Long?) : SplashState
+    data class SignUp(val id: Long?, val kakaoNickName : String) : SplashState
 
     // 유저 토큰 저장
     data class SaveToken(val token: String?) : SplashState

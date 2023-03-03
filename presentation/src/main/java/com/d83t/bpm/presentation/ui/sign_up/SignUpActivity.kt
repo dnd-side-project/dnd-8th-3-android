@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
@@ -80,6 +81,8 @@ class SignUpActivity : BaseComponentActivity() {
     override fun initUi() {
         setContent {
             BPMTheme {
+                nicknameTextState.value = viewModel.kakaoUserInfo.second
+
                 SignUpActivityContent(
                     imageState = imageState,
                     nicknameTextState = nicknameTextState,
@@ -124,8 +127,17 @@ class SignUpActivity : BaseComponentActivity() {
 
     companion object {
 
-        fun newIntent(context: Context, ): Intent {
-            return Intent(context, SignUpActivity::class.java)
+        const val KEY_BUNDLE = "bundle"
+        const val KEY_KAKAO_USER_ID = "kakao_user_id"
+        const val KEY_KAKAO_NICK_NAME = "kakao_nickname"
+
+        fun newIntent(context: Context, kakaoUserId: Long?, kakaoNickName : String): Intent {
+            return Intent(context, SignUpActivity::class.java).apply {
+                putExtra(KEY_BUNDLE, bundleOf(
+                    KEY_KAKAO_USER_ID to kakaoUserId,
+                    KEY_KAKAO_NICK_NAME to kakaoNickName
+                ))
+            }
         }
 
     }
