@@ -54,8 +54,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:onClick="@{() -> vm.clickSchedule()}"
                         android:foreground="?android:attr/selectableItemBackground"
+                        android:onClick="@{() -> vm.clickSchedule()}"
                         app:cardBackgroundColor="@color/gray_02"
                         app:cardCornerRadius="12dp"
                         app:cardElevation="0dp"
@@ -262,8 +262,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginEnd="100dp"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/guide_tab"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:tabIndicatorColor="@color/black"
@@ -286,9 +285,9 @@
                         android:layout_width="0dp"
                         android:layout_height="1dp"
                         android:background="@color/gray_10"
-                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tab"/>
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tab" />
 
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/pager"
@@ -300,6 +299,13 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tab" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guide_tab"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.8" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -107,14 +107,14 @@ class SplashActivity : BaseComponentActivity() {
             kakaoLoginInstance.loginWithKakaoTalk(this) { loginInfo, error ->
                 if (error != null) {
                     // 로그인 실패
-                    showDebugToast("login failed! cause : ${error.message}")
+//                    showDebugToast("login failed! cause : ${error.message}")
                     showToast("로그인에 실패하였습니다. 다시 시도해 주세요.")
                 } else if (loginInfo != null) {
                     // 로그인 성공
                     kakaoLoginInstance.me { user, error ->
                         viewModel.setKakaoUserId(user?.id ?: 0L, user?.kakaoAccount?.profile?.nickname ?: "")
 //                        user?.id?.let { viewModel.setKakaoUserId(it) }
-                        showDebugToast("login succeed. user token : ${user?.id}")
+//                        showDebugToast("login succeed. user token : ${user?.id}")
                     }
                 }
             }
