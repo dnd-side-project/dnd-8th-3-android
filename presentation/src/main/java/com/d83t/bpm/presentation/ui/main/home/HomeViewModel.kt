@@ -40,29 +40,5 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private val _studioList = MutableStateFlow<List<Studio>>(emptyList())
-    val studioList: StateFlow<List<Studio>>
-        get() = _studioList
-
-    fun getStudioList() {
-        viewModelScope.launch(ioDispatcher + exceptionHandler) {
-            getStudioListUseCase(
-                limit = 10,
-                offset = 0
-            ).onEach { state ->
-                when (state) {
-                    is ResponseState.Success -> {
-                        _studioList.emit(state.data.studios ?: emptyList())
-                        _state.emit(HomeState.StudioList)
-                    }
-                    is ResponseState.Error -> {
-                        _state.emit(HomeState.Error)
-                    }
-                }
-            }.launchIn(viewModelScope)
-        }
-
-    }
-
 
 }

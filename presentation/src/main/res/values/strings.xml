@@ -8,6 +8,10 @@
     <string name="nav_community">커뮤니티</string>
     <string name="nav_mypage">마이페이지</string>
 
+    <string name="tab_hot">인기 스튜디오</string>
+    <string name="tab_review">리뷰 맛집</string>
+    <string name="tab_open">이번 달 오픈</string>
+
     <string name="mypage_post">게시물</string>
     <string name="mypage_scrap">스크랩</string>
     <string name="mypage_content_disable">오픈 예정</string>

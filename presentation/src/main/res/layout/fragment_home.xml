@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -13,11 +14,267 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/nav_home" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="false">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container_book"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/black"
+                    android:paddingHorizontal="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <include
+                        android:id="@+id/container_header_search"
+                        layout="@layout/layout_home_search"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/header_book"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        app:cardBackgroundColor="@color/gray_02"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/container_header_search">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingStart="18dp"
+                            android:paddingTop="20dp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/plan_count"
+                                style="@style/Font.PyeongChangPeace.Bold.20"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/pyeongchang_bold"
+                                android:includeFontPadding="false"
+                                android:paddingBottom="21dp"
+                                android:text="D-3"
+                                android:textColor="@color/white"
+                                android:textSize="28dp"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/plan_studio"
+                                style="@style/Font.Pretendard.Medium.14"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="바디프렌즈 스튜디오"
+                                android:textColor="@color/gray_09"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/plan_count" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/plan_date"
+                                style="@style/Font.Pretendard.Semibold.14"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:paddingBottom="17dp"
+                                android:text="2022.01.23 오후 5시"
+                                android:textColor="@color/white"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/plan_studio" />
+
+                            <androidx.constraintlayout.widget.Group
+                                android:id="@+id/group_booked"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                app:constraint_referenced_ids="plan_date, plan_count, plan_studio, plan_guide" />
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/plan_guide"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="12dp"
+                                app:cardBackgroundColor="@color/black"
+                                app:cardCornerRadius="12dp"
+                                app:cardElevation="0dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    style="@style/Font.Pretendard.Medium.13"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingHorizontal="12dp"
+                                    android:paddingVertical="10dp"
+                                    android:text="회원님, 마지막까지 불태워보시죠!"
+                                    android:textColor="@color/white" />
+
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/img_bpmman"
+                                android:layout_width="75dp"
+                                android:layout_height="75dp"
+                                android:src="@drawable/img_home_header_bpmman"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/img_bpmman_star"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_marginTop="5dp"
+                                android:src="@drawable/img_home_header_star"
+                                app:layout_constraintEnd_toStartOf="@id/img_bpmman"
+                                app:layout_constraintTop_toTopOf="@id/img_bpmman" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/book_register"
+                                style="@style/Font.Pretendard.Medium.14"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="촬영 일정 등록하기"
+                                android:textColor="@color/green_B2FF0E"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/book_plan"
+                                style="@style/Font.Pretendard.Medium.10"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:text="등록된 바디프로필 일정 없음"
+                                android:textColor="#BFBFBF"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/book_register" />
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/book_arrow"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:layout_marginStart="5dp"
+                                android:src="@drawable/ic_arrow_right"
+                                app:layout_constraintBottom_toBottomOf="@id/book_plan"
+                                app:layout_constraintStart_toEndOf="@id/book_plan"
+                                app:layout_constraintTop_toTopOf="@id/book_register"
+                                app:tint="@color/gray_06" />
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/book_guide"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginBottom="12dp"
+                                app:cardBackgroundColor="@color/black"
+                                app:cardCornerRadius="12dp"
+                                app:cardElevation="0dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="@id/book_plan"
+                                app:layout_constraintTop_toBottomOf="@id/book_plan">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    style="@style/Font.Pretendard.Medium.13"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingHorizontal="12dp"
+                                    android:paddingVertical="10dp"
+                                    android:text="회원님, 인생 프로필 찍으셔야죠!"
+                                    android:textColor="@color/white" />
+
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.constraintlayout.widget.Group
+                                android:id="@+id/group_book_new"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+
+                                app:constraint_referenced_ids="book_register, book_plan, book_guide, book_arrow" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/recommend_title"
+                    style="@style/Font.Pretendard.Semibold.16"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="26dp"
+                    android:text="바디프로필 스튜디오 추천"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/container_book" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/recommend_description"
+                    style="@style/Font.Pretendard.Medium.10"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="6dp"
+                    android:text="어깨맨이 엄선한 스튜디오를 보여드릴게요"
+                    android:textColor="@color/gray_06"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/recommend_title" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="12dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/recommend_description">
+
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/tab"
+                        style="@style/Widget.Design.TabLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tabIndicatorColor="@color/black"
+                        app:tabIndicatorHeight="3dp"
+                        app:tabMode="fixed"
+                        app:tabRippleColor="@android:color/transparent" />
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/pager"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tab" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
