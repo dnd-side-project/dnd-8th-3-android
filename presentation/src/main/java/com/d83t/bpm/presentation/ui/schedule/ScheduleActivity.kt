@@ -3,6 +3,8 @@ package com.d83t.bpm.presentation.ui.schedule
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -49,6 +51,7 @@ import com.d83t.bpm.presentation.R
 import com.d83t.bpm.presentation.base.BaseComponentActivity
 import com.d83t.bpm.presentation.compose.*
 import com.d83t.bpm.presentation.compose.theme.*
+import com.d83t.bpm.presentation.ui.schedule.select_studio.SelectStudioActivity
 import com.d83t.bpm.presentation.util.addFocusCleaner
 import com.d83t.bpm.presentation.util.clickableWithoutRipple
 import com.d83t.bpm.presentation.util.repeatCallDefaultOnStarted
@@ -63,6 +66,8 @@ import java.time.LocalDate
 class ScheduleActivity : BaseComponentActivity() {
     override val viewModel: ScheduleViewModel by viewModels()
 
+    private lateinit var selectStudioLauncher: ActivityResultLauncher<Intent>
+
     private val editModeState = mutableStateOf(false)
     private val studioLabelTextState = mutableStateOf("스튜디오 이름")
     private val selectedDateState = mutableStateOf<LocalDate?>(null)
@@ -75,6 +80,12 @@ class ScheduleActivity : BaseComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
+        selectStudioLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                studioLabelTextState.value = it.data?.getStringExtra("studioName") ?: ""
+            }
+        }
+
         initComposeUi {
             ScheduleActivityContent(
                 editModeState = editModeState,
@@ -84,7 +95,7 @@ class ScheduleActivity : BaseComponentActivity() {
                 timeLabelTextState = timeLabelTextState,
                 memoLabelTextState = memoLabelTextState,
                 memoTextState = memoTextState,
-                onClickSearchStudio = { },
+                onClickSearchStudio = { selectStudioLauncher.launch(SelectStudioActivity.newIntent(this@ScheduleActivity)) },
                 onClickSetTime = { timeText -> timeLabelTextState.value = timeText },
                 onClickSave = { viewModel.onClickSave() }
             )
@@ -177,11 +188,18 @@ private inline fun ScheduleActivityContent(
             .background(color = Color.White)
             .addFocusCleaner(LocalFocusManager.current)
             .nestedScroll(connection = object : NestedScrollConnection {
-                override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+                override suspend fun onPostFling(
+                    consumed: Velocity,
+                    available: Velocity
+                ): Velocity {
                     return Velocity(0f, available.y)
                 }
 
-                override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+                override fun onPostScroll(
+                    consumed: Offset,
+                    available: Offset,
+                    source: NestedScrollSource
+                ): Offset {
                     return Offset(0f, available.y)
                 }
             }),
@@ -296,7 +314,9 @@ private inline fun ScheduleActivityContent(
                         Icon(
                             modifier = Modifier
                                 .size(10.dp)
-                                .clickableWithoutRipple { calendarState.value = calendarState.value.minusMonths(1) },
+                                .clickableWithoutRipple {
+                                    calendarState.value = calendarState.value.minusMonths(1)
+                                },
                             painter = painterResource(id = R.drawable.ic_calendar_back),
                             contentDescription = "backIcon"
                         )
@@ -306,7 +326,9 @@ private inline fun ScheduleActivityContent(
                         Icon(
                             modifier = Modifier
                                 .size(10.dp)
-                                .clickableWithoutRipple { calendarState.value = calendarState.value.plusMonths(1) },
+                                .clickableWithoutRipple {
+                                    calendarState.value = calendarState.value.plusMonths(1)
+                                },
                             painter = painterResource(id = R.drawable.ic_calendar_forth),
                             contentDescription = "forthIcon"
                         )
@@ -497,7 +519,13 @@ private inline fun ScheduleActivityContent(
                                     Text(
                                         modifier = Modifier
                                             .align(Center)
-                                            .clickableWithoutRipple { scope.launch { if (index != 0) hoursLazyListState.animateScrollToItem(index - 1) } },
+                                            .clickableWithoutRipple {
+                                                scope.launch {
+                                                    if (index != 0) hoursLazyListState.animateScrollToItem(
+                                                        index - 1
+                                                    )
+                                                }
+                                            },
                                         text = if (hour in 1..12) String.format("%02d", hour) else if (hour == 0) "시" else "",
                                         fontWeight = SemiBold,
                                         fontSize = 14.sp,
@@ -529,7 +557,13 @@ private inline fun ScheduleActivityContent(
                                     Text(
                                         modifier = Modifier
                                             .align(Center)
-                                            .clickableWithoutRipple { scope.launch { if (index != 0) minutesLazyListState.animateScrollToItem(index - 1) } },
+                                            .clickableWithoutRipple {
+                                                scope.launch {
+                                                    if (index != 0) minutesLazyListState.animateScrollToItem(
+                                                        index - 1
+                                                    )
+                                                }
+                                            },
                                         text = if (minute in 0..59) String.format("%02d", minute) else if (minute == -1) "분" else "",
                                         fontWeight = SemiBold,
                                         fontSize = 14.sp,
@@ -555,7 +589,13 @@ private inline fun ScheduleActivityContent(
                                     Text(
                                         modifier = Modifier
                                             .align(Center)
-                                            .clickableWithoutRipple { scope.launch { if (index != 0) timeZonesLazyListState.animateScrollToItem(index - 1) } },
+                                            .clickableWithoutRipple {
+                                                scope.launch {
+                                                    if (index != 0) timeZonesLazyListState.animateScrollToItem(
+                                                        index - 1
+                                                    )
+                                                }
+                                            },
                                         text = times,
                                         fontWeight = SemiBold,
                                         fontSize = 14.sp,
@@ -600,8 +640,18 @@ private inline fun ScheduleActivityContent(
                         .align(CenterHorizontally)
                         .clickable {
                             onClickSetTime(
-                                "${String.format("%02d", hours[hoursLazyListState.firstVisibleItemIndex + 1])}:" +
-                                        "${String.format("%02d", minutes[minutesLazyListState.firstVisibleItemIndex + 1])} " +
+                                "${
+                                    String.format(
+                                        "%02d",
+                                        hours[hoursLazyListState.firstVisibleItemIndex + 1]
+                                    )
+                                }:" +
+                                        "${
+                                            String.format(
+                                                "%02d",
+                                                minutes[minutesLazyListState.firstVisibleItemIndex + 1]
+                                            )
+                                        } " +
                                         "(${timeZones[timeZonesLazyListState.firstVisibleItemIndex + 1]})"
                             )
                         }
@@ -707,6 +757,7 @@ private fun ScheduleItemLayout(
 
     if (!editModeState.value) {
         focusManager.clearFocus()
+        expandState.value = false
     }
 
     Column(

@@ -71,4 +71,12 @@ object RepositoryModule {
     ): WriteReviewRepository {
         return WriteReviewRepositoryImpl(mainApi)
     }
+
+    @Singleton
+    @Provides
+    fun provideSearchStudioRepository(
+        mainApi: MainApi
+    ): SearchStudioRepository {
+        return SearchStudioRepositoryImpl(mainApi)
+    }
 }

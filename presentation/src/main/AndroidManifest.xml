@@ -80,6 +80,11 @@
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Bpm.NoActionBar" />
+        <activity
+            android:name=".ui.schedule.select_studio.SelectStudioActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Bpm.NoActionBar" />
 
         <activity
             android:name="com.facebook.flipper.android.diagnostics.FlipperDiagnosticActivity"

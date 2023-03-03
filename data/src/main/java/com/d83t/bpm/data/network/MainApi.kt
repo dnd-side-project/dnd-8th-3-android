@@ -71,10 +71,14 @@ interface MainApi {
         @Part("content") content: String
     ): Response<ReviewResponse>
 
-    @Headers("shouldBeAuthorized: true")
     @GET("api/studio/list")
     suspend fun getStudioList(
         @Query("limit") limit: Int,
         @Query("offset") offset: Int,
+    ): Response<StudioListResponse>
+
+    @GET("api/studio")
+    suspend fun searchStudio(
+        @Query("q") query: String
     ): Response<StudioListResponse>
 }
